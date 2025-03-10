@@ -32,4 +32,10 @@ export class UsersController {
   async deleteUser(@Payload() id: number) {
       return this.userService.remove(id);
   }
+
+  @MessagePattern({ cmd: 'check_user_exists' })
+  async checkUserExists(@Payload() data: { user_id: number }) {
+      const user = await this.userService.findOne(data.user_id);
+      return !!user; // Trả về true nếu user tồn tại, false nếu không
+  }
 }

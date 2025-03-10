@@ -29,7 +29,7 @@ async function bootstrap() {
   // Sử dụng template success response api
   app.useGlobalInterceptors(new ResponseInterceptor(reflector));
   // Đăng ký Global Exception Filter
-  app.useGlobalFilters(new AllExceptionsFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter());
   await app.startAllMicroservices();
   await app.listen(3001);
 }
