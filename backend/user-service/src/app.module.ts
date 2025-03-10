@@ -12,7 +12,7 @@ import { User } from './users/users.entity';
       host:'localhost',
       port: 5432,
       username: 'postgres',
-      password: '12345',
+      password: '123456',
       database: 'user_service',
       autoLoadEntities: true, // Tự động load entity
       synchronize: true, // Tạo bảng tự động (chỉ nên dùng trong phát triển)
