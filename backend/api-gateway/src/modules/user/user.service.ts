@@ -23,14 +23,17 @@ export class UserService {
     }
 
     createUser(createUserRequest: CreateUserRequest) {
-        return this.userClient.send({ cmd: 'create_user' }, createUserRequest);
+        return this.userClient.send({ cmd: 'create_user' }, createUserRequest)
+        .pipe(catchError(error => throwError(() => new RpcException(error.response))));
     }
 
     updateUser(id: number, updateUserRequest: UpdateUserRequest) {
-        return this.userClient.send({ cmd: 'update_user' }, { id, updateUserRequest });
+        return this.userClient.send({ cmd: 'update_user' }, { id, updateUserRequest })
+        .pipe(catchError(error => throwError(() => new RpcException(error.response))));
     }
 
     deleteUser(id: number) {
-        return this.userClient.send({ cmd: 'delete_user' }, id);
+        return this.userClient.send({ cmd: 'delete_user' }, id)
+        .pipe(catchError(error => throwError(() => new RpcException(error.response))));
     }
 }
