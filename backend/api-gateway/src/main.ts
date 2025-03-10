@@ -2,7 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { RpcExceptionFilter } from './common/filters/rpc-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -29,7 +29,7 @@ async function bootstrap() {
   // Sử dụng template success response api
   app.useGlobalInterceptors(new ResponseInterceptor(reflector));
   // Đăng ký Global Exception Filter
-  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalFilters(new RpcExceptionFilter());
   await app.startAllMicroservices();
   await app.listen(3001);
 }

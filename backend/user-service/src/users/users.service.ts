@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { IUserService } from './users.service.interface';
 import { CreateUserRequest } from './dto/requests/create-user-request.dto';
 import { UpdateUserRequest } from './dto/requests/update-user-request.dto';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class UsersService implements IUserService{
@@ -25,7 +26,9 @@ export class UsersService implements IUserService{
     async findOne(id: number): Promise<User> {
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
+            throw new RpcException(
+                new NotFoundException(`User ${id} không tìm thấy`)
+            );
         }
         return user;
     }
