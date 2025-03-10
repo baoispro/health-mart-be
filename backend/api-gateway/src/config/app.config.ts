@@ -7,4 +7,8 @@ export const appConfig = {
         host: 'localhost',
         port: 4002,
     },
+    orderService:{
+        host: 'localhost',
+        port: 4003,
+    },
 }
