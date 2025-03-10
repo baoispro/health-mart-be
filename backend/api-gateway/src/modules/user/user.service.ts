@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 import { CreateUserRequest } from './dto/requests/create-user-request.dto';
 import { UpdateUserRequest } from './dto/requests/update-user-request.dto';
+import { catchError, throwError } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -17,18 +18,22 @@ export class UserService {
     }
 
     getUserById(id: number) {
-        return this.userClient.send({ cmd: 'get_user_by_id' }, id);
+        return this.userClient.send({ cmd: 'get_user_by_id' }, id)
+        .pipe(catchError(error => throwError(() => new RpcException(error.response))));
     }
 
     createUser(createUserRequest: CreateUserRequest) {
-        return this.userClient.send({ cmd: 'create_user' }, createUserRequest);
+        return this.userClient.send({ cmd: 'create_user' }, createUserRequest)
+        .pipe(catchError(error => throwError(() => new RpcException(error.response))));
     }
 
     updateUser(id: number, updateUserRequest: UpdateUserRequest) {
-        return this.userClient.send({ cmd: 'update_user' }, { id, updateUserRequest });
+        return this.userClient.send({ cmd: 'update_user' }, { id, updateUserRequest })
+        .pipe(catchError(error => throwError(() => new RpcException(error.response))));
     }
 
     deleteUser(id: number) {
-        return this.userClient.send({ cmd: 'delete_user' }, id);
+        return this.userClient.send({ cmd: 'delete_user' }, id)
+        .pipe(catchError(error => throwError(() => new RpcException(error.response))));
     }
 }
