@@ -3,4 +3,9 @@ export enum OrderStatus {
     COMPLETED = 'COMPLETED',
     CANCELLED = 'CANCELLED',
   }
+
+export enum OrderShipMethod {
+  HOME_DELIVERY = 'HOME_DELIVERY',
+  PICK_UP = 'PICK_UP',
+}
   
