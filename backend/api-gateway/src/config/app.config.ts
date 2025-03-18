@@ -11,4 +11,8 @@ export const appConfig = {
         host: 'localhost',
         port: 4003,
     },
+    productService: {
+        host: 'localhost',
+        port: 4004, 
+    },
 }
