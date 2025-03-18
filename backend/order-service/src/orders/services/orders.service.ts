@@ -2,10 +2,10 @@ import { BadRequestException, Inject, Injectable, InternalServerErrorException, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClientProxy } from '@nestjs/microservices';
-import { Order } from './orders.entity';
-import { ClientProxyFactoryService } from '../utils/client-proxy.factory';
+import { Order } from '../entities/orders.entity';
+import { ClientProxyFactoryService } from '../../utils/client-proxy.factory';
 import { firstValueFrom } from 'rxjs'; // Import firstValueFrom để xử lý Observable
-import { OrderShipMethod, OrderStatus } from './order.enum';
+import { OrderShipMethod, OrderStatus } from '../enums/order.enum';
 
 @Injectable()
 export class OrdersService {

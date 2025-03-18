@@ -1,4 +1,4 @@
-import { OrderShipMethod, OrderStatus } from "src/orders/order.enum";
+import { OrderShipMethod, OrderStatus } from "src/orders/enums/order.enum";
 
 export class CreateOrderRequest {
     user_id: number;

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, ParseIntPipe, BadRequestException } from '@nestjs/common';
-import { OrdersService } from './orders.service';
-import { Order } from './orders.entity';
+import { OrdersService } from '../services/orders.service';
+import { Order } from '../entities/orders.entity';
 import { MessagePattern, Payload } from '@nestjs/microservices'; // Sửa lỗi thiếu import Payload
 
 @Controller('orders')

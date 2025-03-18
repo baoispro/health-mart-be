@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-import { OrderShipMethod, OrderStatus } from './order.enum';
+import { OrderShipMethod, OrderStatus } from '../enums/order.enum';
 
 @Entity('orders')
 export class Order {
@@ -7,7 +7,7 @@ export class Order {
   id: number;
 
   @Column() 
-  user_id: number; // chỗ này lấy từ user-service bạn xem thử
+  user_id: number;
 
   @Column({ type: 'decimal' })
   total_price: number;
