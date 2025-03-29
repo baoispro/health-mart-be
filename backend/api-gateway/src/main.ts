@@ -6,7 +6,7 @@ import { RpcExceptionFilter } from './common/filters/rpc-exceptions.filter';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule);
 
   //Kết nối swagger
   const config = new DocumentBuilder()
@@ -23,8 +23,8 @@ async function bootstrap() {
         return order.indexOf(a.get('method')) - order.indexOf(b.get('method'));
       },
     },
-  });  
-  
+  });
+
   const reflector = app.get(Reflector);
   app.enableCors();
   // Sử dụng template success response api
