@@ -1,4 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Response } from 'express';
 

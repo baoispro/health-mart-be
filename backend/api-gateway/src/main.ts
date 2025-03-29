@@ -31,7 +31,28 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor(reflector));
   // Đăng ký Global Exception Filter
   app.useGlobalFilters(new RpcExceptionFilter());
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.reduce((acc, err) => {
+          const field = err.property;
+          const messages = err.constraints
+            ? Object.values(err.constraints)
+            : [];
+          acc[field] = messages;
+          return acc;
+        }, {});
+
+        return {
+          statusCode: 400,
+          message: formattedErrors, // Trả về object lỗi với từng field
+          error: 'Bad Request',
+        };
+      },
+    }),
+  );
   await app.startAllMicroservices();
   await app.listen(3001);
 }
