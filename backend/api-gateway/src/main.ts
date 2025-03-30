@@ -6,7 +6,7 @@ import { RpcExceptionFilter } from './common/filters/rpc-exceptions.filter';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule);
 
   //Kết nối swagger
   const config = new DocumentBuilder()
@@ -23,15 +23,36 @@ async function bootstrap() {
         return order.indexOf(a.get('method')) - order.indexOf(b.get('method'));
       },
     },
-  });  
-  
+  });
+
   const reflector = app.get(Reflector);
   app.enableCors();
   // Sử dụng template success response api
   app.useGlobalInterceptors(new ResponseInterceptor(reflector));
   // Đăng ký Global Exception Filter
   app.useGlobalFilters(new RpcExceptionFilter());
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.reduce((acc, err) => {
+          const field = err.property;
+          const messages = err.constraints
+            ? Object.values(err.constraints)
+            : [];
+          acc[field] = messages;
+          return acc;
+        }, {});
+
+        return {
+          statusCode: 400,
+          message: formattedErrors, // Trả về object lỗi với từng field
+          error: 'Bad Request',
+        };
+      },
+    }),
+  );
   await app.startAllMicroservices();
   await app.listen(3001);
 }
