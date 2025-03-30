@@ -9,11 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserService } from './user.service';
-import { CreateUserRequest } from './dto/requests/create-user-request.dto';
-import { UpdateUserRequest } from './dto/requests/update-user-request.dto';
+import { UserService } from '../services/user.service';
+import { CreateUserRequest } from '../dto/requests/create-user-request.dto';
+import { UpdateUserRequest } from '../dto/requests/update-user-request.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
-import { BaseResponseDto } from './dto/responses/base-response.dto';
+import { BaseResponseDto } from '../dto/responses/base-response.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('user')

@@ -39,7 +39,28 @@ async function bootstrap() {
   app.useGlobalFilters(new RpcExceptionFilter());
 
   // Cấu hình ValidationPipe
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.reduce((acc, err) => {
+          const field = err.property;
+          const messages = err.constraints
+            ? Object.values(err.constraints)
+            : [];
+          acc[field] = messages;
+          return acc;
+        }, {});
+
+        return {
+          statusCode: 400,
+          message: formattedErrors, // Trả về object lỗi với từng field
+          error: 'Bad Request',
+        };
+      },
+    }),
+  );
 
   app.useGlobalGuards(new AuthGuard(new JwtService())); // Áp dụng AuthGuard để xác thực JWT cho toàn bộ API
 
