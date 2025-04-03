@@ -48,6 +48,16 @@ export class UsersService implements IUserService {
     return user;
   }
 
+  async findUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new RpcException(
+        new NotFoundException(`User ${email} không tìm thấy`),
+      );
+    }
+    return user;
+  }
+
   async update(
     id: number,
     updateUserRequest: UpdateUserRequest,

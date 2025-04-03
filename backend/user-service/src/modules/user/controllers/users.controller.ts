@@ -18,6 +18,11 @@ export class UsersController {
     return this.userService.findOne(id);
   }
 
+  @MessagePattern('get_user_by_email')
+  async getUserByEmail(@Payload() email: string) {
+    return this.userService.findUserByEmail(email);
+  }
+
   @MessagePattern('create_user')
   async createUser(@Payload() createUserRequest: CreateUserRequest) {
     return this.userService.create(createUserRequest);
