@@ -23,12 +23,11 @@ export class OrdersService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
   ) {
-    // Khởi tạo kết nối tới userService qua RabbitMQ
     this.userClient = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
-        urls: ['amqp://localhost:5672'], // Đảm bảo đúng URL của RabbitMQ
-        queue: appConfig.userService.queue, // Lấy queue từ config
+        urls: ['amqp://localhost:5672'],
+        queue: appConfig.userService.queue,
         queueOptions: { durable: false },
       },
     });
@@ -43,8 +42,9 @@ export class OrdersService {
 
     try {
       const result = await firstValueFrom(
-        this.userClient.send({ cmd: 'check_user_exists' }, { user_id })
+        this.userClient.send('check_user_exists', { user_id })
       );
+      this.logger.log(`Kết quả kiểm tra user_id ${user_id}: ${result}`);
       return result;
     } catch (error) {
       this.logger.error(`Lỗi khi kiểm tra user: ${error.message}`);
