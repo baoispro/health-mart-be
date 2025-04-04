@@ -4,7 +4,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { OrdersService } from './services/orders.service';
 import { Order } from './entities/orders.entity';
 import { OrdersController } from './controllers/orders.controller';
-import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 
 
 @Module({
@@ -12,6 +11,6 @@ import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
     TypeOrmModule.forFeature([Order]),
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, ClientProxyFactoryService],
+  providers: [OrdersService],
 })
 export class OrdersModule {}
