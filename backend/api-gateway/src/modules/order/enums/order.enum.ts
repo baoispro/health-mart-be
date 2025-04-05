@@ -5,6 +5,6 @@ export enum OrderStatus {
 }
 
 export enum OrderShipMethod {
-HOME_DELIVERY = 'HOME_DELIVERY',
-PICK_UP = 'PICK_UP',
+  HOME_DELIVERY = 'HOME_DELIVERY',
+  PICK_UP = 'PICK_UP',
 }

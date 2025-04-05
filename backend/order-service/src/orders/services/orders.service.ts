@@ -1,18 +1,15 @@
-import { 
-  BadRequestException, 
-  Inject, 
-  Injectable, 
-  InternalServerErrorException, 
-  Logger, 
-  NotFoundException
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Order } from '../entities/orders.entity';
 import { firstValueFrom } from 'rxjs';
-import { OrderShipMethod, OrderStatus } from '../enums/order.enum';
-import { appConfig } from '../../config/app.config';
+import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 
 @Injectable()
 export class OrdersService {
@@ -22,15 +19,9 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    private readonly clientProxyFactory: ClientProxyFactoryService,
   ) {
-    this.userClient = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://localhost:5672'],
-        queue: appConfig.userService.queue,
-        queueOptions: { durable: false },
-      },
-    });
+    this.userClient = this.clientProxyFactory.createClient('userService');
   }
 
   async findAll(): Promise<Order[]> {
@@ -42,13 +33,12 @@ export class OrdersService {
 
     try {
       const result = await firstValueFrom(
-        this.userClient.send('check_user_exists', { user_id })
+        this.userClient.send('check_user_exists', { user_id }),
       );
       this.logger.log(`Kết quả kiểm tra user_id ${user_id}: ${result}`);
       return result;
     } catch (error) {
       this.logger.error(`Lỗi khi kiểm tra user: ${error.message}`);
-      throw new InternalServerErrorException('Lỗi kết nối user service');
     }
   }
 
@@ -56,10 +46,12 @@ export class OrdersService {
     this.logger.log(`Nhận yêu cầu tạo đơn hàng: ${JSON.stringify(orderData)}`);
 
     const userExists = await this.checkUserExists(orderData.user_id);
-    if (!userExists) {
-      throw new BadRequestException(`User ID ${orderData.user_id} không tồn tại!`);
+    this.logger.log(userExists == null);
+    if (userExists == null) {
+      throw new RpcException(
+        new NotFoundException(`User ${orderData.user_id} không tìm thấy`),
+      );
     }
-
     const newOrder = this.orderRepository.create(orderData);
     return await this.orderRepository.save(newOrder);
   }
@@ -73,9 +65,12 @@ export class OrdersService {
     return await this.orderRepository.findOne({ where: { id } });
   }
 
-  async updateOrder(id: number, orderData: Partial<Order>): Promise<Order | null> {
+  async updateOrder(
+    id: number,
+    orderData: Partial<Order>,
+  ): Promise<Order | null> {
     if (!orderData || Object.keys(orderData).length === 0) {
-      throw new BadRequestException("Không có dữ liệu cập nhật!");
+      throw new BadRequestException('Không có dữ liệu cập nhật!');
     }
     const order = await this.orderRepository.findOne({ where: { id } });
     if (!order) {

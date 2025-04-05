@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Min } from "class-validator";
-import { OrderShipMethod, OrderStatus } from "../../order.enum";
+import { OrderShipMethod, OrderStatus } from "../../enums/order.enum";
 
 export class CreateOrderRequest {
   @ApiProperty()
