@@ -41,21 +41,8 @@ export class OrderService {
   }
 
   updateOrder(id: number, updateOrderRequest: UpdateOrderRequest) {
-    if (!updateOrderRequest || Object.keys(updateOrderRequest).length === 0) {
-      throw new Error('Không có dữ liệu cập nhật!');
-    }
     return this.orderClient
       .send({ cmd: 'update_order' }, { id, updateOrderRequest })
-      .pipe(
-        catchError((error) =>
-          throwError(() => new RpcException(error.response)),
-        ),
-      );
-  }
-
-  deleteOrder(id: number) {
-    return this.orderClient
-      .send({ cmd: 'delete_order' }, { id })
       .pipe(
         catchError((error) =>
           throwError(() => new RpcException(error.response)),

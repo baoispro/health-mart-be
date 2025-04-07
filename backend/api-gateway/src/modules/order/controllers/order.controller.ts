@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { OrderService } from '../services/order.service';
 import { CreateOrderRequest } from '../dto/requests/create-order-request.dto';
@@ -59,17 +51,5 @@ export class OrderController {
     @Body() updateOrderRequest: UpdateOrderRequest,
   ) {
     return this.orderService.updateOrder(id, updateOrderRequest);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Xóa đơn hàng' })
-  @ApiResponse({
-    status: 200,
-    description: 'Xóa thành công',
-    type: BaseResponseDto,
-  })
-  @ResponseMessage('Xóa đơn hàng thành công.')
-  deleteOrder(@Param('id') id: number) {
-    return this.orderService.deleteOrder(id);
   }
 }

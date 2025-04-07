@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 import { OrderShipMethod, OrderStatus } from '../enums/order.enum';
 
 @Entity('orders')
@@ -6,7 +11,7 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column() 
+  @Column()
   user_id: number;
 
   @Column({ type: 'decimal' })
@@ -17,13 +22,16 @@ export class Order {
 
   @Column({ type: 'decimal' })
   final_price: number;
-  
+
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   order_status: OrderStatus;
 
-  @Column({ type: 'enum', enum: OrderShipMethod, default: OrderShipMethod.HOME_DELIVERY })
+  @Column({
+    type: 'enum',
+    enum: OrderShipMethod,
+    default: OrderShipMethod.HOME_DELIVERY,
+  })
   ship_method: OrderShipMethod;
-
 
   @CreateDateColumn()
   created_at: Date;

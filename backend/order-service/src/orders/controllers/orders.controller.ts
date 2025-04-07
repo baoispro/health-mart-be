@@ -28,9 +28,4 @@ export class OrdersController {
   ): Promise<Order | null> {
     return this.orderService.updateOrder(data.id, data.updateOrderRequest);
   }
-
-  @MessagePattern({ cmd: 'delete_order' })
-  async deleteOrder(@Payload() data: { id: number }): Promise<boolean> {
-    return this.orderService.deleteOrder(data.id);
-  }
 }

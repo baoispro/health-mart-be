@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
@@ -69,20 +64,13 @@ export class OrdersService {
     id: number,
     orderData: Partial<Order>,
   ): Promise<Order | null> {
-    if (!orderData || Object.keys(orderData).length === 0) {
-      throw new BadRequestException('Không có dữ liệu cập nhật!');
-    }
     const order = await this.orderRepository.findOne({ where: { id } });
     if (!order) {
-      throw new NotFoundException(`Không tìm thấy đơn hàng với ID ${id}`);
+      throw new RpcException(
+        new NotFoundException(`Không tìm thấy đơn hàng với ID ${id}`),
+      );
     }
-
     await this.orderRepository.update(id, orderData);
     return this.orderRepository.findOne({ where: { id } });
-  }
-
-  async deleteOrder(id: number): Promise<boolean> {
-    const result = await this.orderRepository.delete(id);
-    return result.affected > 0;
   }
 }
