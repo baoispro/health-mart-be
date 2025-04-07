@@ -51,9 +51,7 @@ export class UsersService implements IUserService {
   async findUserByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new RpcException(
-        new NotFoundException(`User ${email} không tìm thấy`),
-      );
+      return null;
     }
     return user;
   }

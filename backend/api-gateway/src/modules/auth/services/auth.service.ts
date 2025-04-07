@@ -13,7 +13,7 @@ export class AuthService {
 
   getUserByEmail(email: string) {
     return this.authClient
-      .send('auth_user_by_email', email)
+      .send('auth_login_by_email', email)
       .pipe(
         catchError((error) =>
           throwError(() => new RpcException(error.response)),

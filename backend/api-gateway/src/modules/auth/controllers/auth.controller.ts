@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
+import { BaseResponseDto } from '../dto/responses/base-response.dto';
 import { AuthService } from '../services/auth.service';
 
 @Controller('auth')
@@ -13,6 +14,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Thông tin user',
+    type: BaseResponseDto,
   })
   @ResponseMessage('Lấy thông tin người dùng thành công')
   getUserById(@Param('email') email: string) {
