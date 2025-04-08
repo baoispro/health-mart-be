@@ -6,7 +6,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @MessagePattern({ cmd: 'auth_login_by_email' })
+  @MessagePattern('auth_login_by_email')
   getUser(@Payload() email: string) {
     return this.authService.findUserByEmail(email);
   }

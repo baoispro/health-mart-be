@@ -7,10 +7,14 @@ import { appConfig } from '../config/app.config';
 
 export class ClientProxyFactoryService {
   createClient(serviceName: keyof typeof appConfig): ClientProxy {
-    const { host, port } = appConfig[serviceName];
+    const { queue } = appConfig[serviceName];
     return ClientProxyFactory.create({
-      transport: Transport.TCP,
-      options: { host, port },
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://localhost:5672'],
+        queue,
+        queueOptions: { durable: false },
+      },
     });
   }
 }

@@ -1,6 +1,14 @@
 export const appConfig = {
   userService: {
-    host: 'localhost',
-    port: 4001,
+    queue: 'user_queue',
+  },
+  authService: {
+    queue: 'auth_queue',
+  },
+  orderService: {
+    queue: 'order_queue',
+  },
+  productService: {
+    queue: 'product_queue',
   },
 };

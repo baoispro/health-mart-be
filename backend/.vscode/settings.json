@@ -1,7 +1,0 @@
-{
-  "editor.formatOnSave": false,
-  "[typescript]": {
-    "editor.defaultFormatter": null
-  },
-  "eslint.enable": false
-}
