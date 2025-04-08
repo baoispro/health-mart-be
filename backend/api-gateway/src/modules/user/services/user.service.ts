@@ -56,4 +56,14 @@ export class UserService {
         ),
       );
   }
+
+  checkUserExists(user_id: number) {
+    return this.userClient
+      .send('check_user_exists', { user_id })
+      .pipe(
+        catchError((error) =>
+          throwError(() => new RpcException(error.response)),
+        ),
+      );
+  }
 }

@@ -85,4 +85,12 @@ export class UsersService implements IUserService {
     await this.findOne(id);
     return await this.userRepository.delete(id);
   }
+
+  async checkUserExist(id: number): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      return null;
+    }
+    return user;
+  }
 }
