@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,6 +22,11 @@ import { AuthModule } from './modules/auth/auth.module';
         autoLoadEntities: true, // Tự động load entity
         synchronize: true, // Tạo bảng tự động (chỉ nên dùng trong phát triển)
       }),
+    }),
+    JwtModule.register({
+      secret: 'secret',
+      global: true,
+      signOptions: { expiresIn: '7d' },
     }),
     AuthModule,
   ],
