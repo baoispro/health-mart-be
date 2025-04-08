@@ -1,0 +1,38 @@
+import { Controller } from '@nestjs/common';
+import { ProductsService } from '../services/products.service';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { CreateProductRequest } from '../dto/requests/create-product-request.dto';
+import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
+
+@Controller('products')
+export class ProductsController {
+  constructor(private readonly productService: ProductsService) {}
+
+  @MessagePattern('get_all_products')
+  getAllProducts() {
+    return this.productService.findAll();
+  }
+
+  @MessagePattern('get_product_by_id')
+  async getProductById(@Payload() id: number) {
+    return this.productService.findOne(id);
+  }
+
+  @MessagePattern('create_product')
+  async createProduct(@Payload() createProductRequest: CreateProductRequest) {
+    return this.productService.create(createProductRequest);
+  }
+
+  @MessagePattern('update_product')
+  async updateProduct(
+    @Payload() payload: { id: number; updateProductRequest: UpdateProductRequest },
+  ) {
+    const { id, updateProductRequest } = payload;
+    return this.productService.update(id, updateProductRequest);
+  }
+
+  @MessagePattern('delete_product' )
+  async deleteProduct(@Payload() id: number) {
+    return this.productService.remove(id);
+  }
+}
