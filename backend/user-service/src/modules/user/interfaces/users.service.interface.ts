@@ -7,6 +7,7 @@ export interface IUserService {
   create(createUserRequest: CreateUserRequest): Promise<User>;
   findAll(): Promise<User[]>;
   findOne(id: number): Promise<User>;
+  findUserByEmail(email: string): Promise<User>;
   update(id: number, updateUserRequest: UpdateUserRequest): Promise<User>;
   remove(id: number): Promise<DeleteResult>;
 }

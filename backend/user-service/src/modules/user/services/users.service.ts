@@ -48,6 +48,14 @@ export class UsersService implements IUserService {
     return user;
   }
 
+  async findUserByEmail(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      return null;
+    }
+    return user;
+  }
+
   async update(
     id: number,
     updateUserRequest: UpdateUserRequest,
