@@ -1,8 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
-import { BaseResponseDto } from '../dto/responses/base-response.dto';
 import { AuthService } from '../services/auth.service';
+import { LoginRespone } from '../dto/responses/login-response.dto';
+import { LoginRequest } from '../dto/request/login-request.dto';
+import { LogoutRequest } from '../dto/request/logout-request.dto';
+import { VerifyTokenRequest } from '../dto/request/verify-token-request.dto';
+import { RefreshTokenResponse } from '../dto/responses/refresh-token-response.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -14,10 +18,44 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Thông tin user',
-    type: BaseResponseDto,
   })
   @ResponseMessage('Lấy thông tin người dùng thành công')
   getUserById(@Param('email') email: string) {
     return this.authService.getUserByEmail(email);
+  }
+
+  @Post('/login')
+  @ApiOperation({ summary: 'Đăng nhập vào hệ thống' })
+  @ApiResponse({
+    status: 201,
+    description: 'Đăng nhập thành công',
+    type: LoginRespone,
+  })
+  @ResponseMessage('Đăng nhập thành công.')
+  createUser(@Body() dto: LoginRequest) {
+    return this.authService.login(dto);
+  }
+
+  @Post('/refresh-token')
+  @ApiOperation({ summary: 'Làm mới token' })
+  @ApiResponse({
+    status: 201,
+    description: 'Làm mới token thành công',
+    type: RefreshTokenResponse,
+  })
+  @ResponseMessage('Làm mới token thành công.')
+  refreshToken(@Body() dto: VerifyTokenRequest) {
+    return this.authService.refreshToken(dto.token);
+  }
+
+  @Post('/logout')
+  @ApiOperation({ summary: 'Đăng xuất khỏi hệ thống' })
+  @ApiResponse({
+    status: 201,
+    description: 'Đăng xuất thành công',
+  })
+  @ResponseMessage('Đăng xuất thành công.')
+  logout(@Body() dto: LogoutRequest) {
+    return this.authService.logout(dto.userId);
   }
 }
