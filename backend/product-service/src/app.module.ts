@@ -28,11 +28,11 @@ import { SideEffectModule } from './modules/side_effect/side_effect.module';
       }),
     }),
     ProductsModule,
+    PharmacyStocksModule,
+    SideEffectModule,
     UsagesModule,
     DosagesModule,
     StoragesModule,
-    PharmacyStocksModule,
-    SideEffectModule,
   ],
 })
 export class AppModule {}
