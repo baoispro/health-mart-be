@@ -35,11 +35,14 @@ export class UsersService implements IUserService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ relations: ['addresses'] });
   }
 
   async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['addresses'],
+    });
     if (!user) {
       throw new RpcException(
         new NotFoundException(`User ${id} không tìm thấy`),
