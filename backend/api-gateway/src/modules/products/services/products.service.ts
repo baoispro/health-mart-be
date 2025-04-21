@@ -9,6 +9,8 @@ import { CreateUsageRequest } from '../dto/requests/create-usage-request.dto';
 import { UpdateUsageRequest } from '../dto/requests/update-usage-request.dto';
 import { CreateDosageRequest } from '../dto/requests/create-dosage-request.dto';
 import { UpdateDosageRequest } from '../dto/requests/update-dosage-request.dto';
+import { CreateStorageRequest } from '../dto/requests/create-storage-request.dto';
+import { UpdateStorageRequest } from '../dto/requests/update-storage-request.dto';
 
 @Injectable()
 export class ProductsService {
@@ -119,5 +121,41 @@ export class ProductsService {
 
   deleteDosage(id: number) {
     return this.productClient.send('delete_dosage', id).pipe(this.handleError);
+  }
+
+  getAllStorages() {
+    return this.productClient
+      .send('get_all_storages', {})
+      .pipe(this.handleError);
+  }
+
+  getStorageById(id: number) {
+    return this.productClient
+      .send('get_storage_by_id', id)
+      .pipe(this.handleError);
+  }
+
+  getStorageByProductId(productId: number) {
+    return this.productClient
+      .send('get_storage_by_product_id', productId)
+      .pipe(this.handleError);
+  }
+
+  createStorage(createStorageRequest: CreateStorageRequest) {
+    const payload = instanceToPlain(createStorageRequest);
+    return this.productClient
+      .send('create_storage', payload)
+      .pipe(this.handleError);
+  }
+
+  updateStorage(id: number, updateStorageRequest: UpdateStorageRequest) {
+    const payload = instanceToPlain(updateStorageRequest);
+    return this.productClient
+      .send('update_storage', { id, updateStorageRequest: payload })
+      .pipe(this.handleError);
+  }
+
+  deleteStorage(id: number) {
+    return this.productClient.send('delete_storage', id).pipe(this.handleError);
   }
 }

@@ -58,16 +58,16 @@ export class DosagesService implements DosagesServiceInterface {
   }
 
   async findDosageByProductId(productId: number): Promise<Dosage[]> {
-    const usages = await this.dosageRepository.find({
+    const dosage = await this.dosageRepository.find({
       where: { product: { product_id: productId } },
       relations: ['product'],
     });
-    if (!usages) {
+    if (!dosage) {
       throw new RpcException(
         new NotFoundException(`Product ${productId} không tìm thấy`),
       );
     }
-    return usages;
+    return dosage;
   }
 
   async update(
