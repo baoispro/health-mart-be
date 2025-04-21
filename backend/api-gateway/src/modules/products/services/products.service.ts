@@ -5,8 +5,10 @@ import { instanceToPlain } from 'class-transformer';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 import { CreateProductRequest } from '../dto/requests/create-product-request.dto';
 import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
-import { CreateUsageRequest } from '../dto/requests/create-usages-request.dto';
-import { UpdateUsageRequest } from '../dto/requests/update-usages-request.dto';
+import { CreateUsageRequest } from '../dto/requests/create-usage-request.dto';
+import { UpdateUsageRequest } from '../dto/requests/update-usage-request.dto';
+import { CreateDosageRequest } from '../dto/requests/create-dosage-request.dto';
+import { UpdateDosageRequest } from '../dto/requests/update-dosage-request.dto';
 
 @Injectable()
 export class ProductsService {
@@ -63,11 +65,7 @@ export class ProductsService {
   getUsageByProductId(productId: number) {
     return this.productClient
       .send('get_usage_by_product_id', productId)
-      .pipe(
-        catchError((error) =>
-          throwError(() => new RpcException(error.response)),
-        ),
-      );
+      .pipe(this.handleError);
   }
 
   createUsage(createUsageRequest: CreateUsageRequest) {
@@ -86,5 +84,40 @@ export class ProductsService {
 
   deleteUsage(id: number) {
     return this.productClient.send('delete_usage', id).pipe(this.handleError);
+  }
+
+  getAllDosages() {
+    return this.productClient
+      .send('get_all_dosages', {})
+      .pipe(this.handleError);
+  }
+
+  getDosagesById(id: number) {
+    return this.productClient
+      .send('get_dosage_by_id', id)
+      .pipe(this.handleError);
+  }
+
+  getDosagesByProductId(productId: number) {
+    return this.productClient
+      .send('get_dosage_by_product_id', productId)
+      .pipe(this.handleError);
+  }
+
+  createDosage(createDosageRequest: CreateDosageRequest) {
+    const payload = instanceToPlain(createDosageRequest);
+    return this.productClient
+      .send('create_dosage', payload)
+      .pipe(this.handleError);
+  }
+  updateDosage(id: number, updateDosageRequest: UpdateDosageRequest) {
+    const payload = instanceToPlain(updateDosageRequest);
+    return this.productClient
+      .send('update_dosage', { id, updateDosageRequest: payload })
+      .pipe(this.handleError);
+  }
+
+  deleteDosage(id: number) {
+    return this.productClient.send('delete_dosage', id).pipe(this.handleError);
   }
 }

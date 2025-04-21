@@ -26,7 +26,7 @@ export class UsagesController {
   }
 
   @MessagePattern('create_usage')
-  async createProduct(@Payload() createUsageRequest: CreateUsageRequest) {
+  async createUsage(@Payload() createUsageRequest: CreateUsageRequest) {
     return this.usagesService.create(createUsageRequest);
   }
 
