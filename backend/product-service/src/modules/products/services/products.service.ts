@@ -97,4 +97,12 @@ export class ProductsService implements ProductService {
     await this.findOne(id); 
     return await this.productRepository.delete({ product_id: id });
   }
+
+  async checkProductExist(id: number): Promise<Product | null> {
+    const product = await this.productRepository.findOne({ where: { product_id : id } });
+    if (!product) {
+      return null;
+    }
+    return product;
+  }  
 }

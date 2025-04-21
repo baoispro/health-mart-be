@@ -6,7 +6,7 @@ import { BaseResponseDto } from '../dto/responses/base-response.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 import { UpdateOrderRequest } from '../dto/requests/update-order-request.dto';
 
-@ApiTags('orders')
+@ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}

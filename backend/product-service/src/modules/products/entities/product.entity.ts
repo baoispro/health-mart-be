@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Category } from './category.entity';
-import { PharmacyStock } from './pharmacy-stock.entity';
+import { PharmacyStock } from '../../pharmacy_stock/entities/pharmacy_stock.entity';
 import { Ingredient } from './ingredient.entity';
 import { Usage } from './usage.entity';
 import { Dosage } from './dosage.entity';
-import { SideEffect } from './side-effect.entity';
+import { SideEffect } from '../../side_effect/entities/side_effect.entity';
 import { Precaution } from './precaution.entity';
 import { Storage as StorageEntity } from './storage.entity';
 
@@ -74,5 +74,4 @@ export class Product {
 
   @OneToMany(() => PharmacyStock, (pharmacyStock) => pharmacyStock.product)
   pharmacyStock: PharmacyStock[]; 
-
 }

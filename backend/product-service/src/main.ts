@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { appConfig } from './modules/products/config/app.config';
+import { appConfig } from './config/app.config';
 
 async function bootstrap() {
   try {
