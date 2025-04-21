@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ProductsController } from './controllers/products.controller';
-import { ProductsService } from './services/products.service';
+import { UsagesController } from './controllers/usages.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Category } from './entities/category.entity';
@@ -11,6 +10,7 @@ import { SideEffect } from './entities/side-effect.entity';
 import { Precaution } from './entities/precaution.entity';
 import { Storage as StorageEntity } from './entities/storage.entity';
 import { PharmacyStock } from './entities/pharmacy-stock.entity';
+import { UsagesService } from './services/usages.service';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import { PharmacyStock } from './entities/pharmacy-stock.entity';
       PharmacyStock,
     ]),
   ],
-  controllers: [ProductsController],
-  providers: [ProductsService],
+  controllers: [UsagesController],
+  providers: [UsagesService],
 })
-export class ProductsModule {}
+export class UsagesModule {}

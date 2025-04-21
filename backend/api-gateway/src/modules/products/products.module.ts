@@ -5,6 +5,6 @@ import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 
 @Module({
   controllers: [ProductsController],
-  providers: [ProductsService, ClientProxyFactoryService]
+  providers: [ProductsService, ClientProxyFactoryService],
 })
 export class ProductsModule {}
