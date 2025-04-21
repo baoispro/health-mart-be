@@ -5,6 +5,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { UsagesModule } from './modules/usages /usages.module';
 import { DosagesModule } from './modules/dosages/dosages.module';
 import { StoragesModule } from './modules/storages/storages.module';
+import { PharmacyStocksModule } from './modules/pharmacy_stock/pharmacy_stock.module';
+import { SideEffectModule } from './modules/side_effect/side_effect.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { StoragesModule } from './modules/storages/storages.module';
     UsagesModule,
     DosagesModule,
     StoragesModule,
+    PharmacyStocksModule,
+    SideEffectModule,
   ],
 })
 export class AppModule {}

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/users.entity';
-import { DeleteResult, Not, Repository } from 'typeorm';
+import { DeleteResult, In, Not, Repository } from 'typeorm';
 import { IUserService } from '../interfaces/users.service.interface';
 import { CreateUserRequest } from '../dto/requests/create-user-request.dto';
 import { UpdateUserRequest } from '../dto/requests/update-user-request.dto';
@@ -93,4 +93,9 @@ export class UsersService implements IUserService {
     }
     return user;
   }
+
+  async findUsersByIds(ids: number[]): Promise<User[]> {
+    return this.userRepository.findBy({ id: In(ids) });
+  }
+  
 }
