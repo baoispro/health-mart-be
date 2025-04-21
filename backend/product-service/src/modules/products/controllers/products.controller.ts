@@ -35,4 +35,9 @@ export class ProductsController {
   async deleteProduct(@Payload() id: number) {
     return this.productService.remove(id);
   }
+
+  @MessagePattern('check_product_exist')
+  async checkProductExists(@Payload() product_id: number ) {
+    return this.productService.checkProductExist(product_id);
+  }
 }

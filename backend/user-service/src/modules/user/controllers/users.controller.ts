@@ -45,4 +45,15 @@ export class UsersController {
     const user = await this.userService.checkUserExist(data.user_id);
     return user;
   }
+
+  @MessagePattern('get_users_by_ids')
+  async getUsersByIds(@Payload() data: { ids: number[] }) {
+    const users = await this.userService.findUsersByIds(data.ids);
+
+    const result = {};
+    for (const user of users) {
+      result[user.id] = user;
+    }
+    return result;
+  }
 }
