@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { OrdersModule } from './orders/orders.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { OrderShippingAddress } from './modules/order_shipping_address/entities/order_shipping_address.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { OrdersModule } from './orders/orders.module';
         synchronize: true,
       }),
     }),
-    OrdersModule,
+    OrdersModule, OrderShippingAddress,
   ],
 })
 export class AppModule {}

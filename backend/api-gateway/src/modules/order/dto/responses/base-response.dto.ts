@@ -1,10 +1,11 @@
+// base-response.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseResponseDto<T> {
   @ApiProperty({ example: 200 })
   statusCode: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Success' })
   message: string;
 
   @ApiProperty()
