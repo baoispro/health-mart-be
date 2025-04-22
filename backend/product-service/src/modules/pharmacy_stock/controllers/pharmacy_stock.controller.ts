@@ -28,36 +28,49 @@ export class PharmacyStockController {
 
   // Lấy tồn kho theo cả pharmacyId và productId
   @MessagePattern('get_pharmacy_stock_by_id')
-  async getPharmacyStockById(@Payload() payload: { pharmacyId: number, productId: number }) {
-    return this.pharmacyStockService.findOne(payload.pharmacyId, payload.productId);
+  async getPharmacyStockById(
+    @Payload() payload: { pharmacyId: number; productId: number },
+  ) {
+    return this.pharmacyStockService.findOne(
+      payload.pharmacyId,
+      payload.productId,
+    );
   }
 
   // Tạo mới tồn kho
   @MessagePattern('create_pharmacy_stock')
-  async createPharmacyStock(@Payload() createRequest: CreatePharmacyStockRequest) {
+  async createPharmacyStock(
+    @Payload() createRequest: CreatePharmacyStockRequest,
+  ) {
     return this.pharmacyStockService.create(createRequest);
   }
 
   // Cập nhật tồn kho
   @MessagePattern('update_pharmacy_stock')
   async updatePharmacyStock(
-    @Payload() payload: { 
-      pharmacyId: number, 
-      productId: number, 
-      updateRequest: UpdatePharmacyStockRequest 
+    @Payload()
+    payload: {
+      pharmacyId: number;
+      productId: number;
+      updateRequest: UpdatePharmacyStockRequest;
     },
   ) {
     return this.pharmacyStockService.update(
-      payload.pharmacyId, 
-      payload.productId, 
-      payload.updateRequest
+      payload.pharmacyId,
+      payload.productId,
+      payload.updateRequest,
     );
   }
 
   // Xóa tồn kho
   @MessagePattern('delete_pharmacy_stock')
-  async deletePharmacyStock(@Payload() payload: { pharmacyId: number, productId: number }) {
-    return this.pharmacyStockService.remove(payload.pharmacyId, payload.productId);
+  async deletePharmacyStock(
+    @Payload() payload: { pharmacyId: number; productId: number },
+  ) {
+    return this.pharmacyStockService.remove(
+      payload.pharmacyId,
+      payload.productId,
+    );
   }
 
   // Kiểm tra tồn tại tồn kho theo pharmacyId
@@ -65,5 +78,4 @@ export class PharmacyStockController {
   async checkPharmacyExist(@Payload() pharmacyId: number) {
     return this.pharmacyStockService.checkPharmacyExist(pharmacyId);
   }
-  
 }

@@ -11,4 +11,7 @@ export const appConfig = {
   productService: {
     queue: 'product_queue',
   },
+  reviewService: {
+    queue: 'review_queue',
+  },
 };

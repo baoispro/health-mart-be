@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductsModule } from './modules/products/products.module';
 import { PharmacyStocksModule } from './modules/pharmacy_stock/pharmacy_stock.module';
 import { SideEffectModule } from './modules/side_effect/side_effect.module';
+import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { PrecationsModule } from './modules/precautions/precautions.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { SideEffectModule } from './modules/side_effect/side_effect.module';
     ProductsModule,
     PharmacyStocksModule,
     SideEffectModule,
+    IngredientsModule,
+    PrecationsModule,
   ],
 })
 export class AppModule {}

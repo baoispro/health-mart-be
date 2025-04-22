@@ -5,19 +5,24 @@ import { appConfig } from './config/app.config';
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://localhost:5672'],
-        queue: appConfig.productService.queue,
-        queueOptions: {
-          durable: false,
+    const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+      AppModule,
+      {
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: appConfig.productService.queue,
+          queueOptions: {
+            durable: false,
+          },
         },
       },
-    });
+    );
 
     await app.listen();
-    console.log(`✅ Product microservice is listening on queue: ${appConfig.productService.queue}`);
+    console.log(
+      `✅ Product microservice is listening on queue: ${appConfig.productService.queue}`,
+    );
   } catch (error) {
     console.error('❌ Failed to start Product microservice');
     console.error(error);

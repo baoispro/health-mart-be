@@ -3,8 +3,8 @@ import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
 import { OrderShippingAddressController } from './controllers/order_shipping_address.controller';
 import { OrderShippingAddressService } from './services/order_shipping_address.service';
-import { ReviewService} from './services/review.service';
-import { ReviewController} from './controllers/review.controller';
+import { ReviewService} from '../review/services/review.service';
+import { ReviewController} from '../review/controllers/review.controller';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 
 @Module({
