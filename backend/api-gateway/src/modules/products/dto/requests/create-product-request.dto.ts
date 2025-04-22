@@ -1,10 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import {
-  IsString,
-  IsNumber,
-  IsNotEmpty,
-} from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class CreateProductRequest {
   @ApiProperty({ example: 'Paracetamol 500mg', description: 'Tên sản phẩm' })
@@ -67,19 +63,28 @@ export class CreateProductRequest {
   @IsNotEmpty({ message: 'Số đăng ký không được để trống' })
   registration_number: string;
 
-  @ApiProperty({ example: '<p>Chi tiết sản phẩm...</p>', description: 'Mô tả chi tiết HTML' })
+  @ApiProperty({
+    example: '<p>Chi tiết sản phẩm...</p>',
+    description: 'Mô tả chi tiết HTML',
+  })
   @Expose()
   @IsString()
   @IsNotEmpty({ message: 'Mô tả chi tiết không được để trống' })
   description_html: string;
 
-  @ApiProperty({ example: 'paracetamol-500mg', description: 'Slug dùng cho URL' })
+  @ApiProperty({
+    example: 'paracetamol-500mg',
+    description: 'Slug dùng cho URL',
+  })
   @Expose()
   @IsString()
   @IsNotEmpty({ message: 'Slug không được để trống' })
   slug: string;
 
-  @ApiProperty({ example: 'https://example.com/image.jpg', description: 'URL ảnh đại diện' })
+  @ApiProperty({
+    example: 'https://example.com/image.jpg',
+    description: 'URL ảnh đại diện',
+  })
   @Expose()
   @IsString()
   @IsNotEmpty({ message: 'Ảnh sản phẩm không được để trống' })

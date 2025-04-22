@@ -14,4 +14,7 @@ export const appConfig = {
   reviewService: {
     queue: 'review_queue',
   },
+  policyService: {
+    queue: 'policy_queue',
+  },
 };

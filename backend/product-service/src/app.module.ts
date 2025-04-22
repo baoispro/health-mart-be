@@ -6,6 +6,9 @@ import { PharmacyStocksModule } from './modules/pharmacy_stock/pharmacy_stock.mo
 import { SideEffectModule } from './modules/side_effect/side_effect.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { PrecationsModule } from './modules/precautions/precautions.module';
+import { UsagesModule } from './modules/usages/usages.module';
+import { DosagesModule } from './modules/dosages/dosages.module';
+import { StoragesModule } from './modules/storages/storages.module';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { PrecationsModule } from './modules/precautions/precautions.module';
     SideEffectModule,
     IngredientsModule,
     PrecationsModule,
+    UsagesModule,
+    DosagesModule,
+    StoragesModule,
   ],
 })
 export class AppModule {}
