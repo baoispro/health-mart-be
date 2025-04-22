@@ -1,5 +1,6 @@
 // src/modules/reviews/entities/review.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
+import { ReviewImage } from '../../review_img/entities/review_img.entity';
 
 @Entity('reviews')
 export class Review {
@@ -20,4 +21,9 @@ export class Review {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  @OneToMany(() => ReviewImage, (reviewImage) => reviewImage.review, {
+    cascade: true,
+  })
+  images: ReviewImage[];
 }
