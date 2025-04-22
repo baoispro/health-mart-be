@@ -7,4 +7,4 @@ import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
   controllers: [ReviewController],
   providers: [ReviewService, ClientProxyFactoryService],
 })
-export class UserModule {}
+export class ReviewModule {}
