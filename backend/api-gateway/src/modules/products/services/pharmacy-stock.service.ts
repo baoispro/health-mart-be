@@ -10,7 +10,8 @@ export class PharmacyStockService {
   private readonly pharmacyStockClient: ClientProxy;
 
   constructor(private readonly clientProxyFactory: ClientProxyFactoryService) {
-    this.pharmacyStockClient = this.clientProxyFactory.createClient('productService');
+    this.pharmacyStockClient =
+      this.clientProxyFactory.createClient('productService');
   }
 
   private handleError = catchError((error) =>
@@ -18,7 +19,9 @@ export class PharmacyStockService {
   );
 
   getAllPharmacyStocks() {
-    return this.pharmacyStockClient.send('get_all_pharmacy_stocks', {}).pipe(this.handleError);
+    return this.pharmacyStockClient
+      .send('get_all_pharmacy_stocks', {})
+      .pipe(this.handleError);
   }
 
   getPharmacyStockById(pharmacyId: number, productId: number) {
@@ -33,7 +36,11 @@ export class PharmacyStockService {
       .pipe(this.handleError);
   }
 
-  updatePharmacyStock(pharmacyId: number, productId: number, updateRequest: UpdatePharmacyStockRequest) {
+  updatePharmacyStock(
+    pharmacyId: number,
+    productId: number,
+    updateRequest: UpdatePharmacyStockRequest,
+  ) {
     return this.pharmacyStockClient
       .send('update_pharmacy_stock', { pharmacyId, productId, updateRequest })
       .pipe(this.handleError);

@@ -7,10 +7,10 @@ export class PharmacyStock {
   pharmacy_id: number;
 
   @PrimaryColumn()
-  product_id: number; 
+  product_id: number;
 
   @Column({ type: 'varchar', length: 255 })
-  name: string; 
+  name: string;
 
   @Column()
   address_street: string;
@@ -27,7 +27,9 @@ export class PharmacyStock {
   @Column({ type: 'int' })
   quantity: number;
 
-  @ManyToOne(() => Product, (product) => product.pharmacyStock, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Product, (product) => product.pharmacyStock, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 }

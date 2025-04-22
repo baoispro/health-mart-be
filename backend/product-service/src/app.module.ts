@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductsModule } from './modules/products/products.module';
-import { UsagesModule } from './modules/usages /usages.module';
-import { DosagesModule } from './modules/dosages/dosages.module';
-import { StoragesModule } from './modules/storages/storages.module';
 import { PharmacyStocksModule } from './modules/pharmacy_stock/pharmacy_stock.module';
 import { SideEffectModule } from './modules/side_effect/side_effect.module';
+import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { PrecationsModule } from './modules/precautions/precautions.module';
+import { UsagesModule } from './modules/usages/usages.module';
+import { DosagesModule } from './modules/dosages/dosages.module';
+import { StoragesModule } from './modules/storages/storages.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { SideEffectModule } from './modules/side_effect/side_effect.module';
     ProductsModule,
     PharmacyStocksModule,
     SideEffectModule,
+    IngredientsModule,
+    PrecationsModule,
     UsagesModule,
     DosagesModule,
     StoragesModule,

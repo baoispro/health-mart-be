@@ -31,32 +31,35 @@ export class ReviewService {
     if (!user_id) {
       throw new RpcException(new NotFoundException('Thiếu userId'));
     }
-  
+
     const userExists = await this.checkUserExists(user_id);
     if (!userExists) {
-      throw new RpcException(new NotFoundException(`User ${user_id} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`User ${user_id} không tồn tại`),
+      );
     }
-  
+
     const product_id = Number(reviewData.productId);
     if (!product_id) {
       throw new RpcException(new NotFoundException('Thiếu productId'));
     }
-  
+
     const productExists = await this.checkProductExists(product_id);
     if (!productExists) {
-      throw new RpcException(new NotFoundException(`Product ${product_id} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`Product ${product_id} không tồn tại`),
+      );
     }
-  
+
     // Tạo review mới
     const newReview = this.reviewRepository.create({
       ...reviewData,
       userId: user_id,
       productId: product_id,
     });
-  
+
     return this.reviewRepository.save(newReview);
   }
-  
 
   // Cập nhật review
   async updateReview(reviewId: number, data: Partial<Review>): Promise<Review> {
@@ -83,7 +86,9 @@ export class ReviewService {
     });
 
     if (!review) {
-      throw new RpcException(new NotFoundException(`Review ${reviewId} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`Review ${reviewId} không tồn tại`),
+      );
     }
 
     return review;
@@ -93,7 +98,9 @@ export class ReviewService {
   async getReviewsByUser(userId: number): Promise<Review[]> {
     const userExists = await this.checkUserExists(userId);
     if (!userExists) {
-      throw new RpcException(new NotFoundException(`User ${userId} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`User ${userId} không tồn tại`),
+      );
     }
 
     const reviews = await this.reviewRepository.find({
@@ -107,7 +114,9 @@ export class ReviewService {
   async getReviewsProduct(productId: number): Promise<Review[]> {
     const productExists = await this.checkProductExists(productId);
     if (!productExists) {
-      throw new RpcException(new NotFoundException(`Product ${productId} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`Product ${productId} không tồn tại`),
+      );
     }
 
     const reviews = await this.reviewRepository.find({
@@ -124,12 +133,13 @@ export class ReviewService {
     });
 
     if (!reviews || reviews.length === 0) {
-      throw new RpcException(new NotFoundException(`Không có đánh giá nào với số sao ${rating}`));
+      throw new RpcException(
+        new NotFoundException(`Không có đánh giá nào với số sao ${rating}`),
+      );
     }
 
     return reviews;
   }
-
 
   private async checkUserExists(user_id: number): Promise<boolean> {
     try {

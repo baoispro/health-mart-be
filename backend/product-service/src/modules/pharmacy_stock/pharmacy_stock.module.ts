@@ -6,13 +6,8 @@ import { Product } from '../products/entities/product.entity';
 import { PharmacyStock } from './entities/pharmacy_stock.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Product,
-      PharmacyStock
-    ])
-  ],
+  imports: [TypeOrmModule.forFeature([Product, PharmacyStock])],
   controllers: [PharmacyStockController],
-  providers: [PharmacyStockService]
+  providers: [PharmacyStockService],
 })
 export class PharmacyStocksModule {}

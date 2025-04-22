@@ -13,6 +13,8 @@ import { CreateUserRequest } from '../dto/requests/create-user-request.dto';
 import { UpdateUserRequest } from '../dto/requests/update-user-request.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 import { BaseResponseDto } from '../dto/responses/base-response.dto';
+import { UpdateAddressDto } from '../dto/requests/update-address-request.dto';
+import { CreateAddressDto } from '../dto/requests/create-address-request.dto';
 
 @Controller('user')
 @ApiTags('User')
@@ -80,5 +82,56 @@ export class UserController {
   @ResponseMessage('Xóa người dùng thành công.')
   deleteUser(@Param('id') id: number) {
     return this.userService.deleteUser(id);
+  }
+
+  @Get('/address/:id')
+  @ApiOperation({ summary: 'Lấy thông tin một địa chỉ theo id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin địa chỉ',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy thông tin địa chỉ thành công')
+  getAddressById(@Param('id') id: number) {
+    return this.userService.getAddressById(id);
+  }
+
+  @Post('/address')
+  @ApiOperation({ summary: 'Tạo mới một địa chỉ' })
+  @ApiResponse({
+    status: 201,
+    description: 'Tạo thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tạo địa chỉ thành công.')
+  createAddress(@Body() createUserRequest: CreateAddressDto) {
+    return this.userService.createAddress(createUserRequest);
+  }
+
+  @Put('/address/:id')
+  @ApiOperation({ summary: 'Cập nhật thông tin địa chỉ' })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Cập nhật địa chỉ thành công.')
+  updateAddress(
+    @Param('id') id: number,
+    @Body() updateUserRequest: UpdateAddressDto,
+  ) {
+    return this.userService.updateAddress(id, updateUserRequest);
+  }
+
+  @Delete('/address/:id')
+  @ApiOperation({ summary: 'Xóa địa chỉ' })
+  @ApiResponse({
+    status: 200,
+    description: 'Xóa thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Xóa địa chỉ thành công.')
+  deleteAddress(@Param('id') id: number) {
+    return this.userService.deleteAddress(id);
   }
 }
