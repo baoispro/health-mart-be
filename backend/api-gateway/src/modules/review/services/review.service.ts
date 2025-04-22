@@ -12,7 +12,7 @@ export class ReviewService {
   constructor(
     private readonly clientProxyFactory: ClientProxyFactoryService,
   ) {
-    this.reviewClient = this.clientProxyFactory.createClient('orderService');
+    this.reviewClient = this.clientProxyFactory.createClient('reviewService');
   }
 
   private handleError = catchError((error) =>

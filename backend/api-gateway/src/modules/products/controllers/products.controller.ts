@@ -7,15 +7,6 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Body,
-  Put,
-  Delete,
-} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProductsService } from '../services/products.service';
 import { CreateProductRequest } from '../dto/requests/create-product-request.dto';
@@ -36,7 +27,6 @@ import { UpdateStorageRequest } from '../dto/requests/update-storage-request.dto
 @Controller('product')
 @ApiTags('Product')
 export class ProductsController {
-  constructor(private readonly productService: ProductsService) {}
   constructor(private readonly productService: ProductsService) {}
 
   @Get()
