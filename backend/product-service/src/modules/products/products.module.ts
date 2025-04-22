@@ -23,10 +23,10 @@ import { PharmacyStock } from '../pharmacy_stock/entities/pharmacy_stock.entity'
       SideEffect,
       Precaution,
       StorageEntity,
-      PharmacyStock
-    ])
+      PharmacyStock,
+    ]),
   ],
   controllers: [ProductsController],
-  providers: [ProductsService]
+  providers: [ProductsService],
 })
 export class ProductsModule {}
