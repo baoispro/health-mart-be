@@ -3,7 +3,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ReviewService } from '../services/review.service';
 import { Review } from '../entities/review.entity';
 import { CreateReviewRequest } from '../dto/requests/create-review-request.dto';
-import { UpdateReviewRequest } from '../dto/requests/update-revies-request.dto';
+import { UpdateReviewRequest } from '../dto/requests/update-review-request.dto';
 
 @Controller('reviews')
 export class ReviewController {
