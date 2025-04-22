@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ProductsModule } from './modules/products/products.module';
-import { PharmacyStocksModule } from './modules/pharmacy_stock/pharmacy_stock.module'
-import { SideEffectModule} from './modules/side_effect/side_effect.module'
+import { PharmacyStocksModule } from './modules/pharmacy_stock/pharmacy_stock.module';
+import { SideEffectModule } from './modules/side_effect/side_effect.module';
 
 @Module({
   imports: [
@@ -24,7 +24,9 @@ import { SideEffectModule} from './modules/side_effect/side_effect.module'
         synchronize: true, // Tạo bảng tự động (chỉ nên dùng trong phát triển)
       }),
     }),
-    ProductsModule, PharmacyStocksModule, SideEffectModule,
+    ProductsModule,
+    PharmacyStocksModule,
+    SideEffectModule,
   ],
 })
 export class AppModule {}

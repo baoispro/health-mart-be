@@ -1,19 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Category } from './category.entity';
 import { PharmacyStock } from '../../pharmacy_stock/entities/pharmacy_stock.entity';
-import { Ingredient } from './ingredient.entity';
+import { Ingredient } from '../../ingredients/entities/ingredient.entity';
 import { Usage } from './usage.entity';
 import { Dosage } from './dosage.entity';
 import { SideEffect } from '../../side_effect/entities/side_effect.entity';
-import { Precaution } from './precaution.entity';
+import { Precaution } from '../../precautions/entities/precaution.entity';
 import { Storage as StorageEntity } from './storage.entity';
-
 
 @Entity('product')
 export class Product {
   @PrimaryGeneratedColumn()
   product_id: number;
-  
+
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
@@ -22,28 +28,30 @@ export class Product {
 
   @Column({ type: 'varchar', length: 255 })
   brand: string;
-  
-  @Column({ type: 'varchar', length: 255 })
-  unit: string; 
 
-  @ManyToOne(() => Category, (category) => category.products, { nullable: false })
+  @Column({ type: 'varchar', length: 255 })
+  unit: string;
+
+  @ManyToOne(() => Category, (category) => category.products, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @Column({ type: 'varchar', length: 255 })
-  specification: string; 
+  specification: string;
 
-  @Column({ type: 'varchar', length: 255 })   
-  country: string; 
+  @Column({ type: 'varchar', length: 255 })
+  country: string;
 
   @Column({ type: 'text' })
   short_description: string;
 
   @Column({ type: 'varchar', length: 255 })
-  manufacturer: string; 
+  manufacturer: string;
 
   @Column({ type: 'varchar', length: 50 })
-  registration_number: string; 
+  registration_number: string;
 
   @Column({ type: 'text' })
   description_html: string;
@@ -73,5 +81,5 @@ export class Product {
   storages: StorageEntity[];
 
   @OneToMany(() => PharmacyStock, (pharmacyStock) => pharmacyStock.product)
-  pharmacyStock: PharmacyStock[]; 
+  pharmacyStock: PharmacyStock[];
 }
