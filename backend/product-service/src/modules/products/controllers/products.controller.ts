@@ -40,4 +40,12 @@ export class ProductsController {
   async checkProductExists(@Payload() product_id: number ) {
     return this.productService.checkProductExist(product_id);
   }
+
+  @MessagePattern('check_product_exists')
+  async checkProductExistsL(@Payload() payload: { product_id: number }): Promise<boolean> {
+    const { product_id } = payload;
+    const productExists = await this.productService.checkIfExistsL(product_id);
+    return productExists;
+  }
 }
+  

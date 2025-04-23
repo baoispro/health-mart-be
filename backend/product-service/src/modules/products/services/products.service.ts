@@ -105,4 +105,9 @@ export class ProductsService implements ProductService {
     }
     return product;
   }  
+
+  async checkIfExistsL(product_id: number): Promise<boolean> {
+    const product = await this.productRepository.findOne({ where: { product_id } });
+    return !!product; // Trả về true nếu product tồn tại, ngược lại trả về false
+  }
 }
