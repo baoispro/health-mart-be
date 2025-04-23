@@ -27,4 +27,14 @@ export class AuthController {
   refreshToken(@Payload() refreshToken: string) {
     return this.authService.refreshToken(refreshToken);
   }
+
+  @MessagePattern('find_refresh_token')
+  findRefreshToken(@Payload() email: string) {
+    return this.authService.findRefreshToken(email);
+  }
+
+  @MessagePattern('validate_token')
+  validateToken(@Payload() data: { token: string }) {
+    return this.authService.validateToken(data.token);
+  }
 }

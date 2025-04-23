@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,7 +12,7 @@ import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 import { firstValueFrom } from 'rxjs';
 import { LoginRequest } from '../dto/request/login-request.dto';
 import { JwtService } from '@nestjs/jwt';
-import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { RefreshTokenResponse } from '../dto/response/refresh-token-response.dto';
 @Injectable()
 export class AuthService {
@@ -33,6 +34,7 @@ export class AuthService {
 
   async login(dto: LoginRequest) {
     const user = await this.findUserByEmail(dto.email);
+    const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!user) {
       throw new RpcException(
         new ConflictException('Thông tin user không tồn tại!'),
@@ -41,7 +43,7 @@ export class AuthService {
       throw new RpcException(
         new ConflictException('Password không được nhập!'),
       );
-    } else if (user.password !== dto.password) {
+    } else if (!isMatch) {
       throw new RpcException(new ConflictException('password không đúng!'));
     }
 
@@ -58,22 +60,40 @@ export class AuthService {
     let refreshToken: string | undefined;
 
     if (dto.remember) {
-      refreshToken = this.jwtService.sign(
-        { sub: user.id, email: user.email },
-        { expiresIn: '14d' },
-      );
-
-      const authEntity = this.authRepository.create({
-        userId: user.id,
-        email: user.email,
-        createdAt: new Date(),
-        expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
-        refreshToken: refreshToken,
+      const existingAuth = await this.authRepository.findOne({
+        where: { userId: user.id },
       });
 
-      await this.authRepository.save(authEntity);
-    }
+      const now = new Date();
 
+      if (existingAuth) {
+        const isExpired = new Date(existingAuth.expiresAt) < now;
+
+        if (isExpired) {
+          // ❌ Hết hạn → xóa token cũ
+          await this.authRepository.delete({ userId: user.id });
+        } else {
+          // ✅ Vẫn còn hạn → không cần tạo mới
+          refreshToken = existingAuth.refreshToken;
+        }
+      }
+      if (!refreshToken) {
+        refreshToken = this.jwtService.sign(
+          { sub: user.id, email: user.email },
+          { expiresIn: '14d' },
+        );
+
+        const authEntity = this.authRepository.create({
+          userId: user.id,
+          email: user.email,
+          createdAt: new Date(),
+          expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
+          refreshToken: refreshToken,
+        });
+
+        await this.authRepository.save(authEntity);
+      }
+    }
     return {
       token,
       user: user,
@@ -150,6 +170,33 @@ export class AuthService {
       throw new RpcException(
         new UnauthorizedException('Refresh token không hợp lệ hoặc đã hết hạn'),
       );
+    }
+  }
+
+  async findRefreshToken(email: string): Promise<string> {
+    const auth = await this.authRepository.findOne({ where: { email } });
+
+    if (!auth) {
+      throw new RpcException(
+        new NotFoundException(`Email ${email} không tìm thấy`),
+      );
+    }
+
+    if (!auth.refreshToken) {
+      throw new RpcException(
+        new NotFoundException(`Refresh token không tồn tại cho email ${email}`),
+      );
+    }
+
+    return auth.refreshToken;
+  }
+
+  async validateToken(token: string) {
+    try {
+      const payload = this.jwtService.verify(token);
+      return { userId: payload.sub, email: payload.email }; // hoặc payload gốc
+    } catch (e) {
+      throw new RpcException(new UnauthorizedException('Invalid token'));
     }
   }
 }

@@ -7,6 +7,7 @@ import { LoginRequest } from '../dto/request/login-request.dto';
 import { LogoutRequest } from '../dto/request/logout-request.dto';
 import { VerifyTokenRequest } from '../dto/request/verify-token-request.dto';
 import { RefreshTokenResponse } from '../dto/responses/refresh-token-response.dto';
+import { BaseResponseDto } from '../dto/responses/base-response.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -46,6 +47,18 @@ export class AuthController {
   @ResponseMessage('Làm mới token thành công.')
   refreshToken(@Body() dto: VerifyTokenRequest) {
     return this.authService.refreshToken(dto.token);
+  }
+
+  @Get('/refresh-token/:email')
+  @ApiOperation({ summary: 'Tìm kiếm refresh token theo email' })
+  @ApiResponse({
+    status: 200,
+    description: '',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tìm refresh token thành công')
+  findrefreshToken(@Param('email') email: string) {
+    return this.authService.findRefreshToken(email);
   }
 
   @Post('/logout')
