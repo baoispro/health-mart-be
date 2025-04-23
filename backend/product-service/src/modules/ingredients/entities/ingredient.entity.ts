@@ -20,4 +20,7 @@ export class Ingredient {
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  concentration: string;
 }
