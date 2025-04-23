@@ -10,6 +10,7 @@ import { IUserService } from '../interfaces/users.service.interface';
 import { CreateUserRequest } from '../dto/requests/create-user-request.dto';
 import { UpdateUserRequest } from '../dto/requests/update-user-request.dto';
 import { RpcException } from '@nestjs/microservices';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService implements IUserService {
@@ -19,8 +20,9 @@ export class UsersService implements IUserService {
   ) {}
 
   async create(createUserRequest: CreateUserRequest): Promise<User> {
-    const { email, phone } = createUserRequest;
+    const { email, phone, password } = createUserRequest;
 
+    // Kiểm tra email hoặc số điện thoại đã tồn tại
     const existingUser = await this.userRepository.findOne({
       where: [{ email }, { phone }],
     });
@@ -30,7 +32,15 @@ export class UsersService implements IUserService {
         new ConflictException('Email hoặc số điện thoại đã tồn tại!'),
       );
     }
-    const newUser = this.userRepository.create(createUserRequest);
+
+    // Băm mật khẩu
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = this.userRepository.create({
+      ...createUserRequest,
+      password: hashedPassword,
+    });
+
     return await this.userRepository.save(newUser);
   }
 
@@ -100,5 +110,4 @@ export class UsersService implements IUserService {
   async findUsersByIds(ids: number[]): Promise<User[]> {
     return this.userRepository.findBy({ id: In(ids) });
   }
-  
 }

@@ -53,4 +53,26 @@ export class AuthService {
         ),
       );
   }
+
+  findRefreshToken(email: string) {
+    return this.authClient
+      .send('find_refresh_token', email)
+      .pipe(
+        catchError((error) =>
+          throwError(() => new RpcException(error.response)),
+        ),
+      );
+  }
+
+  async validateToken(token: string): Promise<any> {
+    return await firstValueFrom(
+      this.authClient
+        .send('validate_token', { token })
+        .pipe(
+          catchError((error) =>
+            throwError(() => new RpcException(error.response)),
+          ),
+        ),
+    );
+  }
 }

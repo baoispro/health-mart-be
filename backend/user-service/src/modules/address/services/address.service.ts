@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Not, Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 import { IAddressService } from '../interfaces/address.service.interface';
 import { Address } from '../entities/address.entity';
@@ -18,8 +22,24 @@ export class AddressService implements IAddressService {
   ) {}
 
   async createAddress(createAddressDto: CreateAddressDto): Promise<Address> {
-    const newUser = this.addressRepository.create(createAddressDto);
-    return await this.addressRepository.save(newUser);
+    const { address_street, ward, district, city, userId } = createAddressDto;
+    const existingAddress = await this.addressRepository.findOne({
+      where: {
+        address_street,
+        ward,
+        district,
+        city,
+        user: { id: userId }, // nếu bạn dùng quan hệ ManyToOne
+      },
+      relations: ['user'],
+    });
+    if (existingAddress) {
+      throw new RpcException(
+        new ConflictException(`Địa chỉ này đã tồn tại cho user ID ${userId}`),
+      );
+    }
+    const newAddress = this.addressRepository.create(createAddressDto);
+    return await this.addressRepository.save(newAddress);
   }
 
   async findOne(id: number): Promise<Address> {
@@ -40,26 +60,50 @@ export class AddressService implements IAddressService {
     updateAddressRequest: UpdateAddressDto,
   ): Promise<Address> {
     const address = await this.findOne(id);
+    const { address_street, ward, district, city, userId } =
+      updateAddressRequest;
 
-    // Nếu có userId truyền vào thì cần validate và gán lại user
-    if (updateAddressRequest.userId) {
+    const targetUserId = userId || address.user?.id; // Nếu userId không truyền vào thì dùng user hiện tại
+
+    // Kiểm tra địa chỉ trùng lặp (nhưng phải khác id hiện tại)
+    const duplicate = await this.addressRepository.findOne({
+      where: {
+        address_street,
+        ward,
+        district,
+        city,
+        user: { id: targetUserId },
+        // Tránh so sánh với chính nó
+        id: Not(id),
+      },
+      relations: ['user'],
+    });
+
+    if (duplicate) {
+      throw new RpcException(
+        new ConflictException(
+          `Địa chỉ này đã tồn tại cho user ID ${targetUserId}`,
+        ),
+      );
+    }
+
+    // Nếu có userId truyền vào thì validate và gán lại user
+    if (userId) {
       const user = await this.userRepository.findOne({
-        where: { id: updateAddressRequest.userId },
+        where: { id: userId },
       });
 
       if (!user) {
         throw new RpcException(
-          new NotFoundException(
-            `User ${updateAddressRequest.userId} không tồn tại`,
-          ),
+          new NotFoundException(`User ${userId} không tồn tại`),
         );
       }
 
-      address.user = user; // Gán lại quan hệ
+      address.user = user;
     }
 
-    // Gán các trường khác (ngoại trừ userId, đã xử lý ở trên)
-    Object.assign(address, { ...updateAddressRequest });
+    // Gán các trường còn lại
+    Object.assign(address, updateAddressRequest);
 
     return await this.addressRepository.save(address);
   }

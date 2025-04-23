@@ -6,5 +6,6 @@ import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 @Module({
   controllers: [AuthController],
   providers: [AuthService, ClientProxyFactoryService],
+  exports: [AuthService],
 })
 export class AuthModule {}
