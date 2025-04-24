@@ -19,14 +19,16 @@ export class PoliciesService implements IPolicyService {
   ) {}
 
   async create(createPolicyRequest: CreatePolicyRequest): Promise<Policy> {
-    const { slug } = createPolicyRequest;
+    const { slug, title } = createPolicyRequest;
 
     const existingPolicy = await this.policyRepository.findOne({
-      where: [{ slug }],
+      where: [{ slug }, { title }],
     });
 
     if (existingPolicy) {
-      throw new RpcException(new ConflictException('Slug đã tồn tại!'));
+      throw new RpcException(
+        new ConflictException('Slug hoặc title này đã tồn tại!'),
+      );
     }
     const newPolicy = this.policyRepository.create(createPolicyRequest);
     return await this.policyRepository.save(newPolicy);
@@ -51,7 +53,7 @@ export class PoliciesService implements IPolicyService {
     updatePolicyRequest: UpdatePolicyRequest,
   ): Promise<Policy> {
     const policy = await this.findOne(id);
-    const { slug } = updatePolicyRequest;
+    const { slug, title } = updatePolicyRequest;
 
     if (slug) {
       const existingPolicy = await this.policyRepository.findOne({
@@ -60,6 +62,16 @@ export class PoliciesService implements IPolicyService {
 
       if (existingPolicy) {
         throw new RpcException(new ConflictException('Slug đã tồn tại!'));
+      }
+    }
+
+    if (title) {
+      const existingTitlePolicy = await this.policyRepository.findOne({
+        where: [{ title, id: Not(id) }],
+      });
+
+      if (existingTitlePolicy) {
+        throw new RpcException(new ConflictException('Title đã tồn tại!'));
       }
     }
     Object.assign(policy, updatePolicyRequest);

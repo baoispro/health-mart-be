@@ -23,13 +23,18 @@ export class ReviewImgService {
     });
   }
 
-  async createReviewImg(data: { reviewId: number; img_url: string }): Promise<ReviewImage> {
+  async createReviewImg(data: {
+    reviewId: number;
+    img_url: string;
+  }): Promise<ReviewImage> {
     const review = await this.reviewRepository.findOne({
       where: { id: data.reviewId },
     });
 
     if (!review) {
-      throw new RpcException(new NotFoundException(`Review ${data.reviewId} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`Review ${data.reviewId} không tồn tại`),
+      );
     }
 
     const newReviewImg = this.reviewImgRepository.create({
@@ -45,25 +50,27 @@ export class ReviewImgService {
       where: { id },
       relations: ['review'],
     });
-  
+
     if (!image) {
       throw new RpcException(
         new NotFoundException(`Review image ${id} không tồn tại`),
       );
     }
-  
+
     return image;
   }
-  
-  async updateReviewImg(id: number, data: { img_url?: string }): Promise<ReviewImage> {
+
+  async updateReviewImg(
+    id: number,
+    data: { img_url?: string },
+  ): Promise<ReviewImage> {
     const image = await this.findOne(id);
-  
+
     await this.reviewImgRepository.update(id, {
       ...image,
       ...data,
     });
-  
+
     return this.findOne(id);
   }
-  
 }
