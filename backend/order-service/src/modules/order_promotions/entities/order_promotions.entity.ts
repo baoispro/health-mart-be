@@ -1,5 +1,11 @@
-import { Order } from "src/modules/orders/entities/orders.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Order } from 'src/modules/orders/entities/orders.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 export enum DiscountType {
   NONE = 'NONE',
@@ -23,7 +29,7 @@ export class OrderPromotion {
     type: 'enum',
     enum: DiscountType,
     default: DiscountType.NONE,
-  }) 
+  })
   discountType: DiscountType;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })

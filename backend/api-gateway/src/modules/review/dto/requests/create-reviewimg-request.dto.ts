@@ -7,7 +7,10 @@ export class CreateReviewImgRequest {
   @IsNotEmpty()
   reviewId: number;
 
-  @ApiProperty({ example: 'https://example.com/image.jpg', description: 'URL hình ảnh đánh giá' })
+  @ApiProperty({
+    example: 'https://example.com/image.jpg',
+    description: 'URL hình ảnh đánh giá',
+  })
   @IsString()
   @IsNotEmpty()
   img_url: string;

@@ -5,7 +5,12 @@ export interface OrderShippingAddressService {
   findAll(): Promise<OrderShippingAddress[]>;
   findOne(orderShippingAddressId: number): Promise<OrderShippingAddress>;
   getShippingAddress(orderId: number): Promise<OrderShippingAddress>;
-  createShippingAddress(createRequest: CreateOrderShippingAddressRequest): Promise<OrderShippingAddress>;
-  updateShippingAddress(orderId: number, shippingData: Partial<OrderShippingAddress>): Promise<OrderShippingAddress>;
+  createShippingAddress(
+    createRequest: CreateOrderShippingAddressRequest,
+  ): Promise<OrderShippingAddress>;
+  updateShippingAddress(
+    orderId: number,
+    shippingData: Partial<OrderShippingAddress>,
+  ): Promise<OrderShippingAddress>;
   deleteShippingAddress(orderId: number): Promise<void>;
 }

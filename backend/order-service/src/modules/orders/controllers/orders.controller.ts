@@ -9,9 +9,7 @@ export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
 
   @MessagePattern({ cmd: 'create_order' })
-  async createOrder(
-    @Payload() orderData: CreateOrderRequest,
-  ): Promise<Order> {
+  async createOrder(@Payload() orderData: CreateOrderRequest): Promise<Order> {
     return this.orderService.createOrder(orderData);
   }
 
@@ -21,9 +19,7 @@ export class OrdersController {
   }
 
   @MessagePattern({ cmd: 'get_order_by_id' })
-  async getOrderById(
-    @Payload() data: { id: number },
-  ): Promise<Order | null> {
+  async getOrderById(@Payload() data: { id: number }): Promise<Order | null> {
     return this.orderService.getOrderById(data.id);
   }
 

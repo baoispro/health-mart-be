@@ -1,5 +1,14 @@
 // src/modules/orders/controllers/order.controller.ts
-import { Controller, Get, Post, Body, Param, Put, UseGuards, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  UseGuards,
+  Delete,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -29,7 +38,11 @@ export class OrderController {
   //ORDER PROMOTIONS
   @Get('order-promotions')
   @ApiOperation({ summary: 'Lấy tất cả khuyến mãi cho đơn hàng' })
-  @ApiResponse({ status: 200, description: 'Danh sách khuyến mãi được trả về', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách khuyến mãi được trả về',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Lấy danh sách khuyến mãi thành công')
   getAllOrderPromotions() {
     return this.orderService.getAllOrderPromotions();
@@ -38,7 +51,11 @@ export class OrderController {
   @Get('order-promotions/order/:orderId')
   @ApiOperation({ summary: 'Lấy khuyến mãi theo ID đơn hàng' })
   @ApiParam({ name: 'orderId', type: Number })
-  @ApiResponse({ status: 200, description: 'Danh sách khuyến mãi của đơn hàng', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách khuyến mãi của đơn hàng',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Lấy khuyến mãi của đơn hàng thành công')
   getOrderPromotionsByOrderId(@Param('orderId') orderId: number) {
     return this.orderService.getOrderPromotionsByOrderId(orderId);
@@ -47,9 +64,15 @@ export class OrderController {
   @Post('order-promotions')
   @ApiOperation({ summary: 'Tạo mới thông tin khuyến mãi cho đơn hàng' })
   @ApiBody({ type: CreateOrderPromotionRequest })
-  @ApiResponse({ status: 201, description: 'Thông tin khuyến mãi được tạo thành công', type: BaseResponseDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Thông tin khuyến mãi được tạo thành công',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Tạo thông tin khuyến mãi thành công')
-  createOrderPromotion(@Body() createOrderPromotionDto: CreateOrderPromotionRequest) {
+  createOrderPromotion(
+    @Body() createOrderPromotionDto: CreateOrderPromotionRequest,
+  ) {
     return this.orderService.createOrderPromotion(createOrderPromotionDto);
   }
 
@@ -57,7 +80,11 @@ export class OrderController {
   @ApiOperation({ summary: 'Cập nhật thông tin khuyến mãi cho đơn hàng' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateOrderPromotionRequest })
-  @ApiResponse({ status: 200, description: 'Cập nhật thông tin khuyến mãi thành công', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật thông tin khuyến mãi thành công',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Cập nhật thông tin khuyến mãi thành công')
   updateOrderPromotion(
     @Param('id') id: number,
@@ -69,7 +96,11 @@ export class OrderController {
   @Delete('order-promotions/:id')
   @ApiOperation({ summary: 'Xóa thông tin khuyến mãi cho đơn hàng' })
   @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Xóa thông tin khuyến mãi thành công', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Xóa thông tin khuyến mãi thành công',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Xóa thông tin khuyến mãi thành công')
   deleteOrderPromotion(@Param('id') id: number) {
     return this.orderService.deleteOrderPromotion(id);
@@ -78,7 +109,11 @@ export class OrderController {
   // ORDER ITEMS
   @Get('order-items')
   @ApiOperation({ summary: 'Lấy tất cả items của đơn hàng' })
-  @ApiResponse({ status: 200, description: 'Danh sách các items của đơn hàng', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách các items của đơn hàng',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Lấy danh sách các items của đơn hàng thành công')
   getAllOrderItems() {
     return this.orderService.getAllOrderItems();
@@ -87,7 +122,11 @@ export class OrderController {
   @Get('order-items/order/:orderId')
   @ApiOperation({ summary: 'Lấy tất cả items của đơn hàng theo ID đơn hàng' })
   @ApiParam({ name: 'orderId', type: Number })
-  @ApiResponse({ status: 200, description: 'Danh sách items của đơn hàng', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách items của đơn hàng',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Lấy danh sách items của đơn hàng thành công')
   getOrderItemsByOrderId(@Param('orderId') orderId: number) {
     return this.orderService.getOrderItemsByOrderId(orderId);
@@ -96,7 +135,11 @@ export class OrderController {
   // ORDER SHIPPING ADDRESSES
   @Get('shipping-addresses')
   @ApiOperation({ summary: 'Lấy tất cả địa chỉ giao hàng' })
-  @ApiResponse({ status: 200, description: 'Danh sách địa chỉ giao hàng', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách địa chỉ giao hàng',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Lấy danh sách địa chỉ giao hàng thành công')
   getAllShippingAddresses() {
     return this.orderService.getAllShippingAddresses();
@@ -105,7 +148,11 @@ export class OrderController {
   @Get('shipping-addresses/:id')
   @ApiOperation({ summary: 'Lấy địa chỉ giao hàng theo ID' })
   @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Chi tiết địa chỉ giao hàng', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Chi tiết địa chỉ giao hàng',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Lấy địa chỉ giao hàng thành công')
   getShippingAddressById(@Param('id') id: number) {
     return this.orderService.getShippingAddressById(id);
@@ -114,12 +161,15 @@ export class OrderController {
   @Get('shipping-addresses/order/:orderId')
   @ApiOperation({ summary: 'Lấy địa chỉ giao hàng theo ID đơn hàng' })
   @ApiParam({ name: 'orderId', type: Number })
-  @ApiResponse({ status: 200, description: 'Chi tiết địa chỉ giao hàng theo đơn hàng', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Chi tiết địa chỉ giao hàng theo đơn hàng',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Lấy địa chỉ giao hàng theo đơn hàng thành công')
   getShippingAddressByOrderId(@Param('orderId') orderId: number) {
     return this.orderService.getShippingAddressByOrderId(orderId);
   }
-
 
   @Get()
   @ApiOperation({ summary: 'Lấy danh sách đơn hàng' })
@@ -167,7 +217,11 @@ export class OrderController {
   @Post('shipping-addresses')
   @ApiOperation({ summary: 'Tạo mới địa chỉ giao hàng' })
   @ApiBody({ type: CreateOrderShippingAddressRequest })
-  @ApiResponse({ status: 201, description: 'Tạo địa chỉ giao hàng thành công', type: BaseResponseDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Tạo địa chỉ giao hàng thành công',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Tạo địa chỉ giao hàng thành công')
   createShippingAddress(@Body() createDto: CreateOrderShippingAddressRequest) {
     return this.orderService.createShippingAddress(createDto);
@@ -177,7 +231,11 @@ export class OrderController {
   @ApiOperation({ summary: 'Cập nhật địa chỉ giao hàng' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateOrderShippingAddressRequest })
-  @ApiResponse({ status: 200, description: 'Cập nhật địa chỉ giao hàng thành công', type: BaseResponseDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật địa chỉ giao hàng thành công',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Cập nhật địa chỉ giao hàng thành công')
   updateShippingAddress(
     @Param('id') id: number,
@@ -197,11 +255,18 @@ export class OrderController {
 
   @Delete('order-items/:orderItemId')
   @ApiOperation({ summary: 'Xóa một item khỏi đơn hàng dựa trên ID' })
-  @ApiParam({ name: 'orderItemId', type: Number, description: 'ID của item cần xóa' })
-  @ApiResponse({ status: 200, description: 'Item được xóa thành công', type: BaseResponseDto })
+  @ApiParam({
+    name: 'orderItemId',
+    type: Number,
+    description: 'ID của item cần xóa',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Item được xóa thành công',
+    type: BaseResponseDto,
+  })
   @ResponseMessage('Item được xóa thành công')
   deleteItemById(@Param('orderItemId') orderItemId: number) {
     return this.orderService.deleteItemById(orderItemId);
   }
-
 }

@@ -5,7 +5,8 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateOrderItemRequest {
   @ApiProperty({
     example: 123,
-    description: 'ID của đơn hàng. Phải là số nguyên dương lớn hơn hoặc bằng 1.',
+    description:
+      'ID của đơn hàng. Phải là số nguyên dương lớn hơn hoặc bằng 1.',
   })
   @IsInt({ message: 'ID đơn hàng phải là một số nguyên.' })
   @IsPositive({ message: 'ID đơn hàng phải là một số dương.' })
@@ -15,7 +16,8 @@ export class CreateOrderItemRequest {
 
   @ApiProperty({
     example: 456,
-    description: 'ID của sản phẩm. Phải là số nguyên dương lớn hơn hoặc bằng 1.',
+    description:
+      'ID của sản phẩm. Phải là số nguyên dương lớn hơn hoặc bằng 1.',
   })
   @IsInt({ message: 'ID sản phẩm phải là một số nguyên.' })
   @IsPositive({ message: 'ID sản phẩm phải là một số dương.' })
@@ -25,7 +27,8 @@ export class CreateOrderItemRequest {
 
   @ApiProperty({
     example: 2,
-    description: 'Số lượng sản phẩm đặt. Phải là số nguyên dương lớn hơn hoặc bằng 1.',
+    description:
+      'Số lượng sản phẩm đặt. Phải là số nguyên dương lớn hơn hoặc bằng 1.',
   })
   @IsInt({ message: 'Số lượng phải là một số nguyên.' })
   @IsPositive({ message: 'Số lượng phải là một số dương.' })

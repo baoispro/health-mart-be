@@ -1,5 +1,6 @@
-import { OrderShipMethod, OrderStatus } from 'src/modules/orders/enums/order.enum';
+import {
+  OrderShipMethod,
+  OrderStatus,
+} from 'src/modules/orders/enums/order.enum';
 
-export class UpdateOrderItemRequest {
-  
-}
+export class UpdateOrderItemRequest {}

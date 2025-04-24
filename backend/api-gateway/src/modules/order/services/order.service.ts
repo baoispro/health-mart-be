@@ -31,12 +31,16 @@ export class OrderService {
 
   async createOrder(orderData: any) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'create_order' }, orderData).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'create_order' }, orderData)
+        .pipe(this.handleError),
     );
   }
 
   getOrderById(id: number) {
-    return this.orderClient.send({ cmd: 'get_order_by_id' }, { id }).pipe(this.handleError);
+    return this.orderClient
+      .send({ cmd: 'get_order_by_id' }, { id })
+      .pipe(this.handleError);
   }
 
   updateOrder(id: number, updateOrderRequest: UpdateOrderRequest) {
@@ -45,35 +49,50 @@ export class OrderService {
       .pipe(this.handleError);
   }
 
-  // ORDER SHIPPING ADDRESS 
+  // ORDER SHIPPING ADDRESS
 
   async createShippingAddress(createDto: CreateOrderShippingAddressRequest) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'create_order_shipping_address' }, createDto).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'create_order_shipping_address' }, createDto)
+        .pipe(this.handleError),
     );
   }
 
   getAllShippingAddresses() {
-    return this.orderClient.send({ cmd: 'get_all_order_shipping_addresses' }, {})
+    return this.orderClient.send(
+      { cmd: 'get_all_order_shipping_addresses' },
+      {},
+    );
   }
 
   async getShippingAddressById(id: number) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'get_order_shipping_address_by_id' }, { id }).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'get_order_shipping_address_by_id' }, { id })
+        .pipe(this.handleError),
     );
   }
 
-  async updateShippingAddress(id: number, updateDto: UpdateOrderShippingAddressRequest) {
+  async updateShippingAddress(
+    id: number,
+    updateDto: UpdateOrderShippingAddressRequest,
+  ) {
     return await firstValueFrom(
       this.orderClient
-        .send({ cmd: 'update_order_shipping_address' }, { id, updateRequest: updateDto })
+        .send(
+          { cmd: 'update_order_shipping_address' },
+          { id, updateRequest: updateDto },
+        )
         .pipe(this.handleError),
     );
   }
 
   async getShippingAddressByOrderId(orderId: number) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'get_shipping_address_by_order_id' }, { orderId }).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'get_shipping_address_by_order_id' }, { orderId })
+        .pipe(this.handleError),
     );
   }
 
@@ -84,19 +103,25 @@ export class OrderService {
 
   async getOrderItemsByOrderId(orderId: number) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'get_order_items_by_order_id' }, { orderId }).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'get_order_items_by_order_id' }, { orderId })
+        .pipe(this.handleError),
     );
   }
-  
+
   async createOrderItems(items: CreateOrderItemRequest[]) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'create_order_items' }, items).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'create_order_items' }, items)
+        .pipe(this.handleError),
     );
   }
-  
+
   async deleteItemById(orderItemId: number) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'delete_order_item_by_id' }, { orderItemId }).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'delete_order_item_by_id' }, { orderItemId })
+        .pipe(this.handleError),
     );
   }
 
@@ -107,29 +132,40 @@ export class OrderService {
 
   async getOrderPromotionsByOrderId(orderId: number) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'get_order_promotions_by_order_id' }, { orderId }).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'get_order_promotions_by_order_id' }, { orderId })
+        .pipe(this.handleError),
     );
   }
 
   async createOrderPromotion(promotionDto: CreateOrderPromotionRequest) {
     console.log('Sending promotionDto:', promotionDto);
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'create_order_promotions' }, promotionDto).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'create_order_promotions' }, promotionDto)
+        .pipe(this.handleError),
     );
   }
-  
 
-  async updateOrderPromotion(id: number, updateDto: UpdateOrderPromotionRequest) {
+  async updateOrderPromotion(
+    id: number,
+    updateDto: UpdateOrderPromotionRequest,
+  ) {
     return await firstValueFrom(
       this.orderClient
-        .send({ cmd: 'update_order_promotion' }, { id, updateOrderPromotionRequest: updateDto })
+        .send(
+          { cmd: 'update_order_promotion' },
+          { id, updateOrderPromotionRequest: updateDto },
+        )
         .pipe(this.handleError),
     );
   }
 
   async deleteOrderPromotion(id: number) {
     return await firstValueFrom(
-      this.orderClient.send({ cmd: 'delete_order_promotion' }, { id }).pipe(this.handleError),
+      this.orderClient
+        .send({ cmd: 'delete_order_promotion' }, { id })
+        .pipe(this.handleError),
     );
   }
 }

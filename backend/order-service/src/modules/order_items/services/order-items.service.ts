@@ -31,23 +31,33 @@ export class OrderItemsService {
       );
       return result;
     } catch (error) {
-      throw new RpcException(new NotFoundException(`Product with ID ${product_id} not found`));
+      throw new RpcException(
+        new NotFoundException(`Product with ID ${product_id} not found`),
+      );
     }
   }
 
-  async create(createOrderItemRequest: CreateOrderItemRequestDto): Promise<OrderItem> {
+  async create(
+    createOrderItemRequest: CreateOrderItemRequestDto,
+  ): Promise<OrderItem> {
     const { order_id, product_id, quantity, price } = createOrderItemRequest;
 
     // Kiểm tra xem Order có tồn tại hay không
-    const order = await this.orderRepository.findOne({ where: { id: order_id } });
+    const order = await this.orderRepository.findOne({
+      where: { id: order_id },
+    });
     if (!order) {
-      throw new RpcException(new NotFoundException(`Order với ID ${order_id} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`Order với ID ${order_id} không tồn tại`),
+      );
     }
 
     // Kiểm tra xem Product có tồn tại hay không
     const productExists = await this.checkProductExists(product_id);
     if (!productExists) {
-      throw new RpcException(new NotFoundException(`Product với ID ${product_id} không tồn tại`));
+      throw new RpcException(
+        new NotFoundException(`Product với ID ${product_id} không tồn tại`),
+      );
     }
 
     const newOrderItem = this.orderItemRepository.create({
@@ -71,32 +81,47 @@ export class OrderItemsService {
     });
 
     if (!orderItem) {
-      throw new RpcException(new NotFoundException(`OrderItem with ID ${id} not found`));
+      throw new RpcException(
+        new NotFoundException(`OrderItem with ID ${id} not found`),
+      );
     }
 
     return orderItem;
   }
 
-  async update(id: number, updateOrderItemRequest: UpdateOrderItemRequestDto): Promise<OrderItem> {
+  async update(
+    id: number,
+    updateOrderItemRequest: UpdateOrderItemRequestDto,
+  ): Promise<OrderItem> {
     const orderItem = await this.findOne(id);
 
-    
     if (updateOrderItemRequest.order_id !== undefined) {
-      const order = await this.orderRepository.findOne({ where: { id: updateOrderItemRequest.order_id } });
+      const order = await this.orderRepository.findOne({
+        where: { id: updateOrderItemRequest.order_id },
+      });
       if (!order) {
-        throw new RpcException(new NotFoundException(`Order với ID ${updateOrderItemRequest.order_id} không tồn tại`));
+        throw new RpcException(
+          new NotFoundException(
+            `Order với ID ${updateOrderItemRequest.order_id} không tồn tại`,
+          ),
+        );
       }
       orderItem.order = order;
     }
-    
+
     if (updateOrderItemRequest.product_id !== undefined) {
-      const productExists = await this.checkProductExists(updateOrderItemRequest.product_id);
+      const productExists = await this.checkProductExists(
+        updateOrderItemRequest.product_id,
+      );
       if (!productExists) {
-        throw new RpcException(new NotFoundException(`Product với ID ${updateOrderItemRequest.product_id} không tồn tại`));
+        throw new RpcException(
+          new NotFoundException(
+            `Product với ID ${updateOrderItemRequest.product_id} không tồn tại`,
+          ),
+        );
       }
       orderItem.product_id = updateOrderItemRequest.product_id;
     }
-    
 
     // Cập nhật các trường khác
     Object.assign(orderItem, updateOrderItemRequest);

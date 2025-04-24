@@ -7,7 +7,9 @@ import { UpdateOrderPromotionRequest } from '../dto/requests/update-order_promot
 
 @Controller('order-promotions')
 export class OrderPromotionsController {
-  constructor(private readonly orderPromotionsService: OrderPromotionsService) {}
+  constructor(
+    private readonly orderPromotionsService: OrderPromotionsService,
+  ) {}
 
   @MessagePattern({ cmd: 'get_all_order_promotions' })
   async findAll(): Promise<OrderPromotion[]> {
@@ -16,28 +18,35 @@ export class OrderPromotionsController {
 
   @MessagePattern({ cmd: 'get_order_promotions_by_order_id' })
   async findByOrderId(
-    @Payload() payload: { orderId: number }
+    @Payload() payload: { orderId: number },
   ): Promise<OrderPromotion[]> {
     return await this.orderPromotionsService.findByOrderId(payload.orderId);
   }
 
   @MessagePattern({ cmd: 'create_order_promotions' })
   async create(
-    @Payload() promotionDto: CreateOrderPromotionRequest
+    @Payload() promotionDto: CreateOrderPromotionRequest,
   ): Promise<OrderPromotion> {
     return await this.orderPromotionsService.createPromotion(promotionDto);
   }
 
   @MessagePattern({ cmd: 'update_order_promotion' })
   async update(
-    @Payload() payload: { id: number; updateOrderPromotionRequest: UpdateOrderPromotionRequest }
+    @Payload()
+    payload: {
+      id: number;
+      updateOrderPromotionRequest: UpdateOrderPromotionRequest;
+    },
   ): Promise<OrderPromotion> {
-    return await this.orderPromotionsService.updatePromotion(payload.id, payload.updateOrderPromotionRequest);
+    return await this.orderPromotionsService.updatePromotion(
+      payload.id,
+      payload.updateOrderPromotionRequest,
+    );
   }
 
   @MessagePattern({ cmd: 'delete_order_promotion' })
   async delete(
-    @Payload() payload: { id: number }
+    @Payload() payload: { id: number },
   ): Promise<{ message: string }> {
     await this.orderPromotionsService.deletePromotion(payload.id);
     return { message: 'Xóa khuyến mãi đơn hàng thành công' };

@@ -25,7 +25,10 @@ import { OrderPromotionsModule } from './modules/order_promotions/order_promotio
         synchronize: true,
       }),
     }),
-    OrdersModule, OrderShippingAddress, OrderItemsModule, OrderPromotionsModule,
+    OrdersModule,
+    OrderShippingAddress,
+    OrderItemsModule,
+    OrderPromotionsModule,
   ],
 })
 export class AppModule {}

@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, Min } from 'class-validator';
 
 export class UpdateOrderItemRequest {
-
   @ApiProperty()
   @IsOptional()
   @IsNumber({}, { message: 'order_id phải là số!' })

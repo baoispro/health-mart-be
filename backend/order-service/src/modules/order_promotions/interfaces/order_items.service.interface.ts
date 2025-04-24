@@ -6,6 +6,9 @@ export interface OrderPromotionsService {
   findAll(): Promise<OrderPromotion[]>;
   findByOrderId(orderId: number): Promise<OrderPromotion[]>;
   createPromotion(dto: CreateOrderPromotionRequest): Promise<OrderPromotion>;
-  updatePromotion(id: number, updateDto: UpdateOrderPromotionRequest): Promise<OrderPromotion>;
+  updatePromotion(
+    id: number,
+    updateDto: UpdateOrderPromotionRequest,
+  ): Promise<OrderPromotion>;
   deletePromotion(id: number): Promise<void>;
 }

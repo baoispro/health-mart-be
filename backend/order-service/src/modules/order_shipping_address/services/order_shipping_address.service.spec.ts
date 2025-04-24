@@ -9,7 +9,9 @@ describe('OrderShippingAddressService', () => {
       providers: [OrderShippingAddressService],
     }).compile();
 
-    service = module.get<OrderShippingAddressService>(OrderShippingAddressService);
+    service = module.get<OrderShippingAddressService>(
+      OrderShippingAddressService,
+    );
   });
 
   it('should be defined', () => {

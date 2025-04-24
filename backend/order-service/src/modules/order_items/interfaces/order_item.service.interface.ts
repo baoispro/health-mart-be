@@ -7,6 +7,9 @@ export interface IOrderItemService {
   create(createOrderItemRequest: CreateOrderItemRequestDto): Promise<OrderItem>;
   findAll(): Promise<OrderItem[]>;
   findOne(id: number): Promise<OrderItem>;
-  update(id: number, updateOrderItemRequest: UpdateOrderItemRequestDto): Promise<OrderItem>;
+  update(
+    id: number,
+    updateOrderItemRequest: UpdateOrderItemRequestDto,
+  ): Promise<OrderItem>;
   remove(id: number): Promise<DeleteResult>;
 }

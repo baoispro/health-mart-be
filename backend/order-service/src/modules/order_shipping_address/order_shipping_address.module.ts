@@ -8,9 +8,7 @@ import { Order } from '../orders/entities/orders.entity';
 import { ClientProxyFactoryService } from '../../utils/client-proxy.factory';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([OrderShippingAddress, Order]),
-  ],
+  imports: [TypeOrmModule.forFeature([OrderShippingAddress, Order])],
   controllers: [OrderShippingAddressController],
   providers: [OrderShippingAddressService, ClientProxyFactoryService],
 })

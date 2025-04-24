@@ -6,4 +6,3 @@ export class CreateOrderPromotionRequest {
   discountType: DiscountType;
   discountValue: number;
 }
- 

@@ -1,5 +1,5 @@
 export class CreateOrderShippingAddressRequest {
-  orderId: number; 
+  orderId: number;
   city: string;
   district: string;
   ward: string;

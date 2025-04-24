@@ -5,5 +5,4 @@ export interface OrderService {
   getOrderById(id: number): Promise<any>;
   createOrder(orderData: Partial<Order>): Promise<Order>;
   updateOrder(id: number, orderData: Partial<Order>): Promise<Order>;
-  
 }

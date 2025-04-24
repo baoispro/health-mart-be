@@ -11,7 +11,8 @@ export class UpdateOrderPromotionRequest {
   @ApiPropertyOptional({
     enum: DiscountType,
     example: DiscountType.PERCENTAGE,
-    description: 'Loại khuyến mãi mới: NONE, FIXED hoặc PERCENTAGE (nếu cập nhật)',
+    description:
+      'Loại khuyến mãi mới: NONE, FIXED hoặc PERCENTAGE (nếu cập nhật)',
   })
   discountType?: DiscountType;
 

@@ -15,23 +15,25 @@ export class OrderItemsController {
 
   @MessagePattern({ cmd: 'get_order_items_by_order_id' })
   async findByOrderId(
-    @Payload() payload: { orderId: number }
+    @Payload() payload: { orderId: number },
   ): Promise<OrderItem[]> {
     return await this.orderItemsService.findByOrderId(payload.orderId);
   }
 
   @MessagePattern({ cmd: 'create_order_items' })
   async create(
-    @Payload() items: CreateOrderItemRequest[]
+    @Payload() items: CreateOrderItemRequest[],
   ): Promise<OrderItem[]> {
     return await this.orderItemsService.createOrderItem(items);
   }
 
   @MessagePattern({ cmd: 'delete_order_item_by_id' })
   async deleteItemById(
-    @Payload() payload: { orderItemId: number }
+    @Payload() payload: { orderItemId: number },
   ): Promise<{ message: string }> {
-    const result = await this.orderItemsService.deleteItemById(payload.orderItemId);
+    const result = await this.orderItemsService.deleteItemById(
+      payload.orderItemId,
+    );
     return result;
   }
 }

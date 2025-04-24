@@ -19,13 +19,19 @@ export class OrderItemsController {
   }
 
   @MessagePattern('create_order_item')
-  async createOrderItem(@Payload() createOrderItemRequest: CreateOrderItemRequestDto) {
+  async createOrderItem(
+    @Payload() createOrderItemRequest: CreateOrderItemRequestDto,
+  ) {
     return this.orderItemsService.create(createOrderItemRequest);
   }
 
   @MessagePattern('update_order_item')
   async updateOrderItem(
-    @Payload() payload: { id: number; updateOrderItemRequest: UpdateOrderItemRequestDto },
+    @Payload()
+    payload: {
+      id: number;
+      updateOrderItemRequest: UpdateOrderItemRequestDto;
+    },
   ) {
     const { id, updateOrderItemRequest } = payload;
     return this.orderItemsService.update(id, updateOrderItemRequest);

@@ -22,10 +22,10 @@ export class CreateOrderShippingAddressRequest {
   @IsString({ message: 'Address phải là chuỗi' })
   address: string;
 
-  @ApiProperty({ 
-    description: 'Pharmacy ID (optional)', 
+  @ApiProperty({
+    description: 'Pharmacy ID (optional)',
     example: 1,
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsNumber({}, { message: 'Pharmacy ID phải là số nếu có' })

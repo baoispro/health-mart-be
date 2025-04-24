@@ -3,7 +3,10 @@ import { Expose } from 'class-transformer';
 import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateCategoryRequest {
-  @ApiProperty({ example: 'Thuốc giảm đau', description: 'Tên danh mục sản phẩm' })
+  @ApiProperty({
+    example: 'Thuốc giảm đau',
+    description: 'Tên danh mục sản phẩm',
+  })
   @Expose()
   @IsString()
   @IsNotEmpty({ message: 'Tên danh mục không được để trống' })

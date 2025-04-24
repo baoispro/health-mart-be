@@ -31,7 +31,9 @@ export class CreateOrderPromotionRequest {
     description: 'Loại khuyến mãi: NONE, FIXED hoặc PERCENTAGE',
   })
   @IsOptional()
-  @IsEnum(DiscountType, { message: 'discountType phải là NONE, FIXED hoặc PERCENTAGE!' })
+  @IsEnum(DiscountType, {
+    message: 'discountType phải là NONE, FIXED hoặc PERCENTAGE!',
+  })
   discountType: DiscountType;
 
   @ApiProperty({

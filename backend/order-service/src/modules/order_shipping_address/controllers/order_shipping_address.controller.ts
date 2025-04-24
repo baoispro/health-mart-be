@@ -39,7 +39,11 @@ export class OrderShippingAddressController {
 
   @MessagePattern({ cmd: 'update_order_shipping_address' })
   async update(
-    @Payload() data: { id: number; updateRequest: UpdateOrderShippingAddressRequest },
+    @Payload()
+    data: {
+      id: number;
+      updateRequest: UpdateOrderShippingAddressRequest;
+    },
   ): Promise<OrderShippingAddress> {
     return this.shippingAddressService.updateShippingAddress(
       data.id,
@@ -48,9 +52,7 @@ export class OrderShippingAddressController {
   }
 
   @MessagePattern({ cmd: 'delete_order_shipping_address' })
-  async delete(
-    @Payload() data: { id: number },
-  ): Promise<void> {
+  async delete(@Payload() data: { id: number }): Promise<void> {
     return this.shippingAddressService.deleteShippingAddress(data.id);
   }
 }
