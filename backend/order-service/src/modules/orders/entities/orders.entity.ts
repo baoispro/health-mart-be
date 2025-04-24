@@ -9,6 +9,7 @@ import {
 import { OrderShipMethod, OrderStatus } from '../enums/order.enum';
 import { OrderShippingAddress } from 'src/modules/order_shipping_address/entities/order_shipping_address.entity';
 import { OrderItem } from '../../order_items/entities/order_items.entity';
+import { OrderPromotion } from 'src/modules/order_promotions/entities/order_promotions.entity';
 
 @Entity('orders')
 export class Order {
@@ -40,9 +41,15 @@ export class Order {
   @CreateDateColumn()
   created_at: Date;
 
-  @OneToOne(() => OrderShippingAddress, (shippingAddress) => shippingAddress.order)
+  @OneToOne(
+    () => OrderShippingAddress,
+    (shippingAddress) => shippingAddress.order,
+  )
   shippingAddress: OrderShippingAddress;
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
-  orderItems: OrderItem[];
+  @OneToMany(() => OrderItem, (items) => items.order)
+  items: OrderItem;
+
+  @OneToMany(() => OrderPromotion, (promotion) => promotion.order)
+  promotions: OrderPromotion;
 }

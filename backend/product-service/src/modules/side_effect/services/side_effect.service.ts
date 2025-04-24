@@ -20,7 +20,7 @@ export class SideEffectService implements ISideEffectService {
 
   async create(createRequest: CreateSideEffectRequest): Promise<SideEffect> {
     const product = await this.productRepository.findOne({
-      where: { product_id: createRequest.product_id }
+      where: { product_id: createRequest.product_id },
     });
 
     if (!product) {
@@ -31,7 +31,7 @@ export class SideEffectService implements ISideEffectService {
 
     const newEffect = this.sideEffectRepository.create({
       description: createRequest.description,
-      product
+      product,
     });
 
     return await this.sideEffectRepository.save(newEffect);
@@ -46,20 +46,25 @@ export class SideEffectService implements ISideEffectService {
       where: { product: { product_id: productId } },
       relations: ['product'],
     });
-  
+
     if (!effects || effects.length === 0) {
       throw new RpcException(
-        new NotFoundException(`Không tìm thấy tác dụng phụ nào cho sản phẩm có ID ${productId}`),
+        new NotFoundException(
+          `Không tìm thấy tác dụng phụ nào cho sản phẩm có ID ${productId}`,
+        ),
       );
     }
-  
+
     return effects;
   }
 
-  async update(id: number, updateRequest: UpdateSideEffectRequest): Promise<SideEffect> {
+  async update(
+    id: number,
+    updateRequest: UpdateSideEffectRequest,
+  ): Promise<SideEffect> {
     const effect = await this.sideEffectRepository.findOne({
-      where: { side_effect_id: id }, 
-      relations: ['product']
+      where: { side_effect_id: id },
+      relations: ['product'],
     });
 
     if (!effect) {
@@ -70,7 +75,7 @@ export class SideEffectService implements ISideEffectService {
 
     Object.assign(effect, updateRequest);
     return this.sideEffectRepository.save(effect);
-}
+  }
 
   async remove(id: number): Promise<void> {
     const result = await this.sideEffectRepository.delete(id);

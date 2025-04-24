@@ -19,13 +19,19 @@ export class CategoriesController {
   }
 
   @MessagePattern('create_category')
-  async createCategory(@Payload() createCategoryRequest: CreateCategoryRequest) {
+  async createCategory(
+    @Payload() createCategoryRequest: CreateCategoryRequest,
+  ) {
     return this.categoryService.create(createCategoryRequest);
   }
 
   @MessagePattern('update_category')
   async updateCategory(
-    @Payload() payload: { id: number; updateCategoryRequest: UpdateCategoryRequest },
+    @Payload()
+    payload: {
+      id: number;
+      updateCategoryRequest: UpdateCategoryRequest;
+    },
   ) {
     const { id, updateCategoryRequest } = payload;
     return this.categoryService.update(id, updateCategoryRequest);

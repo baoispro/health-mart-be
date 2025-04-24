@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, Length } from 'class-validator';
 
 export class UpdateSideEffectRequest {
-  @ApiProperty({ 
-    description: 'Mô tả tác dụng phụ cập nhật', 
+  @ApiProperty({
+    description: 'Mô tả tác dụng phụ cập nhật',
     example: 'Có thể gây buồn ngủ hoặc chóng mặt',
-    required: false 
+    required: false,
   })
   @IsString()
   @IsOptional()

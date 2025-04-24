@@ -7,6 +7,9 @@ export interface SideEffectService {
   create(createRequest: CreateSideEffectRequest): Promise<SideEffect>;
   findAll(): Promise<SideEffect[]>;
   findByProduct(productId: number): Promise<SideEffect[]>;
-  update(id: number, updateRequest: UpdateSideEffectRequest): Promise<SideEffect>;
+  update(
+    id: number,
+    updateRequest: UpdateSideEffectRequest,
+  ): Promise<SideEffect>;
   remove(id: number): Promise<void>;
 }

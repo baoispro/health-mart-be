@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrdersModule } from './modules/orders/orders.module';
 import { OrderShippingAddress } from './modules/order_shipping_address/entities/order_shipping_address.entity';
 import { OrderItemsModule } from './modules/order_items/order_items.module';
+import { OrderPromotionsModule } from './modules/order_promotions/order_promotions.module';
 
 @Module({
   imports: [
@@ -24,7 +25,10 @@ import { OrderItemsModule } from './modules/order_items/order_items.module';
         synchronize: true,
       }),
     }),
-    OrdersModule, OrderShippingAddress,OrderItemsModule
+    OrdersModule,
+    OrderShippingAddress,
+    OrderItemsModule,
+    OrderPromotionsModule,
   ],
 })
 export class AppModule {}

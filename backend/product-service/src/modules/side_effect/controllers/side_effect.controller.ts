@@ -5,10 +5,10 @@ import { CreateSideEffectRequest } from '../dto/requests/create-sideEffect-reque
 import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-request.dto';
 
 @Controller('side-effect')
-  export class SideEffectController {
-    constructor(private readonly sideEffectService: SideEffectService) {}
+export class SideEffectController {
+  constructor(private readonly sideEffectService: SideEffectService) {}
 
-    @MessagePattern('get_all_side_effects')
+  @MessagePattern('get_all_side_effects')
   async getAllSideEffects() {
     return this.sideEffectService.findAll();
   }
@@ -25,7 +25,7 @@ import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-reque
 
   @MessagePattern('update_side_effect')
   async updateSideEffect(
-    @Payload() payload: { id: number, updateRequest: UpdateSideEffectRequest },
+    @Payload() payload: { id: number; updateRequest: UpdateSideEffectRequest },
   ) {
     return this.sideEffectService.update(payload.id, payload.updateRequest);
   }

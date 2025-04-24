@@ -12,8 +12,9 @@ export class OrderItem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  order_id: number;
+  @ManyToOne(() => Order, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'order_id' })
+  order: Order;
 
   @Column()
   product_id: number;
@@ -21,10 +22,6 @@ export class OrderItem {
   @Column()
   quantity: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({ type: 'decimal' })
   price: number;
-
-  @ManyToOne(() => Order, (order) => order.orderItems, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'order_id' })
-  order: Order;
 }

@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrderItemsService } from './services/order_items.service';
 import { OrderItem } from './entities/order_items.entity';
-import { OrderItemsService } from './services/order-items.service';
-import { OrderItemsController } from './controllers/order-items.controller';
+import { OrderItemsController } from './controllers/order_items.controller';
+import { Order } from '../orders/entities/orders.entity';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
-import { Order } from '../orders/entities/orders.entity'; 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OrderItem, Order])], 
+  imports: [TypeOrmModule.forFeature([OrderItem, Order])],
   controllers: [OrderItemsController],
   providers: [OrderItemsService, ClientProxyFactoryService],
-  exports: [OrderItemsService, TypeOrmModule], 
 })
 export class OrderItemsModule {}

@@ -134,10 +134,16 @@ export class ProductsService implements ProductService {
     return product;
   }
 
-  async checkIfExistsL(product_id: number): Promise<boolean> {
+  //Lấy giá sản phẩm
+  async getProductPrice(productId: number): Promise<number> {
     const product = await this.productRepository.findOne({
-      where: { product_id },
+      where: { product_id: productId },
     });
-    return !!product;
+    if (!product) {
+      throw new RpcException(
+        new NotFoundException(`Sản phẩm với ID ${productId} không tồn tại!`),
+      );
+    }
+    return product.price;
   }
 }
