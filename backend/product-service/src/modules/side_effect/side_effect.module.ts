@@ -7,10 +7,8 @@ import { Product } from '../products/entities/product.entity';
 import { SideEffect } from './entities/side_effect.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Product, SideEffect])
-  ],
+  imports: [TypeOrmModule.forFeature([Product, SideEffect])],
   controllers: [SideEffectController],
-  providers: [SideEffectService]
+  providers: [SideEffectService],
 })
 export class SideEffectModule {}

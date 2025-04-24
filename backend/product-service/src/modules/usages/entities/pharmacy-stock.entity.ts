@@ -28,7 +28,9 @@ export class PharmacyStock {
   quantity: number;
 
   // FK: Mỗi record tham chiếu tới Product
-  @ManyToOne(() => Product, (product) => product.pharmacyStock, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Product, (product) => product.pharmacyStock, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 }

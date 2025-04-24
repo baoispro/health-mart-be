@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Product } from './product.entity';
 
 @Entity('category')
@@ -13,7 +20,10 @@ export class Category {
   slug: string;
 
   // Self-referencing: Many Categories can have 1 parent
-  @ManyToOne(() => Category, (category) => category.children, { onDelete: 'CASCADE', nullable: true })
+  @ManyToOne(() => Category, (category) => category.children, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
   @JoinColumn({ name: 'parent_id' })
   parent: Category;
 
@@ -23,5 +33,4 @@ export class Category {
 
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
-
 }
