@@ -2,7 +2,10 @@ import { IsOptional, IsString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePharmacyStockRequest {
-  @ApiProperty({ example: 'Nhà thuốc An Khang', description: 'Tên kho nhà thuốc' })
+  @ApiProperty({
+    example: 'Nhà thuốc An Khang',
+    description: 'Tên kho nhà thuốc',
+  })
   @IsOptional()
   @IsString({ message: 'name phải là chuỗi' })
   name?: string;

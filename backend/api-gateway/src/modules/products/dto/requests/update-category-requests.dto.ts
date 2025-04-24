@@ -7,7 +7,10 @@ export class UpdateCategoryRequest {
   @IsString({ message: 'name phải là chuỗi' })
   name?: string;
 
-  @ApiProperty({ example: 'thuoc-giam-dau', description: 'Slug dùng trong URL' })
+  @ApiProperty({
+    example: 'thuoc-giam-dau',
+    description: 'Slug dùng trong URL',
+  })
   @IsOptional()
   @IsString({ message: 'slug phải là chuỗi' })
   slug?: string;

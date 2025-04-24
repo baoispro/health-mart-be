@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../entities/product.entity';
 import { DeleteResult, Repository } from 'typeorm';
@@ -18,30 +22,36 @@ export class ProductsService implements ProductService {
   ) {}
 
   async create(createProductRequest: CreateProductRequest): Promise<Product> {
-  console.log('Received createProductRequest:', createProductRequest);
+    const { category_id, ...productData } = createProductRequest;
 
-  const { category_id, ...productData } = createProductRequest;
+    const category = await this.categoryRepository.findOne({
+      where: { category_id },
+    });
 
-  const category = await this.categoryRepository.findOne({
-    where: { category_id },
-  });
+    if (!category) {
+      throw new RpcException(
+        new NotFoundException(`Category ${category_id} không tồn tại!`),
+      );
+    }
 
-  if (!category) {
-    throw new RpcException(
-      new NotFoundException(`Category ${category_id} không tồn tại!`),
-    );
+    const existingProduct = await this.productRepository.findOne({
+      where: [{ slug: productData.slug }],
+    });
+    if (existingProduct) {
+      throw new RpcException(
+        new ConflictException('Slug sản phẩm đã tồn tại!'),
+      );
+    }
+
+    const newProduct = this.productRepository.create({
+      ...productData,
+      category,
+    });
+
+    console.log('New Product to save:', newProduct); // THÊM DÒNG NÀY
+
+    return await this.productRepository.save(newProduct);
   }
-
-  const newProduct = this.productRepository.create({
-    ...productData,
-    category,
-  });
-
-  console.log('New Product to save:', newProduct); // THÊM DÒNG NÀY
-
-  return await this.productRepository.save(newProduct);
-}
-
 
   async findAll(): Promise<Product[]> {
     return await this.productRepository.find({ relations: ['category'] });
@@ -50,13 +60,29 @@ export class ProductsService implements ProductService {
   async findOne(id: number): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { product_id: id },
-      relations: ['category'],
+      relations: [
+        'category',
+        'usages',
+        'ingredients',
+        'dosages',
+        'precautions',
+        'sideEffects',
+        'storages',
+        'pharmacyStock',
+      ],
     });
     if (!product) {
       throw new RpcException(
         new NotFoundException(`Product ${id} không tìm thấy`),
       );
     }
+    product.ingredients = product.ingredients ?? [];
+    product.usages = product.usages ?? [];
+    product.dosages = product.dosages ?? [];
+    product.sideEffects = product.sideEffects ?? [];
+    product.precautions = product.precautions ?? [];
+    product.storages = product.storages ?? [];
+    product.pharmacyStock = product.pharmacyStock ?? [];
     return product;
   }
 
@@ -65,7 +91,7 @@ export class ProductsService implements ProductService {
     updateProductRequest: UpdateProductRequest,
   ): Promise<Product> {
     const product = await this.findOne(id);
-  
+
     // Nếu có update category
     if (updateProductRequest.categoryId) {
       const category = await this.categoryRepository.findOne({
@@ -76,38 +102,42 @@ export class ProductsService implements ProductService {
       }
       product.category = category;
     }
-  
+
     // Loại bỏ categoryId tránh ghi đè
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { categoryId, ...rest } = updateProductRequest;
     Object.assign(product, rest);
-  
+
     await this.productRepository.save(product);
-  
+
     // Tìm lại product kèm quan hệ category
     const updatedProduct = await this.productRepository.findOne({
       where: { product_id: id },
       relations: ['category'],
     });
-  
+
     return updatedProduct;
   }
-  
 
   async remove(id: number): Promise<DeleteResult> {
-    await this.findOne(id); 
+    await this.findOne(id);
     return await this.productRepository.delete({ product_id: id });
   }
 
   async checkProductExist(id: number): Promise<Product | null> {
-    const product = await this.productRepository.findOne({ where: { product_id : id } });
+    const product = await this.productRepository.findOne({
+      where: { product_id: id },
+    });
     if (!product) {
       return null;
     }
     return product;
-  }  
+  }
 
   async checkIfExistsL(product_id: number): Promise<boolean> {
-    const product = await this.productRepository.findOne({ where: { product_id } });
-    return !!product; // Trả về true nếu product tồn tại, ngược lại trả về false
+    const product = await this.productRepository.findOne({
+      where: { product_id },
+    });
+    return !!product;
   }
 }
