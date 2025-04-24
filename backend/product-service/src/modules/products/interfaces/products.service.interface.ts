@@ -4,9 +4,12 @@ import { UpdateProductRequest } from '../dto/requests/update-product-request.dto
 import { Product } from '../entities/product.entity';
 
 export interface ProductService {
-    create(createProductRequest: CreateProductRequest): Promise<Product>;
-    findAll(): Promise<Product[]>;
-    findOne(id: number): Promise<Product>;
-    update(id: number, updateProductRequest: UpdateProductRequest): Promise<Product>;
-    remove(id: number): Promise<DeleteResult>;
+  create(createProductRequest: CreateProductRequest): Promise<Product>;
+  findAll(): Promise<Product[]>;
+  findOne(id: number): Promise<Product>;
+  update(
+    id: number,
+    updateProductRequest: UpdateProductRequest,
+  ): Promise<Product>;
+  remove(id: number): Promise<DeleteResult>;
 }

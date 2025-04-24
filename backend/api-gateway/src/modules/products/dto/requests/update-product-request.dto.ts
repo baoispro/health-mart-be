@@ -8,7 +8,10 @@ export class UpdateProductRequest {
   @IsString({ message: 'name phải là chuỗi' })
   name?: string;
 
-  @ApiProperty({ example: '<p>Chi tiết mô tả HTML</p>', description: 'Mô tả chi tiết dạng HTML' })
+  @ApiProperty({
+    example: '<p>Chi tiết mô tả HTML</p>',
+    description: 'Mô tả chi tiết dạng HTML',
+  })
   @IsOptional()
   @IsString({ message: 'description_html phải là chuỗi' })
   description_html?: string;
@@ -28,7 +31,10 @@ export class UpdateProductRequest {
   @IsString({ message: 'unit phải là chuỗi' })
   unit?: string;
 
-  @ApiProperty({ example: '500mg paracetamol', description: 'Thành phần / đặc điểm kỹ thuật' })
+  @ApiProperty({
+    example: '500mg paracetamol',
+    description: 'Thành phần / đặc điểm kỹ thuật',
+  })
   @IsOptional()
   @IsString({ message: 'specification phải là chuỗi' })
   specification?: string;
@@ -48,17 +54,26 @@ export class UpdateProductRequest {
   @IsString({ message: 'registration_number phải là chuỗi' })
   registration_number?: string;
 
-  @ApiProperty({ example: 'Giảm đau, hạ sốt', description: 'Mô tả ngắn gọn sản phẩm' })
+  @ApiProperty({
+    example: 'Giảm đau, hạ sốt',
+    description: 'Mô tả ngắn gọn sản phẩm',
+  })
   @IsOptional()
   @IsString({ message: 'short_description phải là chuỗi' })
   short_description?: string;
 
-  @ApiProperty({ example: 'paracetamol-500mg', description: 'Slug dùng trong URL' })
+  @ApiProperty({
+    example: 'paracetamol-500mg',
+    description: 'Slug dùng trong URL',
+  })
   @IsOptional()
   @IsString({ message: 'slug phải là chuỗi' })
   slug?: string;
 
-  @ApiProperty({ example: 'https://example.com/image.jpg', description: 'URL ảnh đại diện' })
+  @ApiProperty({
+    example: 'https://example.com/image.jpg',
+    description: 'URL ảnh đại diện',
+  })
   @IsOptional()
   @IsString({ message: 'image_url phải là chuỗi' })
   image_url?: string;
