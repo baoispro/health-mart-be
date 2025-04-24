@@ -1,20 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { 
-  IsInt, 
-  IsNumber, 
-  IsPositive, 
-  IsString, 
+import {
+  IsInt,
+  IsNumber,
+  IsPositive,
+  IsString,
   IsNotEmpty,
   Length,
-  IsOptional
+  IsOptional,
 } from 'class-validator';
 
 export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 1,
     description: 'ID của nhà thuốc',
-    required: true
+    required: true,
   })
   @Expose()
   @IsInt({ message: 'ID nhà thuốc phải là số nguyên' })
@@ -25,7 +25,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 1,
     description: 'ID của sản phẩm',
-    required: true
+    required: true,
   })
   @Expose()
   @IsInt({ message: 'ID sản phẩm phải là số nguyên' })
@@ -36,7 +36,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 'Paracetamol 500mg',
     description: 'Tên sản phẩm',
-    maxLength: 255
+    maxLength: 255,
   })
   @Expose()
   @IsString({ message: 'Tên sản phẩm phải là chuỗi' })
@@ -47,7 +47,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: '123 Đường Láng',
     description: 'Địa chỉ đường',
-    maxLength: 255
+    maxLength: 255,
   })
   @Expose()
   @IsString({ message: 'Địa chỉ phải là chuỗi' })
@@ -58,7 +58,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 'Phường Láng Thượng',
     description: 'Phường/Xã',
-    maxLength: 100
+    maxLength: 100,
   })
   @Expose()
   @IsString({ message: 'Tên phường/xã phải là chuỗi' })
@@ -69,7 +69,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 'Quận Đống Đa',
     description: 'Quận/Huyện',
-    maxLength: 100
+    maxLength: 100,
   })
   @Expose()
   @IsString({ message: 'Tên quận/huyện phải là chuỗi' })
@@ -80,7 +80,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 'Hà Nội',
     description: 'Thành phố/Tỉnh',
-    maxLength: 100
+    maxLength: 100,
   })
   @Expose()
   @IsString({ message: 'Tên thành phố phải là chuỗi' })
@@ -91,7 +91,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 100,
     description: 'Số lượng tồn kho',
-    minimum: 0
+    minimum: 0,
   })
   @Expose()
   @Type(() => Number)
@@ -103,7 +103,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: 'LOT2023-001',
     description: 'Mã lô hàng',
-    required: false
+    required: false,
   })
   @Expose()
   @IsString({ message: 'Mã lô hàng phải là chuỗi' })
@@ -113,7 +113,7 @@ export class CreatePharmacyStockRequest {
   @ApiProperty({
     example: '2023-12-31',
     description: 'Ngày hết hạn',
-    required: false
+    required: false,
   })
   @Expose()
   @IsString({ message: 'Ngày hết hạn phải là chuỗi' })

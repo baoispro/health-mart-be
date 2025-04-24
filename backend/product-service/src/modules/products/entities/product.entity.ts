@@ -14,6 +14,7 @@ import { Dosage } from './dosage.entity';
 import { SideEffect } from '../../side_effect/entities/side_effect.entity';
 import { Precaution } from '../../precautions/entities/precaution.entity';
 import { Storage as StorageEntity } from './storage.entity';
+import { Expose } from 'class-transformer';
 
 @Entity('product')
 export class Product {
@@ -82,4 +83,39 @@ export class Product {
 
   @OneToMany(() => PharmacyStock, (pharmacyStock) => pharmacyStock.product)
   pharmacyStock: PharmacyStock[];
+
+  @Expose()
+  get safeIngredients(): Ingredient[] {
+    return this.ingredients ?? [];
+  }
+
+  @Expose()
+  get safeUsages(): Usage[] {
+    return this.usages ?? [];
+  }
+
+  @Expose()
+  get safeDosages(): Dosage[] {
+    return this.dosages ?? [];
+  }
+
+  @Expose()
+  get safeSideEffects(): SideEffect[] {
+    return this.sideEffects ?? [];
+  }
+
+  @Expose()
+  get safePrecautions(): Precaution[] {
+    return this.precautions ?? [];
+  }
+
+  @Expose()
+  get safeStorages(): StorageEntity[] {
+    return this.storages ?? [];
+  }
+
+  @Expose()
+  get safePharmacyStock(): PharmacyStock[] {
+    return this.pharmacyStock ?? [];
+  }
 }
