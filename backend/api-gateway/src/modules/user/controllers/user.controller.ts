@@ -6,8 +6,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { CreateUserRequest } from '../dto/requests/create-user-request.dto';
 import { UpdateUserRequest } from '../dto/requests/update-user-request.dto';
@@ -15,6 +21,7 @@ import { ResponseMessage } from 'src/common/decorators/response-message.decorato
 import { BaseResponseDto } from '../dto/responses/base-response.dto';
 import { UpdateAddressDto } from '../dto/requests/update-address-request.dto';
 import { CreateAddressDto } from '../dto/requests/create-address-request.dto';
+import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 
 @Controller('user')
 @ApiTags('User')
@@ -29,6 +36,8 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Lấy danh sách tất cả người dùng thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   getUsers() {
     return this.userService.getUsers();
   }
@@ -41,18 +50,20 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Lấy thông tin người dùng thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   getUserById(@Param('id') id: number) {
     return this.userService.getUserById(id);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Tạo mới một người dùng' })
+  @Post('register')
+  @ApiOperation({ summary: 'Đăng ký tài khoản' })
   @ApiResponse({
     status: 201,
     description: 'Tạo thành công',
     type: BaseResponseDto,
   })
-  @ResponseMessage('Tạo người dùng thành công.')
+  @ResponseMessage('Đăng ký tài khoản thành công.')
   createUser(@Body() createUserRequest: CreateUserRequest) {
     return this.userService.createUser(createUserRequest);
   }
@@ -65,6 +76,8 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật người dùng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateUser(
     @Param('id') id: number,
     @Body() updateUserRequest: UpdateUserRequest,
@@ -80,6 +93,8 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa người dùng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteUser(@Param('id') id: number) {
     return this.userService.deleteUser(id);
   }
@@ -92,6 +107,8 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Lấy thông tin địa chỉ thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   getAddressById(@Param('id') id: number) {
     return this.userService.getAddressById(id);
   }
@@ -104,6 +121,8 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo địa chỉ thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   createAddress(@Body() createUserRequest: CreateAddressDto) {
     return this.userService.createAddress(createUserRequest);
   }
@@ -116,6 +135,8 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật địa chỉ thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateAddress(
     @Param('id') id: number,
     @Body() updateUserRequest: UpdateAddressDto,
@@ -131,6 +152,8 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa địa chỉ thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteAddress(@Param('id') id: number) {
     return this.userService.deleteAddress(id);
   }

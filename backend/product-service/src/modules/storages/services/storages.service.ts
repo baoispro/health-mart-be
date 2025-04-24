@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { StoragesServiceInterface } from '../interfaces/storages.service.interface';
 import { RpcException } from '@nestjs/microservices';
-import { Product } from '../entities/product.entity';
 import { Storage } from '../entities/storage.entity';
 import { CreateStorageRequest } from '../dto/requests/create-storages-request.dto';
 import { UpdateStorageRequest } from '../dto/requests/update-storages-request.dto';
+import { Product } from '../../products/entities/product.entity';
 
 @Injectable()
 export class StoragesService implements StoragesServiceInterface {

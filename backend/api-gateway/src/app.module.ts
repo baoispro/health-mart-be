@@ -7,6 +7,13 @@ import { PolicyModule } from './modules/policy/policies.module';
 import { ReviewModule } from './modules/review/review.module';
 
 @Module({
-  imports: [UserModule, OrderModule, ProductsModule, AuthModule, PolicyModule, ReviewModule],
+  imports: [
+    UserModule,
+    OrderModule,
+    ProductsModule,
+    AuthModule,
+    PolicyModule,
+    ReviewModule,
+  ],
 })
 export class AppModule {}

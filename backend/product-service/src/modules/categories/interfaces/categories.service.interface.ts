@@ -7,6 +7,9 @@ export interface CategoryService {
   create(createCategoryRequest: CreateCategoryRequest): Promise<Category>;
   findAll(): Promise<Category[]>;
   findOne(id: number): Promise<Category>;
-  update(id: number, updateCategoryRequest: UpdateCategoryRequest): Promise<Category>;
+  update(
+    id: number,
+    updateCategoryRequest: UpdateCategoryRequest,
+  ): Promise<Category>;
   remove(id: number): Promise<DeleteResult>;
 }
