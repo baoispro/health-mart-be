@@ -3,7 +3,7 @@ import { OrderShipMethod, OrderStatus } from "src/modules/orders/enums/order.enu
 export class CreateOrderRequest {
     user_id: number;
     total_price: number;
-    final_price: number;
+    discount?: number;
     order_status: OrderStatus;
     ship_method: OrderShipMethod;
 }

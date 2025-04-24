@@ -105,4 +105,17 @@ export class ProductsService implements ProductService {
     }
     return product;
   }  
+
+  //Lấy giá sản phẩm
+  async getProductPrice(productId: number): Promise<number> {
+    const product = await this.productRepository.findOne({
+      where: { product_id: productId },
+    });
+    if (!product) {
+      throw new RpcException(
+        new NotFoundException(`Sản phẩm với ID ${productId} không tồn tại!`),
+      );
+    }
+    return product.price;
+  }
 }

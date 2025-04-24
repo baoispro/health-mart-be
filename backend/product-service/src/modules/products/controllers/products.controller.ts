@@ -40,4 +40,11 @@ export class ProductsController {
   async checkProductExists(@Payload() product_id: number ) {
     return this.productService.checkProductExist(product_id);
   }
+
+  @MessagePattern({ cmd: 'get_product_price' })
+  async handleGetProductPrice(
+    @Payload() payload: { productId: number },
+  ): Promise<number> {
+    return this.productService.getProductPrice(payload.productId);
+  }
 }

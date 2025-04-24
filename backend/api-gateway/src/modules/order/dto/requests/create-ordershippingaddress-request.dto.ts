@@ -3,23 +3,23 @@ import { IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateOrderShippingAddressRequest {
   @ApiProperty({ description: 'Order ID', example: 1 })
-  @IsNumber()
+  @IsNumber({}, { message: 'Order ID phải là số' })
   orderId: number;
 
   @ApiProperty({ description: 'City', example: 'Hà Nội' })
-  @IsString()
+  @IsString({ message: 'City phải là chuỗi' })
   city: string;
 
   @ApiProperty({ description: 'District', example: 'Cầu Giấy' })
-  @IsString()
+  @IsString({ message: 'District phải là chuỗi' })
   district: string;
 
   @ApiProperty({ description: 'Ward', example: 'Dịch Vọng' })
-  @IsString()
+  @IsString({ message: 'Ward phải là chuỗi' })
   ward: string;
 
   @ApiProperty({ description: 'Detailed address', example: '123 Nguyễn Văn A' })
-  @IsString()
+  @IsString({ message: 'Address phải là chuỗi' })
   address: string;
 
   @ApiProperty({ 
@@ -28,6 +28,6 @@ export class CreateOrderShippingAddressRequest {
     required: false 
   })
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { message: 'Pharmacy ID phải là số nếu có' })
   pharmacy_id?: number;
 }

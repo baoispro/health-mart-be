@@ -24,4 +24,10 @@ export class OrderShippingAddress {
 
   @Column({ nullable: true })
   pharmacy_id: number;
+
+  @Column({ nullable: true })
+  recipientName: string;
+
+  @Column({ nullable: true })
+  phoneNumber: string;
 }

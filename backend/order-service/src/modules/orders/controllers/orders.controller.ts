@@ -1,14 +1,17 @@
 import { Controller } from '@nestjs/common';
 import { OrdersService } from '../services/orders.service';
 import { Order } from '../entities/orders.entity';
-import { MessagePattern, Payload } from '@nestjs/microservices'; // Sửa lỗi thiếu import Payload
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { CreateOrderRequest } from '../dto/requests/create-order-request.dto';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
 
   @MessagePattern({ cmd: 'create_order' })
-  async createOrder(@Payload() orderData: Partial<Order>): Promise<Order> {
+  async createOrder(
+    @Payload() orderData: CreateOrderRequest,
+  ): Promise<Order> {
     return this.orderService.createOrder(orderData);
   }
 
@@ -18,7 +21,9 @@ export class OrdersController {
   }
 
   @MessagePattern({ cmd: 'get_order_by_id' })
-  async getOrderById(@Payload() data: { id: number }): Promise<Order | null> {
+  async getOrderById(
+    @Payload() data: { id: number },
+  ): Promise<Order | null> {
     return this.orderService.getOrderById(data.id);
   }
 

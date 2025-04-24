@@ -1,17 +1,19 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { OrderShippingAddressService} from '../services/order_shipping_address.service';
+import { OrderShippingAddressService } from '../services/order_shipping_address.service';
 import { OrderShippingAddress } from '../entities/order_shipping_address.entity';
 import { CreateOrderShippingAddressRequest } from '../dto/requests/create-ordershippingaddress-request.dto';
 import { UpdateOrderShippingAddressRequest } from '../dto/requests/update-ordershippingaddress-request.dto';
 
 @Controller('order-shipping-addresses')
 export class OrderShippingAddressController {
-  constructor(private readonly shippingAddressService: OrderShippingAddressService) {}
+  constructor(
+    private readonly shippingAddressService: OrderShippingAddressService,
+  ) {}
 
   @MessagePattern({ cmd: 'create_order_shipping_address' })
   async create(
-    @Payload() createRequest: CreateOrderShippingAddressRequest
+    @Payload() createRequest: CreateOrderShippingAddressRequest,
   ): Promise<OrderShippingAddress> {
     return this.shippingAddressService.createShippingAddress(createRequest);
   }
@@ -23,28 +25,31 @@ export class OrderShippingAddressController {
 
   @MessagePattern({ cmd: 'get_order_shipping_address_by_id' })
   async findOne(
-    @Payload() data: { id: number }
+    @Payload() data: { id: number },
   ): Promise<OrderShippingAddress> {
     return this.shippingAddressService.findOne(data.id);
   }
 
   @MessagePattern({ cmd: 'get_shipping_address_by_order_id' })
   async findByOrderId(
-    @Payload() data: { orderId: number }
+    @Payload() data: { orderId: number },
   ): Promise<OrderShippingAddress> {
     return this.shippingAddressService.getShippingAddress(data.orderId);
   }
 
   @MessagePattern({ cmd: 'update_order_shipping_address' })
   async update(
-    @Payload() data: { id: number; updateRequest: UpdateOrderShippingAddressRequest }
+    @Payload() data: { id: number; updateRequest: UpdateOrderShippingAddressRequest },
   ): Promise<OrderShippingAddress> {
-    return this.shippingAddressService.updateShippingAddress(data.id, data.updateRequest);
+    return this.shippingAddressService.updateShippingAddress(
+      data.id,
+      data.updateRequest,
+    );
   }
 
   @MessagePattern({ cmd: 'delete_order_shipping_address' })
   async delete(
-    @Payload() data: { id: number }
+    @Payload() data: { id: number },
   ): Promise<void> {
     return this.shippingAddressService.deleteShippingAddress(data.id);
   }

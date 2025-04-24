@@ -10,7 +10,7 @@ export class CreateOrderRequest {
 
   @IsNotEmpty({ message: 'total_price không được để trống!' })
   @IsNumber({}, { message: 'total_price phải là số!' })
-  @Min(0, { message: 'total_price không được nhỏ hơn 0!' })
+  @Min(0.01, { message: 'total_price không được nhỏ hơn 0!' })
   @ApiProperty()
   total_price: number;
 
@@ -18,21 +18,19 @@ export class CreateOrderRequest {
   @IsNumber({}, { message: 'discount phải là số!' })
   @Min(0, { message: 'discount không được nhỏ hơn 0!' })
   @ApiProperty()
-  discount: number;
-
-  @IsNotEmpty({ message: 'final_price không được để trống!' })
-  @IsNumber({}, { message: 'final_price phải là số!' })
-  @Min(0, { message: 'final_price không được nhỏ hơn 0!' })
-  @ApiProperty()
-  final_price: number;
+  discount?: number;
 
   @ApiProperty({ example: 'PENDING', enum: OrderStatus, description: 'Trạng thái đơn hàng' })
   @IsEnum(OrderStatus, { message: 'order_status phải là "PENDING", "COMPLETED" hoặc "CANCELLED"' })
   @IsOptional()
   order_status?: OrderStatus;
 
-  @ApiProperty({ example: 'HOME_DELIVERY', enum: OrderShipMethod, description: 'Phương thức vận chuyển' })
+  @ApiProperty({ 
+    example: 'PICK_UP', 
+    enum: OrderShipMethod, 
+    description: 'Phương thức vận chuyển. Nếu là PICK_UP thì trạng thái sẽ tự động là COMPLETED' 
+  })
   @IsEnum(OrderShipMethod, { message: 'ship_method phải là "HOME_DELIVERY" hoặc "PICK_UP"' })
   @IsOptional()
-  ship_method?: OrderShipMethod;
+  ship_method?: OrderShipMethod;  
 }

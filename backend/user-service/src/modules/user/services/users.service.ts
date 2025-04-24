@@ -14,7 +14,7 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService implements IUserService {
-  constructor(
+  constructor( 
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
