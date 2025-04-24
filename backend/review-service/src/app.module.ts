@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ReviewModule } from './modules/reviews/review.module';
-import { ReviewImgModule} from './modules/review_img/review_img.module';
+import { ReviewImgModule } from './modules/review_img/review_img.module';
+import { ReviewReplyModule } from './modules/review-replies/review_replies.module';
 
 @Module({
   imports: [
@@ -23,7 +24,9 @@ import { ReviewImgModule} from './modules/review_img/review_img.module';
         synchronize: true, // Tạo bảng tự động (chỉ nên dùng trong phát triển)
       }),
     }),
-    ReviewModule, ReviewImgModule,
+    ReviewModule,
+    ReviewImgModule,
+    ReviewReplyModule,
   ],
 })
 export class AppModule {}

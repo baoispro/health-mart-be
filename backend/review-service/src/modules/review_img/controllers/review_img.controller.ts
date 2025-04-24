@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ReviewImgService } from '../services/review_img.service';
 import { ReviewImage } from '../entities/review_img.entity';

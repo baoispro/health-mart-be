@@ -2,4 +2,5 @@
 export class UpdateReviewRequest {
   rating?: number;
   comment?: string;
+  isHidden?: boolean;
 }

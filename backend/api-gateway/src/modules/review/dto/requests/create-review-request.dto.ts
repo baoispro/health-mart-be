@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateReviewRequest {
   @ApiProperty({ example: 1, description: 'ID người dùng' })
@@ -19,8 +27,16 @@ export class CreateReviewRequest {
   @Max(5, { message: 'rating phải từ 1 đến 5' })
   rating: number;
 
-  @ApiProperty({ example: 'Sản phẩm rất tốt!', description: 'Nội dung đánh giá', required: false })
+  @ApiProperty({
+    example: 'Sản phẩm rất tốt!',
+    description: 'Nội dung đánh giá',
+    required: false,
+  })
   @IsOptional()
   @IsString({ message: 'comment phải là chuỗi ký tự' })
   comment?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isHidden?: boolean = false;
 }

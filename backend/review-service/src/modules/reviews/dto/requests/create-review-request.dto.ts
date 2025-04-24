@@ -4,4 +4,5 @@ export class CreateReviewRequest {
   userId: number;
   rating: number;
   comment?: string;
+  isHidden?: boolean = false;
 }

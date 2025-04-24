@@ -1,5 +1,11 @@
 // src/modules/reviews/entities/review_img.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('review_img')
@@ -13,6 +19,6 @@ export class ReviewImage {
   @ManyToOne(() => Review, (review) => review.images, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'reviewId'})
+  @JoinColumn({ name: 'reviewId' })
   review: Review;
 }

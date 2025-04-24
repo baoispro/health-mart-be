@@ -1,6 +1,12 @@
-// src/modules/reviews/entities/review.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
-import { ReviewImage } from '../../review_img/entities/review_img.entity';
+import { ReviewReply } from 'src/modules/review-replies/entities/review-replies.entity';
+import { ReviewImage } from 'src/modules/review_img/entities/review_img.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity('reviews')
 export class Review {
@@ -13,17 +19,21 @@ export class Review {
   @Column()
   userId: number;
 
-  @Column('int')
+  @Column({ type: 'int' })
   rating: number;
 
-  @Column('text')
+  @Column({ type: 'text' })
   comment: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @Column()
+  isHidden: boolean;
+
+  @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => ReviewImage, (reviewImage) => reviewImage.review, {
-    cascade: true,
-  })
+  @OneToMany(() => ReviewImage, (image) => image.review, { cascade: true })
   images: ReviewImage[];
+
+  @OneToMany(() => ReviewReply, (reply) => reply.review, { cascade: true })
+  replies: ReviewReply[];
 }
