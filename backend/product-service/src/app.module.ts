@@ -9,6 +9,7 @@ import { PrecationsModule } from './modules/precautions/precautions.module';
 import { UsagesModule } from './modules/usages/usages.module';
 import { DosagesModule } from './modules/dosages/dosages.module';
 import { StoragesModule } from './modules/storages/storages.module';
+import { CategoriesModule } from './modules/categories/catrgories.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { StoragesModule } from './modules/storages/storages.module';
     UsagesModule,
     DosagesModule,
     StoragesModule,
+    CategoriesModule,
   ],
 })
 export class AppModule {}

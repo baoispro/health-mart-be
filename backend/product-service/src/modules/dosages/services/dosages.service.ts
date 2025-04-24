@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { DosagesServiceInterface } from '../interfaces/dosages.service.interface';
 import { RpcException } from '@nestjs/microservices';
-import { Product } from '../entities/product.entity';
 import { CreateDosageRequest } from '../dto/requests/create-dosages-request.dto';
 import { Dosage } from '../entities/dosage.entity';
 import { UpdateDosagesRequest } from '../dto/requests/update-dosages-request.dto';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 @Injectable()
 export class DosagesService implements DosagesServiceInterface {

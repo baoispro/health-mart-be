@@ -2,12 +2,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  OneToOne,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import {Order} from '../../orders/entities/orders.entity';
+import { Order } from '../../orders/entities/orders.entity';
 
 @Entity('order_items')
 export class OrderItem {

@@ -6,8 +6,14 @@ import {
   Body,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ProductsService } from '../services/products.service';
 import { CreateProductRequest } from '../dto/requests/create-product-request.dto';
 import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
@@ -23,7 +29,16 @@ import { CreateDosageRequest } from '../dto/requests/create-dosage-request.dto';
 import { UpdateDosageRequest } from '../dto/requests/update-dosage-request.dto';
 import { CreateStorageRequest } from '../dto/requests/create-storage-request.dto';
 import { UpdateStorageRequest } from '../dto/requests/update-storage-request.dto';
+import { CreatePharmacyStockRequest } from '../dto/requests/create-pharmacystock-request.dto';
+import { UpdatePharmacyStockRequest } from '../dto/requests/update-pharmacystock-request.dto';
+import { CreateSideEffectRequest } from '../dto/requests/create-sideEffect-request.dto';
+import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-request.dto';
+import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
+import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
+import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 @Controller('product')
 @ApiTags('Product')
 export class ProductsController {
@@ -41,6 +56,38 @@ export class ProductsController {
     return this.productService.getAllProducts();
   }
 
+  @Get('/categories')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả danh mục' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách danh mục',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách tất cả danh mục thành công')
+  getAllCategories() {
+    return this.productService.getAllCategories();
+  }
+
+  @Get('/pharmacy-stocks')
+  @ApiOperation({ summary: 'Lấy danh sách tồn kho nhà thuốc' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy danh sách tồn kho thành công')
+  getAllPharmacyStocks() {
+    return this.productService.getAllPharmacyStocks();
+  }
+
+  @Get('side-effects')
+  @ApiOperation({ summary: 'Lấy tất cả tác dụng phụ' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách tác dụng phụ',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy tất cả tác dụng phụ thành công')
+  layTatCaTacDungPhu() {
+    return this.productService.getAllSideEffects();
+  }
+
   @Get('/dosages')
   @ApiOperation({ summary: 'Lấy danh sách tất cả cách dùng' })
   @ApiResponse({
@@ -51,6 +98,20 @@ export class ProductsController {
   @ResponseMessage('Lấy danh sách tất cả cách dùng thành công')
   getAllDosages() {
     return this.productService.getAllDosages();
+  }
+
+  @Get('/precautions')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả lưu ý' })
+  @ResponseMessage('Lấy danh sách lưu ý thành công')
+  getAllPrecautions() {
+    return this.productService.getAllPrecautions();
+  }
+
+  @Get('/ingredients')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả nguyên liệu' })
+  @ResponseMessage('Lấy danh sách nguyên liệu thành công')
+  getAllIngredients() {
+    return this.productService.getAllIngredients();
   }
 
   @Get('/usages')
@@ -77,6 +138,33 @@ export class ProductsController {
     return this.productService.getAllStorages();
   }
 
+  @Get('/category/:id')
+  @ApiOperation({ summary: 'Lấy thông tin danh mục theo ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin danh mục',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy thông tin danh mục thành công')
+  getCategoryById(@Param('id') id: number) {
+    return this.productService.getCategoryById(id);
+  }
+
+  @Get('/ingredients/:id')
+  @ApiOperation({ summary: 'Lấy thông tin nguyên liệu theo ID' })
+  @ResponseMessage('Lấy thông tin nguyên liệu thành công')
+  getIngredientById(@Param('id') id: number) {
+    return this.productService.getIngredientById(id);
+  }
+
+  @Get('pharmacy-stocks/:pharmacyId')
+  @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo nhà thuốc thành công')
+  getStockByPharmacy(@Param('pharmacyId') pharmacyId: number) {
+    return this.productService.getStockByPharmacy(pharmacyId);
+  }
+
   @Get('/dosages/:id')
   @ApiOperation({ summary: 'Lấy danh sách cách dùng theo id' })
   @ApiResponse({
@@ -87,6 +175,13 @@ export class ProductsController {
   @ResponseMessage('Lấy danh sách cách dùng thành công')
   getDosageById(@Param('id') id: number) {
     return this.productService.getDosagesById(id);
+  }
+
+  @Get('/precautions/:id')
+  @ApiOperation({ summary: 'Lấy thông tin lưu ý theo ID' })
+  @ResponseMessage('Lấy thông tin lưu ý thành công')
+  getPrecautionById(@Param('id') id: number) {
+    return this.productService.getPrecautionById(id);
   }
 
   @Get('/usages/:id')
@@ -111,6 +206,37 @@ export class ProductsController {
   @ResponseMessage('Lấy danh sách cách bảo quản thành công')
   getStorageById(@Param('id') id: number) {
     return this.productService.getStorageById(id);
+  }
+
+  @Get(':productId/pharmacy-stocks')
+  @ApiOperation({ summary: 'Lấy tồn kho theo sản phẩm' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo sản phẩm thành công')
+  getStockByProduct(@Param('productId') productId: number) {
+    return this.productService.getStockByProduct(productId);
+  }
+
+  @Get(':productId/side-effects')
+  @ApiOperation({ summary: 'Lấy tác dụng phụ theo sản phẩm' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách tác dụng phụ theo sản phẩm',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy tác dụng phụ theo sản phẩm thành công')
+  layTacDungPhuTheoSanPham(@Param('productId') productId: number) {
+    return this.productService.getSideEffectsByProduct(productId);
+  }
+
+  @Get(':productId/pharmacy-stocks/:pharmacyId')
+  @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc + sản phẩm' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo nhà thuốc và sản phẩm thành công')
+  getPharmacyStockById(
+    @Param('pharmacyId') pharmacyId: number,
+    @Param('productId') productId: number,
+  ) {
+    return this.productService.getPharmacyStockById(pharmacyId, productId);
   }
 
   @Get(':id/dosages')
@@ -161,6 +287,40 @@ export class ProductsController {
     return this.productService.getProductById(id);
   }
 
+  @Post('/precautions')
+  @ApiOperation({ summary: 'Tạo lưu ý mới' })
+  @ResponseMessage('Tạo lưu ý thành công')
+  createPrecaution(@Body() createRequest: CreatePrecautionRequest) {
+    return this.productService.createPrecaution(createRequest);
+  }
+
+  @Post('/pharmacy-stocks')
+  @ApiOperation({ summary: 'Tạo mới tồn kho nhà thuốc' })
+  @ApiResponse({ status: 201, type: BaseResponseDto })
+  @ResponseMessage('Tạo tồn kho thành công')
+  createPharmacyStock(@Body() createRequest: CreatePharmacyStockRequest) {
+    return this.productService.createPharmacyStock(createRequest);
+  }
+
+  @Post('/side-effects')
+  @ApiOperation({ summary: 'Tạo tác dụng phụ mới' })
+  @ApiResponse({
+    status: 201,
+    description: 'Tạo mới tác dụng phụ thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tạo tác dụng phụ thành công')
+  taoTacDungPhu(@Body() createRequest: CreateSideEffectRequest) {
+    return this.productService.createSideEffect(createRequest);
+  }
+
+  @Post('/ingredients')
+  @ApiOperation({ summary: 'Tạo nguyên liệu mới' })
+  @ResponseMessage('Tạo nguyên liệu thành công')
+  createIngredient(@Body() createRequest: CreateIngredientRequest) {
+    return this.productService.createIngredient(createRequest);
+  }
+
   @Post('/dosages')
   @ApiOperation({ summary: 'Tạo mới một cách dùng' })
   @ApiResponse({
@@ -185,6 +345,18 @@ export class ProductsController {
     return this.productService.createUsage(createUsageRequest);
   }
 
+  @Post('/category')
+  @ApiOperation({ summary: 'Tạo mới một danh mục' })
+  @ApiResponse({
+    status: 201,
+    description: 'Danh mục được tạo thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tạo danh mục thành công.')
+  createCategory(@Body() createCategoryRequest: CreateCategoryRequest) {
+    return this.productService.createCategory(createCategoryRequest);
+  }
+
   @Post('/storages')
   @ApiOperation({ summary: 'Tạo mới một cách bảo quản' })
   @ApiResponse({
@@ -207,6 +379,57 @@ export class ProductsController {
   @ResponseMessage('Tạo sản phẩm thành công.')
   createProduct(@Body() createProductRequest: CreateProductRequest) {
     return this.productService.createProduct(createProductRequest);
+  }
+
+  @Put(':productId/pharmacy-stocks/:pharmacyId')
+  @ApiOperation({ summary: 'Cập nhật thông tin tồn kho' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Cập nhật tồn kho thành công')
+  updatePharmacyStock(
+    @Param('pharmacyId') pharmacyId: number,
+    @Param('productId') productId: number,
+    @Body() updateRequest: UpdatePharmacyStockRequest,
+  ) {
+    return this.productService.updatePharmacyStock(
+      pharmacyId,
+      productId,
+      updateRequest,
+    );
+  }
+
+  @Put('/precautions/:id')
+  @ApiOperation({ summary: 'Cập nhật lưu ý' })
+  @ResponseMessage('Cập nhật lưu ý thành công')
+  updatePrecaution(
+    @Param('id') id: number,
+    @Body() updateRequest: UpdatePrecautionRequest,
+  ) {
+    return this.productService.updatePrecaution(id, updateRequest);
+  }
+
+  @Put('/ingredients/:id')
+  @ApiOperation({ summary: 'Cập nhật nguyên liệu' })
+  @ResponseMessage('Cập nhật nguyên liệu thành công')
+  updateIngredient(
+    @Param('id') id: number,
+    @Body() updateRequest: UpdateIngredientRequest,
+  ) {
+    return this.productService.updateIngredient(id, updateRequest);
+  }
+
+  @Put('/category/:id')
+  @ApiOperation({ summary: 'Cập nhật thông tin danh mục' })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Cập nhật danh mục thành công.')
+  updateCategory(
+    @Param('id') id: number,
+    @Body() updateCategoryRequest: UpdateCategoryRequest,
+  ) {
+    return this.productService.updateCategory(id, updateCategoryRequest);
   }
 
   @Put('/dosages/:id')
@@ -254,6 +477,21 @@ export class ProductsController {
     return this.productService.updateStorage(id, updateStorageRequest);
   }
 
+  @Put('/side-effects/:id')
+  @ApiOperation({ summary: 'Cập nhật tác dụng phụ' })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật tác dụng phụ thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Cập nhật tác dụng phụ thành công')
+  capNhatTacDungPhu(
+    @Param('id') id: number,
+    @Body() updateRequest: UpdateSideEffectRequest,
+  ) {
+    return this.productService.updateSideEffect(id, updateRequest);
+  }
+
   @Put(':id')
   @ApiOperation({ summary: 'Cập nhật thông tin sản phẩm' })
   @ApiResponse({
@@ -266,7 +504,6 @@ export class ProductsController {
     @Param('id') id: number,
     @Body() updateProductRequest: UpdateProductRequest,
   ) {
-    // Bắt buộc đảm bảo có categoryId
     return this.productService.updateProduct(id, updateProductRequest);
   }
 
@@ -306,6 +543,55 @@ export class ProductsController {
     return this.productService.deleteStorage(id);
   }
 
+  @Delete('/precautions/:id')
+  @ApiOperation({ summary: 'Xóa lưu ý' })
+  @ResponseMessage('Xóa lưu ý thành công')
+  deletePrecaution(@Param('id') id: number) {
+    return this.productService.deletePrecaution(id);
+  }
+
+  @Delete('/category/:id')
+  @ApiOperation({ summary: 'Xóa danh mục' })
+  @ApiResponse({
+    status: 200,
+    description: 'Xóa thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Xóa danh mục thành công.')
+  deleteCategory(@Param('id') id: number) {
+    return this.productService.deleteCategory(id);
+  }
+
+  @Delete('/side-effects/:id')
+  @ApiOperation({ summary: 'Xóa tác dụng phụ' })
+  @ApiResponse({
+    status: 200,
+    description: 'Xóa tác dụng phụ thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Xóa tác dụng phụ thành công')
+  xoaTacDungPhu(@Param('id') id: number) {
+    return this.productService.deleteSideEffect(id);
+  }
+
+  @Delete('/ingredients/:id')
+  @ApiOperation({ summary: 'Xóa nguyên liệu' })
+  @ResponseMessage('Xóa nguyên liệu thành công')
+  deleteIngredient(@Param('id') id: number) {
+    return this.productService.deleteIngredient(id);
+  }
+
+  @Delete(':productId/pharmacy-stocks/:pharmacyId')
+  @ApiOperation({ summary: 'Xóa tồn kho' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Xóa tồn kho thành công')
+  deletePharmacyStock(
+    @Param('pharmacyId') pharmacyId: number,
+    @Param('productId') productId: number,
+  ) {
+    return this.productService.deletePharmacyStock(pharmacyId, productId);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Xóa sản phẩm' })
   @ApiResponse({
@@ -316,83 +602,5 @@ export class ProductsController {
   @ResponseMessage('Xóa sản phẩm thành công.')
   deleteProduct(@Param('id') id: number) {
     return this.productService.deleteProduct(id);
-  }
-
-  // ----- Ingredient APIs -----
-  @Get('/ingredients')
-  @ApiOperation({ summary: 'Lấy danh sách tất cả nguyên liệu' })
-  @ResponseMessage('Lấy danh sách nguyên liệu thành công')
-  getAllIngredients() {
-    return this.productService.getAllIngredients();
-  }
-
-  @Get('/ingredients/:id')
-  @ApiOperation({ summary: 'Lấy thông tin nguyên liệu theo ID' })
-  @ResponseMessage('Lấy thông tin nguyên liệu thành công')
-  getIngredientById(@Param('id') id: number) {
-    return this.productService.getIngredientById(id);
-  }
-
-  @Post('/ingredients')
-  @ApiOperation({ summary: 'Tạo nguyên liệu mới' })
-  @ResponseMessage('Tạo nguyên liệu thành công')
-  createIngredient(@Body() createRequest: CreateIngredientRequest) {
-    return this.productService.createIngredient(createRequest);
-  }
-
-  @Put('/ingredients/:id')
-  @ApiOperation({ summary: 'Cập nhật nguyên liệu' })
-  @ResponseMessage('Cập nhật nguyên liệu thành công')
-  updateIngredient(
-    @Param('id') id: number,
-    @Body() updateRequest: UpdateIngredientRequest,
-  ) {
-    return this.productService.updateIngredient(id, updateRequest);
-  }
-
-  @Delete('/ingredients/:id')
-  @ApiOperation({ summary: 'Xóa nguyên liệu' })
-  @ResponseMessage('Xóa nguyên liệu thành công')
-  deleteIngredient(@Param('id') id: number) {
-    return this.productService.deleteIngredient(id);
-  }
-
-  // ----- Precaution APIs -----
-  @Get('/precautions')
-  @ApiOperation({ summary: 'Lấy danh sách tất cả lưu ý' })
-  @ResponseMessage('Lấy danh sách lưu ý thành công')
-  getAllPrecautions() {
-    return this.productService.getAllPrecautions();
-  }
-
-  @Get('/precautions/:id')
-  @ApiOperation({ summary: 'Lấy thông tin lưu ý theo ID' })
-  @ResponseMessage('Lấy thông tin lưu ý thành công')
-  getPrecautionById(@Param('id') id: number) {
-    return this.productService.getPrecautionById(id);
-  }
-
-  @Post('/precautions')
-  @ApiOperation({ summary: 'Tạo lưu ý mới' })
-  @ResponseMessage('Tạo lưu ý thành công')
-  createPrecaution(@Body() createRequest: CreatePrecautionRequest) {
-    return this.productService.createPrecaution(createRequest);
-  }
-
-  @Put('/precautions/:id')
-  @ApiOperation({ summary: 'Cập nhật lưu ý' })
-  @ResponseMessage('Cập nhật lưu ý thành công')
-  updatePrecaution(
-    @Param('id') id: number,
-    @Body() updateRequest: UpdatePrecautionRequest,
-  ) {
-    return this.productService.updatePrecaution(id, updateRequest);
-  }
-
-  @Delete('/precautions/:id')
-  @ApiOperation({ summary: 'Xóa lưu ý' })
-  @ResponseMessage('Xóa lưu ý thành công')
-  deletePrecaution(@Param('id') id: number) {
-    return this.productService.deletePrecaution(id);
   }
 }

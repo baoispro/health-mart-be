@@ -41,7 +41,10 @@ export class Order {
   @CreateDateColumn()
   created_at: Date;
 
-  @OneToOne(() => OrderShippingAddress, (shippingAddress) => shippingAddress.order)
+  @OneToOne(
+    () => OrderShippingAddress,
+    (shippingAddress) => shippingAddress.order,
+  )
   shippingAddress: OrderShippingAddress;
 
   @OneToMany(() => OrderItem, (items) => items.order)

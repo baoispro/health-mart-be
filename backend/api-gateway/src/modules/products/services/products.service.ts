@@ -15,6 +15,12 @@ import { CreateIngredientRequest } from '../dto/requests/create-ingredients-requ
 import { UpdateIngredientRequest } from '../dto/requests/update-ingredients-request.dto';
 import { CreatePrecautionRequest } from '../dto/requests/create-precaution-request.dto';
 import { UpdatePrecautionRequest } from '../dto/requests/update-precaution-request.dto';
+import { CreatePharmacyStockRequest } from '../dto/requests/create-pharmacystock-request.dto';
+import { UpdatePharmacyStockRequest } from '../dto/requests/update-pharmacystock-request.dto';
+import { CreateSideEffectRequest } from '../dto/requests/create-sideEffect-request.dto';
+import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-request.dto';
+import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
+import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
 
 @Injectable()
 export class ProductsService {
@@ -225,5 +231,113 @@ export class ProductsService {
 
   deleteStorage(id: number) {
     return this.productClient.send('delete_storage', id).pipe(this.handleError);
+  }
+
+  getAllPharmacyStocks() {
+    return this.productClient
+      .send('get_all_pharmacy_stocks', {})
+      .pipe(this.handleError);
+  }
+
+  getPharmacyStockById(pharmacyId: number, productId: number) {
+    return this.productClient
+      .send('get_pharmacy_stock_by_id', { pharmacyId, productId })
+      .pipe(this.handleError);
+  }
+
+  createPharmacyStock(createRequest: CreatePharmacyStockRequest) {
+    return this.productClient
+      .send('create_pharmacy_stock', createRequest)
+      .pipe(this.handleError);
+  }
+
+  updatePharmacyStock(
+    pharmacyId: number,
+    productId: number,
+    updateRequest: UpdatePharmacyStockRequest,
+  ) {
+    return this.productClient
+      .send('update_pharmacy_stock', { pharmacyId, productId, updateRequest })
+      .pipe(this.handleError);
+  }
+
+  deletePharmacyStock(pharmacyId: number, productId: number) {
+    return this.productClient
+      .send('delete_pharmacy_stock', { pharmacyId, productId })
+      .pipe(this.handleError);
+  }
+
+  getStockByPharmacy(pharmacyId: number) {
+    return this.productClient
+      .send('get_stock_by_pharmacy', pharmacyId)
+      .pipe(this.handleError);
+  }
+
+  getStockByProduct(productId: number) {
+    return this.productClient
+      .send('get_stock_by_product', productId)
+      .pipe(this.handleError);
+  }
+
+  getAllSideEffects() {
+    return this.productClient
+      .send('get_all_side_effects', {})
+      .pipe(this.handleError);
+  }
+
+  getSideEffectsByProduct(productId: number) {
+    return this.productClient
+      .send('get_side_effects_by_product', productId)
+      .pipe(this.handleError);
+  }
+
+  createSideEffect(createRequest: CreateSideEffectRequest) {
+    return this.productClient
+      .send('create_side_effect', createRequest)
+      .pipe(this.handleError);
+  }
+
+  updateSideEffect(id: number, updateRequest: UpdateSideEffectRequest) {
+    return this.productClient
+      .send('update_side_effect', { id, updateRequest })
+      .pipe(this.handleError);
+  }
+
+  deleteSideEffect(id: number) {
+    return this.productClient
+      .send('delete_side_effect', id)
+      .pipe(this.handleError);
+  }
+
+  getAllCategories() {
+    return this.productClient
+      .send('get_all_categories', {})
+      .pipe(this.handleError);
+  }
+
+  getCategoryById(id: number) {
+    return this.productClient
+      .send('get_category_by_id', id)
+      .pipe(this.handleError);
+  }
+
+  createCategory(createCategoryRequest: CreateCategoryRequest) {
+    const payload = instanceToPlain(createCategoryRequest);
+    return this.productClient
+      .send('create_category', payload)
+      .pipe(this.handleError);
+  }
+
+  updateCategory(id: number, updateCategoryRequest: UpdateCategoryRequest) {
+    const payload = instanceToPlain(updateCategoryRequest);
+    return this.productClient
+      .send('update_category', { id, updateCategoryRequest: payload })
+      .pipe(this.handleError);
+  }
+
+  deleteCategory(id: number) {
+    return this.productClient
+      .send('delete_category', id)
+      .pipe(this.handleError);
   }
 }

@@ -11,6 +11,10 @@ import { CreateReviewRequest } from '../dto/requests/create-review-request.dto';
 import { UpdateReviewRequest } from '../dto/requests/update-review-request.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 import { BaseResponseDto } from '../../order/dto/responses/base-response.dto';
+import { UpdateReviewReplyRequest } from '../dto/requests/update-review-reply-request.dto';
+import { CreateReviewReplyRequest } from '../dto/requests/create-review-reply-request.dto';
+import { CreateReviewImgRequest } from '../dto/requests/create-reviewimg-request.dto';
+import { UpdateReviewImgRequest } from '../dto/requests/update-reviewimg-request.dto';
 
 @ApiTags('Review')
 @Controller('review')
@@ -116,5 +120,121 @@ export class ReviewController {
   @ResponseMessage('Lấy đánh giá theo rating thành công')
   async getReviewByRating(@Param('rating') rating: number) {
     return this.reviewService.getRating(rating);
+  }
+
+  // Lấy tất cả phản hồi
+  @Get('/reply')
+  @ApiOperation({ summary: 'Lấy tất cả phản hồi' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách phản hồi',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách phản hồi thành công')
+  async getAllReplies() {
+    return this.reviewService.findAllReplies();
+  }
+
+  // Lấy phản hồi theo ID
+  @Get('/reply/:id')
+  @ApiOperation({ summary: 'Lấy phản hồi theo ID' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Chi tiết phản hồi',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy phản hồi thành công')
+  async getReplyById(@Param('id') id: number) {
+    return this.reviewService.findReplyById(id);
+  }
+
+  // Tạo phản hồi mới
+  @Post('/reply')
+  @ApiOperation({ summary: 'Tạo mới phản hồi cho đánh giá' })
+  @ApiBody({ type: CreateReviewReplyRequest })
+  @ApiResponse({
+    status: 201,
+    description: 'Tạo phản hồi thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tạo phản hồi thành công')
+  async createReply(@Body() createDto: CreateReviewReplyRequest) {
+    return this.reviewService.createReply(createDto);
+  }
+
+  // Cập nhật phản hồi
+  @Put('/reply/:id')
+  @ApiOperation({ summary: 'Cập nhật phản hồi' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiBody({ type: UpdateReviewReplyRequest })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật phản hồi thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Cập nhật phản hồi thành công')
+  async updateReply(
+    @Param('id') id: number,
+    @Body() updateDto: UpdateReviewReplyRequest,
+  ) {
+    return this.reviewService.updateReply(id, updateDto);
+  }
+
+  // ===== REVIEW IMAGE =====
+
+  @Get('/image')
+  @ApiOperation({ summary: 'Lấy tất cả ảnh đánh giá' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách ảnh đánh giá',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy tất cả ảnh đánh giá thành công')
+  async getAllReviewImages() {
+    return this.reviewService.findAllImages();
+  }
+
+  @Post('/image')
+  @ApiOperation({ summary: 'Tạo ảnh đánh giá mới' })
+  @ApiBody({ type: CreateReviewImgRequest })
+  @ApiResponse({
+    status: 201,
+    description: 'Tạo ảnh đánh giá thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tạo ảnh đánh giá thành công')
+  async createReviewImage(@Body() createDto: CreateReviewImgRequest) {
+    return this.reviewService.createImage(createDto);
+  }
+
+  @Get('/image/:id')
+  @ApiOperation({ summary: 'Lấy ảnh đánh giá theo ID' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Chi tiết ảnh đánh giá',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy ảnh đánh giá thành công')
+  async getReviewImageById(@Param('id') id: number) {
+    return this.reviewService.findImageById(id);
+  }
+
+  @Put('/image/:id')
+  @ApiOperation({ summary: 'Cập nhật ảnh đánh giá' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiBody({ type: UpdateReviewImgRequest })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật ảnh đánh giá thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Cập nhật ảnh đánh giá thành công')
+  async updateReviewImage(
+    @Param('id') id: number,
+    @Body() updateDto: UpdateReviewImgRequest,
+  ) {
+    return this.reviewService.updateImage(id, updateDto);
   }
 }

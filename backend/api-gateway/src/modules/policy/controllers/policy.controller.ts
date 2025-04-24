@@ -6,16 +6,25 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PoliciesService } from '../services/policies.service';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 import { BaseResponseDto } from 'src/modules/user/dto/responses/base-response.dto';
 import { UpdatePolicyRequest } from '../dto/request/update-policy-request.dto';
 import { CreatePolicyRequest } from '../dto/request/create-policy-request.dto';
+import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 
 @Controller('policies')
 @ApiTags('Policies')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 export class PoliciesController {
   constructor(private readonly policiesService: PoliciesService) {}
 

@@ -25,19 +25,23 @@ export class ProductsController {
 
   @MessagePattern('update_product')
   async updateProduct(
-    @Payload() payload: { id: number; updateProductRequest: UpdateProductRequest },
+    @Payload()
+    payload: {
+      id: number;
+      updateProductRequest: UpdateProductRequest;
+    },
   ) {
     const { id, updateProductRequest } = payload;
     return this.productService.update(id, updateProductRequest);
   }
 
-  @MessagePattern('delete_product' )
+  @MessagePattern('delete_product')
   async deleteProduct(@Payload() id: number) {
     return this.productService.remove(id);
   }
 
   @MessagePattern('check_product_exist')
-  async checkProductExists(@Payload() product_id: number ) {
+  async checkProductExists(@Payload() product_id: number) {
     return this.productService.checkProductExist(product_id);
   }
 
