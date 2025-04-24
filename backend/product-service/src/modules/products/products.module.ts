@@ -3,14 +3,15 @@ import { ProductsController } from './controllers/products.controller';
 import { ProductsService } from './services/products.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Category } from './entities/category.entity';
 import { Ingredient } from '../ingredients/entities/ingredient.entity';
-import { Usage } from './entities/usage.entity';
-import { Dosage } from './entities/dosage.entity';
+
 import { SideEffect } from '../side_effect/entities/side_effect.entity';
 import { Precaution } from '../precautions/entities/precaution.entity';
-import { Storage as StorageEntity } from './entities/storage.entity';
 import { PharmacyStock } from '../pharmacy_stock/entities/pharmacy_stock.entity';
+import { Category } from '../categories/entities/category.entity';
+import { Usage } from '../usages/entities/usage.entity';
+import { Dosage } from '../dosages/entities/dosage.entity';
+import { Storage } from '../storages/entities/storage.entity';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { PharmacyStock } from '../pharmacy_stock/entities/pharmacy_stock.entity'
       Dosage,
       SideEffect,
       Precaution,
-      StorageEntity,
+      Storage,
       PharmacyStock,
     ]),
   ],

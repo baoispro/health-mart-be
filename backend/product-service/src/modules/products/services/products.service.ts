@@ -10,7 +10,7 @@ import { ProductService } from '../interfaces/products.service.interface';
 import { CreateProductRequest } from '../dto/requests/create-product-request.dto';
 import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
 import { RpcException } from '@nestjs/microservices';
-import { Category } from '../entities/category.entity';
+import { Category } from '../../categories/entities/category.entity';
 
 @Injectable()
 export class ProductsService implements ProductService {
@@ -132,5 +132,12 @@ export class ProductsService implements ProductService {
       return null;
     }
     return product;
+  }
+
+  async checkIfExistsL(product_id: number): Promise<boolean> {
+    const product = await this.productRepository.findOne({
+      where: { product_id },
+    });
+    return !!product;
   }
 }

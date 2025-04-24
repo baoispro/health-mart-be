@@ -34,6 +34,8 @@ import { UpdatePharmacyStockRequest } from '../dto/requests/update-pharmacystock
 import { CreateSideEffectRequest } from '../dto/requests/create-sideEffect-request.dto';
 import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-request.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
+import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
+import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('access-token')
@@ -52,6 +54,18 @@ export class ProductsController {
   @ResponseMessage('Lấy danh sách tất cả sản phẩm thành công')
   getAllProducts() {
     return this.productService.getAllProducts();
+  }
+
+  @Get('/categories')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả danh mục' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách danh mục',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách tất cả danh mục thành công')
+  getAllCategories() {
+    return this.productService.getAllCategories();
   }
 
   @Get('/pharmacy-stocks')
@@ -124,16 +138,16 @@ export class ProductsController {
     return this.productService.getAllStorages();
   }
 
-  @Get(':productId/side-effects')
-  @ApiOperation({ summary: 'Lấy tác dụng phụ theo sản phẩm' })
+  @Get('/category/:id')
+  @ApiOperation({ summary: 'Lấy thông tin danh mục theo ID' })
   @ApiResponse({
     status: 200,
-    description: 'Danh sách tác dụng phụ theo sản phẩm',
+    description: 'Thông tin danh mục',
     type: BaseResponseDto,
   })
-  @ResponseMessage('Lấy tác dụng phụ theo sản phẩm thành công')
-  layTacDungPhuTheoSanPham(@Param('productId') productId: number) {
-    return this.productService.getSideEffectsByProduct(productId);
+  @ResponseMessage('Lấy thông tin danh mục thành công')
+  getCategoryById(@Param('id') id: number) {
+    return this.productService.getCategoryById(id);
   }
 
   @Get('/ingredients/:id')
@@ -149,25 +163,6 @@ export class ProductsController {
   @ResponseMessage('Lấy tồn kho theo nhà thuốc thành công')
   getStockByPharmacy(@Param('pharmacyId') pharmacyId: number) {
     return this.productService.getStockByPharmacy(pharmacyId);
-  }
-
-  @Get(':productId/pharmacy-stocks')
-  @ApiOperation({ summary: 'Lấy tồn kho theo sản phẩm' })
-  @ApiResponse({ status: 200, type: BaseResponseDto })
-  @ResponseMessage('Lấy tồn kho theo sản phẩm thành công')
-  getStockByProduct(@Param('productId') productId: number) {
-    return this.productService.getStockByProduct(productId);
-  }
-
-  @Get(':productId/pharmacy-stocks/:pharmacyId')
-  @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc + sản phẩm' })
-  @ApiResponse({ status: 200, type: BaseResponseDto })
-  @ResponseMessage('Lấy tồn kho theo nhà thuốc và sản phẩm thành công')
-  getPharmacyStockById(
-    @Param('pharmacyId') pharmacyId: number,
-    @Param('productId') productId: number,
-  ) {
-    return this.productService.getPharmacyStockById(pharmacyId, productId);
   }
 
   @Get('/dosages/:id')
@@ -211,6 +206,37 @@ export class ProductsController {
   @ResponseMessage('Lấy danh sách cách bảo quản thành công')
   getStorageById(@Param('id') id: number) {
     return this.productService.getStorageById(id);
+  }
+
+  @Get(':productId/pharmacy-stocks')
+  @ApiOperation({ summary: 'Lấy tồn kho theo sản phẩm' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo sản phẩm thành công')
+  getStockByProduct(@Param('productId') productId: number) {
+    return this.productService.getStockByProduct(productId);
+  }
+
+  @Get(':productId/side-effects')
+  @ApiOperation({ summary: 'Lấy tác dụng phụ theo sản phẩm' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách tác dụng phụ theo sản phẩm',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy tác dụng phụ theo sản phẩm thành công')
+  layTacDungPhuTheoSanPham(@Param('productId') productId: number) {
+    return this.productService.getSideEffectsByProduct(productId);
+  }
+
+  @Get(':productId/pharmacy-stocks/:pharmacyId')
+  @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc + sản phẩm' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo nhà thuốc và sản phẩm thành công')
+  getPharmacyStockById(
+    @Param('pharmacyId') pharmacyId: number,
+    @Param('productId') productId: number,
+  ) {
+    return this.productService.getPharmacyStockById(pharmacyId, productId);
   }
 
   @Get(':id/dosages')
@@ -319,6 +345,18 @@ export class ProductsController {
     return this.productService.createUsage(createUsageRequest);
   }
 
+  @Post('/category')
+  @ApiOperation({ summary: 'Tạo mới một danh mục' })
+  @ApiResponse({
+    status: 201,
+    description: 'Danh mục được tạo thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tạo danh mục thành công.')
+  createCategory(@Body() createCategoryRequest: CreateCategoryRequest) {
+    return this.productService.createCategory(createCategoryRequest);
+  }
+
   @Post('/storages')
   @ApiOperation({ summary: 'Tạo mới một cách bảo quản' })
   @ApiResponse({
@@ -377,6 +415,21 @@ export class ProductsController {
     @Body() updateRequest: UpdateIngredientRequest,
   ) {
     return this.productService.updateIngredient(id, updateRequest);
+  }
+
+  @Put('/category/:id')
+  @ApiOperation({ summary: 'Cập nhật thông tin danh mục' })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Cập nhật danh mục thành công.')
+  updateCategory(
+    @Param('id') id: number,
+    @Body() updateCategoryRequest: UpdateCategoryRequest,
+  ) {
+    return this.productService.updateCategory(id, updateCategoryRequest);
   }
 
   @Put('/dosages/:id')
@@ -495,6 +548,18 @@ export class ProductsController {
   @ResponseMessage('Xóa lưu ý thành công')
   deletePrecaution(@Param('id') id: number) {
     return this.productService.deletePrecaution(id);
+  }
+
+  @Delete('/category/:id')
+  @ApiOperation({ summary: 'Xóa danh mục' })
+  @ApiResponse({
+    status: 200,
+    description: 'Xóa thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Xóa danh mục thành công.')
+  deleteCategory(@Param('id') id: number) {
+    return this.productService.deleteCategory(id);
   }
 
   @Delete('/side-effects/:id')

@@ -19,6 +19,8 @@ import { CreatePharmacyStockRequest } from '../dto/requests/create-pharmacystock
 import { UpdatePharmacyStockRequest } from '../dto/requests/update-pharmacystock-request.dto';
 import { CreateSideEffectRequest } from '../dto/requests/create-sideEffect-request.dto';
 import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-request.dto';
+import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
+import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
 
 @Injectable()
 export class ProductsService {
@@ -304,6 +306,38 @@ export class ProductsService {
   deleteSideEffect(id: number) {
     return this.productClient
       .send('delete_side_effect', id)
+      .pipe(this.handleError);
+  }
+
+  getAllCategories() {
+    return this.productClient
+      .send('get_all_categories', {})
+      .pipe(this.handleError);
+  }
+
+  getCategoryById(id: number) {
+    return this.productClient
+      .send('get_category_by_id', id)
+      .pipe(this.handleError);
+  }
+
+  createCategory(createCategoryRequest: CreateCategoryRequest) {
+    const payload = instanceToPlain(createCategoryRequest);
+    return this.productClient
+      .send('create_category', payload)
+      .pipe(this.handleError);
+  }
+
+  updateCategory(id: number, updateCategoryRequest: UpdateCategoryRequest) {
+    const payload = instanceToPlain(updateCategoryRequest);
+    return this.productClient
+      .send('update_category', { id, updateCategoryRequest: payload })
+      .pipe(this.handleError);
+  }
+
+  deleteCategory(id: number) {
+    return this.productClient
+      .send('delete_category', id)
       .pipe(this.handleError);
   }
 }
