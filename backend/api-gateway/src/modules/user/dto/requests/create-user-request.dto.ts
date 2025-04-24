@@ -5,12 +5,15 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsString,
   Matches,
 } from 'class-validator';
 
 export class CreateUserRequest {
   @ApiProperty({ example: 'https://example.com/avatar.png' })
-  avatar?: string;
+  @IsString({ message: 'avatar phải là chuỗi' })
+  @IsOptional()
+  avatar?: string = 'https://example.com/avatar.png';
   @ApiProperty({ example: 'Nguyen Van A' })
   @IsNotEmpty({ message: 'Tên không được để trống' })
   fullName: string;

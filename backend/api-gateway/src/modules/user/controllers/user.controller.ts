@@ -56,7 +56,7 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
-  @Post('register')
+  @Post('/register')
   @ApiOperation({ summary: 'Đăng ký tài khoản' })
   @ApiResponse({
     status: 201,
