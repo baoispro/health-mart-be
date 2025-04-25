@@ -5,9 +5,13 @@ import { ProductsModule } from './modules/products/products.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PolicyModule } from './modules/policy/policies.module';
 import { ReviewModule } from './modules/review/review.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // RẤT QUAN TRỌNG
+    }),
     UserModule,
     OrderModule,
     ProductsModule,

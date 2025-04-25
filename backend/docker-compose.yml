@@ -1,0 +1,54 @@
+services:
+  # RabbitMQ service (đã có sẵn image trên Docker Hub)
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"      # Cổng giao tiếp giữa services
+      - "15672:15672"    # Cổng giao diện web của RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  api-gateway:
+    build: ./api-gateway
+    command: yarn start:dev
+    ports:
+      - "3001:3001"
+    depends_on:
+      - rabbitmq
+
+  user-service:
+    build: ./user-service
+    command: yarn start:dev
+    depends_on:
+      - rabbitmq
+
+  auth-service:
+    build: ./auth-service
+    command: yarn start:dev
+    depends_on:
+      - rabbitmq
+
+  order-service:
+      build: ./order-service
+      command: yarn start:dev
+      depends_on:
+        - rabbitmq
+
+  policy-service:
+      build: ./policy-service
+      command: yarn start:dev
+      depends_on:
+        - rabbitmq
+
+  product-service:
+      build: ./product-service
+      command: yarn start:dev
+      depends_on:
+        - rabbitmq
+
+  review-service:
+      build: ./review-service
+      command: yarn start:dev
+      depends_on:
+        - rabbitmq
