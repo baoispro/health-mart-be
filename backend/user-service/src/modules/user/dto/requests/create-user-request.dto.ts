@@ -7,4 +7,5 @@ export class CreateUserRequest {
   phone: string;
   password: string;
   role?: Role;
+  avatarFile?: Express.Multer.File; // nếu có file upload
 }
