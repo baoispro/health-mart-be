@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Get, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Put,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -15,6 +24,7 @@ import { UpdateReviewReplyRequest } from '../dto/requests/update-review-reply-re
 import { CreateReviewReplyRequest } from '../dto/requests/create-review-reply-request.dto';
 import { CreateReviewImgRequest } from '../dto/requests/create-reviewimg-request.dto';
 import { UpdateReviewImgRequest } from '../dto/requests/update-reviewimg-request.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Review')
 @Controller('review')
@@ -196,6 +206,7 @@ export class ReviewController {
   }
 
   @Post('/image')
+  @UseInterceptors(FileInterceptor('image_url'))
   @ApiOperation({ summary: 'Tạo ảnh đánh giá mới' })
   @ApiBody({ type: CreateReviewImgRequest })
   @ApiResponse({
@@ -204,8 +215,21 @@ export class ReviewController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo ảnh đánh giá thành công')
-  async createReviewImage(@Body() createDto: CreateReviewImgRequest) {
-    return this.reviewService.createImage(createDto);
+  async createReviewImage(
+    @Body() createDto: CreateReviewImgRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const payload = {
+      ...createDto,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.reviewService.createImage(payload);
   }
 
   @Get('/image/:id')

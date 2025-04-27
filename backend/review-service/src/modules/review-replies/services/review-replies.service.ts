@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from '../../reviews/entities/review.entity';
@@ -50,6 +55,23 @@ export class ReviewReplyService {
     if (!review) {
       throw new RpcException(
         new NotFoundException(`Review ${data.reviewId} không tồn tại`),
+      );
+    }
+
+    // Kiểm tra đã tồn tại reply với reviewId và staffId chưa
+    const existingReply = await this.reviewReplyRepository.findOne({
+      where: {
+        review: { id: data.reviewId },
+        staffId: data.staffId,
+      },
+      relations: ['review'], // cần nếu review là quan hệ
+    });
+
+    if (existingReply) {
+      throw new RpcException(
+        new ConflictException(
+          `Reply của staff ${data.staffId} cho review ${data.reviewId} đã tồn tại`,
+        ),
       );
     }
 
