@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from '../entities/review.entity';
@@ -22,7 +27,7 @@ export class ReviewService {
   }
 
   async findAll(): Promise<Review[]> {
-    return this.reviewRepository.find();
+    return this.reviewRepository.find({ relations: ['images', 'replies'] });
   }
 
   async createReview(reviewData: Partial<Review>): Promise<Review> {
@@ -50,6 +55,20 @@ export class ReviewService {
       );
     }
 
+    const existingReview = await this.reviewRepository.findOne({
+      where: {
+        userId: user_id,
+        productId: product_id,
+      },
+    });
+
+    if (existingReview) {
+      throw new RpcException(
+        new ConflictException(
+          `User ${user_id} đã review sản phẩm ${product_id} rồi.`,
+        ),
+      );
+    }
     // Tạo review mới
     const newReview = this.reviewRepository.create({
       ...reviewData,
