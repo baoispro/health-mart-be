@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -22,6 +24,7 @@ import { BaseResponseDto } from '../dto/responses/base-response.dto';
 import { UpdateAddressDto } from '../dto/requests/update-address-request.dto';
 import { CreateAddressDto } from '../dto/requests/create-address-request.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 @ApiTags('User')
@@ -57,6 +60,7 @@ export class UserController {
   }
 
   @Post('/register')
+  @UseInterceptors(FileInterceptor('avatar'))
   @ApiOperation({ summary: 'Đăng ký tài khoản' })
   @ApiResponse({
     status: 201,
@@ -64,8 +68,21 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Đăng ký tài khoản thành công.')
-  createUser(@Body() createUserRequest: CreateUserRequest) {
-    return this.userService.createUser(createUserRequest);
+  createUser(
+    @Body() createUserRequest: CreateUserRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const payload = {
+      ...createUserRequest,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.userService.createUser(payload);
   }
 
   @Put(':id')
