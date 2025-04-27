@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateProductRequest {
   @ApiProperty({ example: 'Paracetamol 500mg', description: 'Tên sản phẩm' })
@@ -87,6 +87,6 @@ export class CreateProductRequest {
   })
   @Expose()
   @IsString()
-  @IsNotEmpty({ message: 'Ảnh sản phẩm không được để trống' })
-  image_url: string;
+  @IsOptional()
+  image_url?: string = 'https://example.com/avatar.png';
 }

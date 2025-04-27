@@ -11,5 +11,6 @@ export class CreateProductRequest {
   registration_number: string;
   description_html: string;
   slug: string;
-  image_url: string;
+  image_url?: string;
+  avatarFile?: Express.Multer.File; // nếu có file upload
 }
