@@ -3,7 +3,6 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, throwError } from 'rxjs';
 import { instanceToPlain } from 'class-transformer';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
-import { CreateProductRequest } from '../dto/requests/create-product-request.dto';
 import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
 import { CreateUsageRequest } from '../dto/requests/create-usage-request.dto';
 import { UpdateUsageRequest } from '../dto/requests/update-usage-request.dto';
@@ -46,8 +45,7 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
-  createProduct(createProductRequest: CreateProductRequest) {
-    const payload = instanceToPlain(createProductRequest);
+  createProduct(payload: any) {
     return this.productClient
       .send('create_product', payload)
       .pipe(this.handleError);

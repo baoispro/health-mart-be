@@ -7,6 +7,8 @@ import {
   Put,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -36,6 +38,7 @@ import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-reque
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
 import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('access-token')
@@ -370,6 +373,7 @@ export class ProductsController {
   }
 
   @Post()
+  @UseInterceptors(FileInterceptor('image_url'))
   @ApiOperation({ summary: 'Tạo mới một sản phẩm' })
   @ApiResponse({
     status: 201,
@@ -377,8 +381,21 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo sản phẩm thành công.')
-  createProduct(@Body() createProductRequest: CreateProductRequest) {
-    return this.productService.createProduct(createProductRequest);
+  createProduct(
+    @Body() createProductRequest: CreateProductRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const payload = {
+      ...createProductRequest,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.productService.createProduct(payload);
   }
 
   @Put(':productId/pharmacy-stocks/:pharmacyId')

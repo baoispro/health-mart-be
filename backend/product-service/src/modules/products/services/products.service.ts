@@ -11,15 +11,26 @@ import { CreateProductRequest } from '../dto/requests/create-product-request.dto
 import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
 import { RpcException } from '@nestjs/microservices';
 import { Category } from '../../categories/entities/category.entity';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ProductsService implements ProductService {
+  private s3: S3Client;
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
-  ) {}
+  ) {
+    this.s3 = new S3Client({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      },
+    });
+  }
 
   async create(createProductRequest: CreateProductRequest): Promise<Product> {
     const { category_id, ...productData } = createProductRequest;
@@ -42,6 +53,14 @@ export class ProductsService implements ProductService {
         new ConflictException('Slug sản phẩm đã tồn tại!'),
       );
     }
+
+    // Nếu có avatarFile thì upload lên S3
+    let avatarUrl = productData.image_url ?? 'https://example.com/avatar.png'; // default
+    if (productData.avatarFile) {
+      avatarUrl = await this.uploadToS3(productData.avatarFile); // bạn cần viết hàm này
+    }
+
+    productData.image_url = avatarUrl;
 
     const newProduct = this.productRepository.create({
       ...productData,
@@ -145,5 +164,22 @@ export class ProductsService implements ProductService {
       );
     }
     return product.price;
+  }
+
+  async uploadToS3(file: any): Promise<string> {
+    const bucket = process.env.AWS_BUCKET_NAME;
+    const fileName = `avatars/${uuidv4()}_${file.originalname}`;
+    const buffer = Buffer.from(file.buffer);
+
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: fileName,
+      Body: buffer,
+      ContentType: file.mimetype,
+    });
+
+    await this.s3.send(command);
+
+    return `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
   }
 }
