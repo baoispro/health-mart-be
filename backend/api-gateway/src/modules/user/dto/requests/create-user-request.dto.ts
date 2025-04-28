@@ -11,6 +11,7 @@ import {
 
 export class CreateUserRequest {
   @ApiProperty({ example: 'https://example.com/avatar.png' })
+  @ApiProperty({ type: 'string', format: 'binary' }) 
   @IsString({ message: 'avatar phải là chuỗi' })
   @IsOptional()
   avatar?: string = 'https://example.com/avatar.png';

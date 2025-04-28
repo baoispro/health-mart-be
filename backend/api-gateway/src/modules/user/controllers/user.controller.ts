@@ -25,6 +25,7 @@ import { UpdateAddressDto } from '../dto/requests/update-address-request.dto';
 import { CreateAddressDto } from '../dto/requests/create-address-request.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes } from '@nestjs/swagger';
 
 @Controller('user')
 @ApiTags('User')
@@ -61,6 +62,7 @@ export class UserController {
 
   @Post('/register')
   @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Đăng ký tài khoản' })
   @ApiResponse({
     status: 201,
@@ -76,10 +78,10 @@ export class UserController {
       ...createUserRequest,
       avatarFile: file
         ? {
-            originalname: file.originalname,
-            mimetype: file.mimetype,
-            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
-          }
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+        }
         : null,
     };
     return this.userService.createUser(payload);
@@ -95,11 +97,26 @@ export class UserController {
   @ResponseMessage('Cập nhật người dùng thành công.')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
   updateUser(
     @Param('id') id: number,
     @Body() updateUserRequest: UpdateUserRequest,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.updateUser(id, updateUserRequest);
+
+    const payload = {
+      ...updateUserRequest,
+      avatarFile: file
+        ? {
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          buffer: Array.from(file.buffer),
+        }
+        : null,
+    };
+
+    return this.userService.updateUser(id, payload);
   }
 
   @Delete(':id')

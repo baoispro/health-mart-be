@@ -50,7 +50,7 @@ export class UsersService implements IUserService {
     // Nếu có avatarFile thì upload lên S3
     let avatarUrl = rest.avatar ?? 'https://example.com/avatar.png'; // default
     if (avatarFile) {
-      avatarUrl = await this.uploadToS3(avatarFile); // bạn cần viết hàm này
+      avatarUrl = await this.uploadToS3(avatarFile);
     }
 
     const newUser = this.userRepository.create({
@@ -61,7 +61,6 @@ export class UsersService implements IUserService {
       avatar: avatarUrl,
     });
 
-    // không cần ép kiểu nữa, vì create trả về entity đúng kiểu
     return await this.userRepository.save(newUser);
   }
 
@@ -94,25 +93,47 @@ export class UsersService implements IUserService {
     id: number,
     updateUserRequest: UpdateUserRequest,
   ): Promise<User> {
+  
     const user = await this.findOne(id);
-    const { email, phone } = updateUserRequest;
-
+  
+    const { email, phone, avatarFile, ...rest } = updateUserRequest;
+  
     if (email || phone) {
+      console.log('Checking for duplicate email or phone...');
       const existingUser = await this.userRepository.findOne({
         where: [
           email ? { email, id: Not(id) } : null,
           phone ? { phone, id: Not(id) } : null,
         ].filter(Boolean),
       });
-
+  
       if (existingUser) {
+        console.log('Duplicate found:', existingUser);
         throw new RpcException(
           new ConflictException('Email hoặc số điện thoại đã tồn tại!'),
         );
       }
     }
-    Object.assign(user, updateUserRequest);
-    return await this.userRepository.save(user);
+  
+    if (avatarFile) {
+      const avatarUrl = await this.uploadToS3(avatarFile);
+      user.avatar = avatarUrl; 
+    } else if (rest.avatar === 'undefined') {
+      rest.avatar = user.avatar; 
+    }
+  
+    if (email) {
+      user.email = email;
+    }
+    if (phone) {
+      user.phone = phone;
+    }
+  
+    Object.assign(user, rest);
+  
+    const updatedUser = await this.userRepository.save(user);
+
+    return updatedUser;
   }
 
   async remove(id: number): Promise<DeleteResult> {
