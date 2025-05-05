@@ -139,7 +139,6 @@ export class OrderService {
   }
 
   async createOrderPromotion(promotionDto: CreateOrderPromotionRequest) {
-    console.log('Sending promotionDto:', promotionDto);
     return await firstValueFrom(
       this.orderClient
         .send({ cmd: 'create_order_promotions' }, promotionDto)

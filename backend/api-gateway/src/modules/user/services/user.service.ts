@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
-import { UpdateUserRequest } from '../dto/requests/update-user-request.dto';
 import { catchError, throwError } from 'rxjs';
 import { CreateAddressDto } from '../dto/requests/create-address-request.dto';
 import { UpdateAddressDto } from '../dto/requests/update-address-request.dto';
@@ -38,9 +37,9 @@ export class UserService {
       );
   }
 
-  updateUser(id: number, updateUserRequest: UpdateUserRequest) {
+  updateUser(id: number, payload: any) {
     return this.userClient
-      .send('update_user', { id, updateUserRequest })
+      .send('update_user', { id, payload })
       .pipe(
         catchError((error) =>
           throwError(() => new RpcException(error.response)),

@@ -40,8 +40,6 @@ import { CreateCategoryRequest } from '../dto/requests/create-category-requests.
 import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth('access-token')
 @Controller('product')
 @ApiTags('Product')
 export class ProductsController {
@@ -293,6 +291,8 @@ export class ProductsController {
   @Post('/precautions')
   @ApiOperation({ summary: 'Tạo lưu ý mới' })
   @ResponseMessage('Tạo lưu ý thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   createPrecaution(@Body() createRequest: CreatePrecautionRequest) {
     return this.productService.createPrecaution(createRequest);
   }
@@ -301,6 +301,9 @@ export class ProductsController {
   @ApiOperation({ summary: 'Tạo mới tồn kho nhà thuốc' })
   @ApiResponse({ status: 201, type: BaseResponseDto })
   @ResponseMessage('Tạo tồn kho thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiBearerAuth('access-token')
   createPharmacyStock(@Body() createRequest: CreatePharmacyStockRequest) {
     return this.productService.createPharmacyStock(createRequest);
   }
@@ -313,6 +316,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo tác dụng phụ thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   taoTacDungPhu(@Body() createRequest: CreateSideEffectRequest) {
     return this.productService.createSideEffect(createRequest);
   }
@@ -320,6 +325,8 @@ export class ProductsController {
   @Post('/ingredients')
   @ApiOperation({ summary: 'Tạo nguyên liệu mới' })
   @ResponseMessage('Tạo nguyên liệu thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   createIngredient(@Body() createRequest: CreateIngredientRequest) {
     return this.productService.createIngredient(createRequest);
   }
@@ -332,6 +339,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo cách dùng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   createDosage(@Body() createDosageRequest: CreateDosageRequest) {
     return this.productService.createDosage(createDosageRequest);
   }
@@ -344,11 +353,14 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo công dụng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   createUsage(@Body() createUsageRequest: CreateUsageRequest) {
     return this.productService.createUsage(createUsageRequest);
   }
 
   @Post('/category')
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({ summary: 'Tạo mới một danh mục' })
   @ApiResponse({
     status: 201,
@@ -356,8 +368,23 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo danh mục thành công.')
-  createCategory(@Body() createCategoryRequest: CreateCategoryRequest) {
-    return this.productService.createCategory(createCategoryRequest);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  createCategory(
+    @Body() createCategoryRequest: CreateCategoryRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const payload = {
+      ...createCategoryRequest,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.productService.createCategory(payload);
   }
 
   @Post('/storages')
@@ -368,6 +395,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo cách bảo quản thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   createStorage(@Body() createStorageRequest: CreateStorageRequest) {
     return this.productService.createStorage(createStorageRequest);
   }
@@ -381,6 +410,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Tạo sản phẩm thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   createProduct(
     @Body() createProductRequest: CreateProductRequest,
     @UploadedFile() file: Express.Multer.File,
@@ -402,6 +433,8 @@ export class ProductsController {
   @ApiOperation({ summary: 'Cập nhật thông tin tồn kho' })
   @ApiResponse({ status: 200, type: BaseResponseDto })
   @ResponseMessage('Cập nhật tồn kho thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updatePharmacyStock(
     @Param('pharmacyId') pharmacyId: number,
     @Param('productId') productId: number,
@@ -417,6 +450,8 @@ export class ProductsController {
   @Put('/precautions/:id')
   @ApiOperation({ summary: 'Cập nhật lưu ý' })
   @ResponseMessage('Cập nhật lưu ý thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updatePrecaution(
     @Param('id') id: number,
     @Body() updateRequest: UpdatePrecautionRequest,
@@ -427,6 +462,8 @@ export class ProductsController {
   @Put('/ingredients/:id')
   @ApiOperation({ summary: 'Cập nhật nguyên liệu' })
   @ResponseMessage('Cập nhật nguyên liệu thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateIngredient(
     @Param('id') id: number,
     @Body() updateRequest: UpdateIngredientRequest,
@@ -442,11 +479,25 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật danh mục thành công.')
+  @UseInterceptors(FileInterceptor('image'))
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateCategory(
     @Param('id') id: number,
     @Body() updateCategoryRequest: UpdateCategoryRequest,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.productService.updateCategory(id, updateCategoryRequest);
+    const payload = {
+      ...updateCategoryRequest,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.productService.updateCategory(id, payload);
   }
 
   @Put('/dosages/:id')
@@ -457,6 +508,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật cách dùng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateDosage(
     @Param('id') id: number,
     @Body() updateDosageRequest: UpdateDosageRequest,
@@ -472,6 +525,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật công dụng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateUsage(
     @Param('id') id: number,
     @Body() updateUsageRequest: UpdateUsageRequest,
@@ -487,6 +542,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật cách bảo quản thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateStorage(
     @Param('id') id: number,
     @Body() updateStorageRequest: UpdateStorageRequest,
@@ -502,6 +559,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật tác dụng phụ thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   capNhatTacDungPhu(
     @Param('id') id: number,
     @Body() updateRequest: UpdateSideEffectRequest,
@@ -511,17 +570,31 @@ export class ProductsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Cập nhật thông tin sản phẩm' })
+  @UseInterceptors(FileInterceptor('image_url'))
   @ApiResponse({
     status: 200,
     description: 'Cập nhật thành công',
     type: BaseResponseDto,
   })
   @ResponseMessage('Cập nhật sản phẩm thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   updateProduct(
     @Param('id') id: number,
     @Body() updateProductRequest: UpdateProductRequest,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.productService.updateProduct(id, updateProductRequest);
+    const payload = {
+      ...updateProductRequest,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.productService.updateProduct(id, payload);
   }
 
   @Delete('/dosages/:id')
@@ -532,6 +605,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa cách dùng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteDosage(@Param('id') id: number) {
     return this.productService.deleteDosage(id);
   }
@@ -544,6 +619,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa công dụng thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteUsage(@Param('id') id: number) {
     return this.productService.deleteUsage(id);
   }
@@ -556,6 +633,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa cách bảo quản thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteStorage(@Param('id') id: number) {
     return this.productService.deleteStorage(id);
   }
@@ -563,6 +642,8 @@ export class ProductsController {
   @Delete('/precautions/:id')
   @ApiOperation({ summary: 'Xóa lưu ý' })
   @ResponseMessage('Xóa lưu ý thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deletePrecaution(@Param('id') id: number) {
     return this.productService.deletePrecaution(id);
   }
@@ -575,6 +656,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa danh mục thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteCategory(@Param('id') id: number) {
     return this.productService.deleteCategory(id);
   }
@@ -587,6 +670,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa tác dụng phụ thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   xoaTacDungPhu(@Param('id') id: number) {
     return this.productService.deleteSideEffect(id);
   }
@@ -594,6 +679,8 @@ export class ProductsController {
   @Delete('/ingredients/:id')
   @ApiOperation({ summary: 'Xóa nguyên liệu' })
   @ResponseMessage('Xóa nguyên liệu thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteIngredient(@Param('id') id: number) {
     return this.productService.deleteIngredient(id);
   }
@@ -602,6 +689,8 @@ export class ProductsController {
   @ApiOperation({ summary: 'Xóa tồn kho' })
   @ApiResponse({ status: 200, type: BaseResponseDto })
   @ResponseMessage('Xóa tồn kho thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deletePharmacyStock(
     @Param('pharmacyId') pharmacyId: number,
     @Param('productId') productId: number,
@@ -617,6 +706,8 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Xóa sản phẩm thành công.')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   deleteProduct(@Param('id') id: number) {
     return this.productService.deleteProduct(id);
   }

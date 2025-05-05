@@ -66,9 +66,6 @@ export class ProductsService implements ProductService {
       ...productData,
       category,
     });
-
-    console.log('New Product to save:', newProduct); // THÊM DÒNG NÀY
-
     return await this.productRepository.save(newProduct);
   }
 
@@ -124,7 +121,16 @@ export class ProductsService implements ProductService {
 
     // Loại bỏ categoryId tránh ghi đè
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { categoryId, ...rest } = updateProductRequest;
+    const { categoryId, avatarFile, ...rest } = updateProductRequest;
+
+    // Nếu có avatarFile thì upload lên S3
+    let avatarUrl = rest.image_url ?? 'https://example.com/avatar.png'; // default
+    if (avatarFile) {
+      avatarUrl = await this.uploadToS3(avatarFile); // bạn cần viết hàm này
+    }
+
+    rest.image_url = avatarUrl;
+
     Object.assign(product, rest);
 
     await this.productRepository.save(product);

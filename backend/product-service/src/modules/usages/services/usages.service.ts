@@ -34,9 +34,6 @@ export class UsagesService implements UsagesServiceInterface {
       ...usageData,
       product,
     });
-
-    console.log('New Product to save:', newUsage); // THÊM DÒNG NÀY
-
     return await this.usageRepository.save(newUsage);
   }
 
@@ -95,14 +92,6 @@ export class UsagesService implements UsagesServiceInterface {
         );
       }
       usage.product = product;
-
-      console.log('Product to save:', usage.product); // THÊM DÒNG NÀY
-
-      console.log('Product ID:', product.product_id); // THÊM DÒNG NÀY
-
-      console.log('Usage ID:', usage.usage_id); // THÊM DÒNG NÀY
-
-      console.log('Usage to save:', usage); // THÊM DÒNG NÀY
     }
     return await this.usageRepository.save({
       ...usage,

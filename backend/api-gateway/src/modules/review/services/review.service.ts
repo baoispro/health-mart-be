@@ -6,7 +6,6 @@ import { CreateReviewRequest } from '../dto/requests/create-review-request.dto';
 import { UpdateReviewRequest } from '../dto/requests/update-review-request.dto';
 import { CreateReviewReplyRequest } from '../dto/requests/create-review-reply-request.dto';
 import { UpdateReviewReplyRequest } from '../dto/requests/update-review-reply-request.dto';
-import { UpdateReviewImgRequest } from '../dto/requests/update-reviewimg-request.dto';
 
 @Injectable()
 export class ReviewService {
@@ -172,10 +171,10 @@ export class ReviewService {
     );
   }
 
-  async updateImage(id: number, updateData: UpdateReviewImgRequest) {
+  async updateImage(id: number, data: any) {
     return await firstValueFrom(
       this.reviewClient
-        .send({ cmd: 'reviewImg_update' }, { id, updateRequest: updateData })
+        .send({ cmd: 'reviewImg_update' }, { id, data })
         .pipe(this.handleError),
     );
   }

@@ -7,6 +7,7 @@ import { RpcException } from '@nestjs/microservices';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateReviewImgRequest } from '../dto/create-reviewimg-request.dto';
+import { UpdateReviewImgRequest } from '../dto/update-reviewimg-request.dto';
 
 @Injectable()
 export class ReviewImgService {
@@ -77,9 +78,17 @@ export class ReviewImgService {
 
   async updateReviewImg(
     id: number,
-    data: { img_url?: string },
+    data: UpdateReviewImgRequest,
   ): Promise<ReviewImage> {
     const image = await this.findOne(id);
+
+    // Nếu có avatarFile thì upload lên S3
+    let avatarUrl = data.img_url ?? 'https://example.com/avatar.png'; // default
+    if (data.avatarFile) {
+      avatarUrl = await this.uploadToS3(data.avatarFile); // bạn cần viết hàm này
+    }
+
+    data.img_url = avatarUrl; // cập nhật lại avatarUrl
 
     await this.reviewImgRepository.update(id, {
       ...image,

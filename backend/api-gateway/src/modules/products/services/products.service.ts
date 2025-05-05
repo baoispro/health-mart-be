@@ -3,7 +3,6 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, throwError } from 'rxjs';
 import { instanceToPlain } from 'class-transformer';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
-import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
 import { CreateUsageRequest } from '../dto/requests/create-usage-request.dto';
 import { UpdateUsageRequest } from '../dto/requests/update-usage-request.dto';
 import { CreateDosageRequest } from '../dto/requests/create-dosage-request.dto';
@@ -18,8 +17,6 @@ import { CreatePharmacyStockRequest } from '../dto/requests/create-pharmacystock
 import { UpdatePharmacyStockRequest } from '../dto/requests/update-pharmacystock-request.dto';
 import { CreateSideEffectRequest } from '../dto/requests/create-sideEffect-request.dto';
 import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-request.dto';
-import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
-import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
 
 @Injectable()
 export class ProductsService {
@@ -51,10 +48,9 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
-  updateProduct(id: number, updateProductRequest: UpdateProductRequest) {
-    const payload = instanceToPlain(updateProductRequest);
+  updateProduct(id: number, payload: any) {
     return this.productClient
-      .send('update_product', { id, updateProductRequest: payload })
+      .send('update_product', { id, payload })
       .pipe(this.handleError);
   }
 
@@ -319,17 +315,15 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
-  createCategory(createCategoryRequest: CreateCategoryRequest) {
-    const payload = instanceToPlain(createCategoryRequest);
+  createCategory(payload: any) {
     return this.productClient
       .send('create_category', payload)
       .pipe(this.handleError);
   }
 
-  updateCategory(id: number, updateCategoryRequest: UpdateCategoryRequest) {
-    const payload = instanceToPlain(updateCategoryRequest);
+  updateCategory(id: number, payload: any) {
     return this.productClient
-      .send('update_category', { id, updateCategoryRequest: payload })
+      .send('update_category', { id, payload })
       .pipe(this.handleError);
   }
 

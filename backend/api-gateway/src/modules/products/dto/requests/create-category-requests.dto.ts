@@ -27,4 +27,9 @@ export class CreateCategoryRequest {
   @IsOptional()
   @IsNumber({}, { message: 'Parent ID phải là số' })
   parent_id?: number;
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  image?: string = 'https://example.com/avatar.png';
 }

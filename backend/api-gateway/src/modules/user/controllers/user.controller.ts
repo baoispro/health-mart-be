@@ -87,6 +87,7 @@ export class UserController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Cập nhật thông tin người dùng' })
+  @UseInterceptors(FileInterceptor('avatar'))
   @ApiResponse({
     status: 200,
     description: 'Cập nhật thành công',
@@ -98,8 +99,19 @@ export class UserController {
   updateUser(
     @Param('id') id: number,
     @Body() updateUserRequest: UpdateUserRequest,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.updateUser(id, updateUserRequest);
+    const payload = {
+      ...updateUserRequest,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.userService.updateUser(id, payload);
   }
 
   @Delete(':id')

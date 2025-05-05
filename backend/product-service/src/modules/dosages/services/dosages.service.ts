@@ -34,9 +34,6 @@ export class DosagesService implements DosagesServiceInterface {
       ...dosageData,
       product,
     });
-
-    console.log('New Product to save:', newDosage); // THÊM DÒNG NÀY
-
     return await this.dosageRepository.save(newDosage);
   }
 

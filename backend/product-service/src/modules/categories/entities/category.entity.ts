@@ -19,6 +19,9 @@ export class Category {
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   slug: string;
 
+  @Column({ nullable: true })
+  image: string;
+
   // Self-referencing: Many Categories can have 1 parent
   @ManyToOne(() => Category, (category) => category.children, {
     onDelete: 'CASCADE',

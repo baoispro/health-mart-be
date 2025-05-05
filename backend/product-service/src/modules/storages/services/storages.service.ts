@@ -34,9 +34,6 @@ export class StoragesService implements StoragesServiceInterface {
       ...storageData,
       product,
     });
-
-    console.log('New Product to save:', newStorage); // THÊM DÒNG NÀY
-
     return await this.storageRepository.save(newStorage);
   }
 

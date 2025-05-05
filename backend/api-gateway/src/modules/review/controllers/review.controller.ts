@@ -247,6 +247,7 @@ export class ReviewController {
 
   @Put('/image/:id')
   @ApiOperation({ summary: 'Cập nhật ảnh đánh giá' })
+  @UseInterceptors(FileInterceptor('image_url'))
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateReviewImgRequest })
   @ApiResponse({
@@ -258,7 +259,18 @@ export class ReviewController {
   async updateReviewImage(
     @Param('id') id: number,
     @Body() updateDto: UpdateReviewImgRequest,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.reviewService.updateImage(id, updateDto);
+    const payload = {
+      ...updateDto,
+      avatarFile: file
+        ? {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
+          }
+        : null,
+    };
+    return this.reviewService.updateImage(id, payload);
   }
 }

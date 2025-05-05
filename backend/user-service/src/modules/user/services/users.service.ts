@@ -95,7 +95,7 @@ export class UsersService implements IUserService {
     updateUserRequest: UpdateUserRequest,
   ): Promise<User> {
     const user = await this.findOne(id);
-    const { email, phone } = updateUserRequest;
+    const { email, phone, ...rest } = updateUserRequest;
 
     if (email || phone) {
       const existingUser = await this.userRepository.findOne({
@@ -111,6 +111,15 @@ export class UsersService implements IUserService {
         );
       }
     }
+
+    // Nếu có avatarFile thì upload lên S3
+    let avatarUrl = rest.avatar ?? 'https://example.com/avatar.png'; // default
+    if (rest.avatarFile) {
+      avatarUrl = await this.uploadToS3(rest.avatarFile); // bạn cần viết hàm này
+    }
+
+    rest.avatar = avatarUrl; // cập nhật avatarUrl nếu có
+
     Object.assign(user, updateUserRequest);
     return await this.userRepository.save(user);
   }
