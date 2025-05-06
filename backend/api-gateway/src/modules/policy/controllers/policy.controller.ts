@@ -23,8 +23,6 @@ import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 
 @Controller('policies')
 @ApiTags('Policies')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth('access-token')
 export class PoliciesController {
   constructor(private readonly policiesService: PoliciesService) {}
 
@@ -53,6 +51,8 @@ export class PoliciesController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Tạo mới một Chính sách' })
   @ApiResponse({
     status: 201,
@@ -65,6 +65,8 @@ export class PoliciesController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Cập nhật thông tin chính sách' })
   @ApiResponse({
     status: 200,
@@ -80,6 +82,8 @@ export class PoliciesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Xóa chính sách' })
   @ApiResponse({
     status: 200,
