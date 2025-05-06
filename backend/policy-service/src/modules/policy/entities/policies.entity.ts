@@ -8,7 +8,7 @@ export class Policy {
   @Column()
   title: string;
 
-  @Column()
+  @Column('text')
   content: string;
 
   @Column()
