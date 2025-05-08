@@ -32,28 +32,25 @@ export class PharmacyStockService implements IPharmacyStockService {
     }
     const newStock = this.pharmacyStockRepository.create({
       ...createRequest,
-      product,
     });
     return await this.pharmacyStockRepository.save(newStock);
   }
 
   async findAll(): Promise<PharmacyStock[]> {
-    return await this.pharmacyStockRepository.find({ relations: ['product'] });
+    return await this.pharmacyStockRepository.find();
   }
 
-  async findOne(pharmacyId: number, productId: number): Promise<PharmacyStock> {
+  async findOne(pharmacyId: number): Promise<PharmacyStock> {
     const stock = await this.pharmacyStockRepository.findOne({
       where: {
         pharmacy_id: pharmacyId,
-        product_id: productId,
       },
-      relations: ['product'],
     });
 
     if (!stock) {
       throw new RpcException(
         new NotFoundException(
-          `Không tìm thấy tồn kho cho nhà thuốc ${pharmacyId} và sản phẩm ${productId}`,
+          `Không tìm thấy tồn kho cho nhà thuốc ${pharmacyId}`,
         ),
       );
     }
@@ -64,7 +61,6 @@ export class PharmacyStockService implements IPharmacyStockService {
   async findByPharmacy(pharmacyId: number): Promise<PharmacyStock[]> {
     const stocks = await this.pharmacyStockRepository.find({
       where: { pharmacy_id: pharmacyId },
-      relations: ['product'],
     });
 
     if (stocks.length === 0) {
@@ -78,40 +74,20 @@ export class PharmacyStockService implements IPharmacyStockService {
     return stocks;
   }
 
-  async findByProduct(productId: number): Promise<PharmacyStock[]> {
-    const stocks = await this.pharmacyStockRepository.find({
-      where: { product_id: productId },
-      relations: ['product'],
-    });
-
-    if (stocks.length === 0) {
-      throw new RpcException(
-        new NotFoundException(
-          `Không tìm thấy tồn kho cho sản phẩm ${productId}`,
-        ),
-      );
-    }
-
-    return stocks;
-  }
-
   async update(
     pharmacyId: number,
-    productId: number,
     updateRequest: UpdatePharmacyStockRequest,
   ): Promise<PharmacyStock> {
     const stock = await this.pharmacyStockRepository.findOne({
       where: {
         pharmacy_id: pharmacyId,
-        product_id: productId,
       },
-      relations: ['product'],
     });
 
     if (!stock) {
       throw new RpcException(
         new NotFoundException(
-          `Không tìm thấy tồn kho cho nhà thuốc ${pharmacyId} và sản phẩm ${productId}`,
+          `Không tìm thấy tồn kho cho nhà thuốc ${pharmacyId}`,
         ),
       );
     }
@@ -121,15 +97,14 @@ export class PharmacyStockService implements IPharmacyStockService {
     return stock;
   }
 
-  async remove(pharmacyId: number, productId: number): Promise<DeleteResult> {
+  async remove(pharmacyId: number): Promise<DeleteResult> {
     const result = await this.pharmacyStockRepository.delete({
       pharmacy_id: pharmacyId,
-      product_id: productId,
     });
     if (result.affected === 0) {
       throw new RpcException(
         new NotFoundException(
-          `Không tìm thấy tồn kho với nhà thuốc ${pharmacyId} và sản phẩm ${productId}`,
+          `Không tìm thấy tồn kho với nhà thuốc ${pharmacyId}.`,
         ),
       );
     }

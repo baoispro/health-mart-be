@@ -39,6 +39,8 @@ import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
 import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdatePharmacyProductRequest } from '../dto/requests/update-pharmacyproduct-request.dto';
+import { CreatePharmacyProductRequest } from '../dto/requests/create-pharmacyproduct-request.dto';
 
 @Controller('product')
 @ApiTags('Product')
@@ -75,6 +77,14 @@ export class ProductsController {
   @ResponseMessage('Lấy danh sách tồn kho thành công')
   getAllPharmacyStocks() {
     return this.productService.getAllPharmacyStocks();
+  }
+
+  @Get('/pharmacy-products')
+  @ApiOperation({ summary: 'Lấy danh sách nhà thuốc và sản phẩm' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy danh sách nhà thuốc và sản phẩm thành công')
+  getAllPharmacyProducts() {
+    return this.productService.getAllPharmacyProducts();
   }
 
   @Get('side-effects')
@@ -209,14 +219,6 @@ export class ProductsController {
     return this.productService.getStorageById(id);
   }
 
-  @Get(':productId/pharmacy-stocks')
-  @ApiOperation({ summary: 'Lấy tồn kho theo sản phẩm' })
-  @ApiResponse({ status: 200, type: BaseResponseDto })
-  @ResponseMessage('Lấy tồn kho theo sản phẩm thành công')
-  getStockByProduct(@Param('productId') productId: number) {
-    return this.productService.getStockByProduct(productId);
-  }
-
   @Get(':productId/side-effects')
   @ApiOperation({ summary: 'Lấy tác dụng phụ theo sản phẩm' })
   @ApiResponse({
@@ -229,15 +231,28 @@ export class ProductsController {
     return this.productService.getSideEffectsByProduct(productId);
   }
 
-  @Get(':productId/pharmacy-stocks/:pharmacyId')
-  @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc + sản phẩm' })
+  @Get('/pharmacy-stocks/:pharmacyId')
+  @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc' })
   @ApiResponse({ status: 200, type: BaseResponseDto })
   @ResponseMessage('Lấy tồn kho theo nhà thuốc và sản phẩm thành công')
-  getPharmacyStockById(
-    @Param('pharmacyId') pharmacyId: number,
-    @Param('productId') productId: number,
-  ) {
-    return this.productService.getPharmacyStockById(pharmacyId, productId);
+  getPharmacyStockById(@Param('pharmacyId') pharmacyId: number) {
+    return this.productService.getPharmacyStockById(pharmacyId);
+  }
+
+  @Get('/pharmacy-products/:pharmacyId')
+  @ApiOperation({ summary: 'Lấy tồn kho và sản phẩm theo nhà thuốc' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo nhà thuốc và sản phẩm thành công')
+  getProductByPharmacyId(@Param('pharmacyId') pharmacyId: number) {
+    return this.productService.getProductByPharmacy(pharmacyId);
+  }
+
+  @Get(':productId/pharmacy-products')
+  @ApiOperation({ summary: 'Lấy tồn kho theo sản phẩm' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo sản phẩm thành công')
+  getStockByProduct(@Param('productId') productId: number) {
+    return this.productService.getPharmacyByProduct(productId);
   }
 
   @Get(':id/dosages')
@@ -262,6 +277,17 @@ export class ProductsController {
   @ResponseMessage('Lấy danh sách công dụng theo id sản phẩm thành công')
   getUsageByProductId(@Param('id') id: number) {
     return this.productService.getUsageByProductId(id);
+  }
+
+  @Get(':productId/pharmacy-product/:pharmacyId')
+  @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc + sản phẩm' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Lấy tồn kho theo nhà thuốc và sản phẩm thành công')
+  getPharmacyProductById(
+    @Param('pharmacyId') pharmacyId: number,
+    @Param('productId') productId: number,
+  ) {
+    return this.productService.getPharmacyProductById(pharmacyId, productId);
   }
 
   @Get(':id/storage')
@@ -306,6 +332,17 @@ export class ProductsController {
   @ApiBearerAuth('access-token')
   createPharmacyStock(@Body() createRequest: CreatePharmacyStockRequest) {
     return this.productService.createPharmacyStock(createRequest);
+  }
+
+  @Post('/pharmacy-products')
+  @ApiOperation({ summary: 'Tạo mới tồn kho nhà thuốc' })
+  @ApiResponse({ status: 201, type: BaseResponseDto })
+  @ResponseMessage('Tạo tồn kho thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiBearerAuth('access-token')
+  createPharmacyProduct(@Body() createRequest: CreatePharmacyProductRequest) {
+    return this.productService.createPharmacyProduct(createRequest);
   }
 
   @Post('/side-effects')
@@ -429,7 +466,7 @@ export class ProductsController {
     return this.productService.createProduct(payload);
   }
 
-  @Put(':productId/pharmacy-stocks/:pharmacyId')
+  @Put('/pharmacy-stocks/:pharmacyId')
   @ApiOperation({ summary: 'Cập nhật thông tin tồn kho' })
   @ApiResponse({ status: 200, type: BaseResponseDto })
   @ResponseMessage('Cập nhật tồn kho thành công')
@@ -437,10 +474,23 @@ export class ProductsController {
   @ApiBearerAuth('access-token')
   updatePharmacyStock(
     @Param('pharmacyId') pharmacyId: number,
-    @Param('productId') productId: number,
     @Body() updateRequest: UpdatePharmacyStockRequest,
   ) {
-    return this.productService.updatePharmacyStock(
+    return this.productService.updatePharmacyStock(pharmacyId, updateRequest);
+  }
+
+  @Put(':productId/pharmacy-product/:pharmacyId')
+  @ApiOperation({ summary: 'Cập nhật thông tin tồn kho' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Cập nhật tồn kho thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  updatePharmacyProduct(
+    @Param('pharmacyId') pharmacyId: number,
+    @Param('productId') productId: number,
+    @Body() updateRequest: UpdatePharmacyProductRequest,
+  ) {
+    return this.productService.updatePharmacyProduct(
       pharmacyId,
       productId,
       updateRequest,
@@ -691,11 +741,21 @@ export class ProductsController {
   @ResponseMessage('Xóa tồn kho thành công')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  deletePharmacyStock(
+  deletePharmacyStock(@Param('pharmacyId') pharmacyId: number) {
+    return this.productService.deletePharmacyStock(pharmacyId);
+  }
+
+  @Delete(':productId/pharmacy-products/:pharmacyId')
+  @ApiOperation({ summary: 'Xóa tồn kho' })
+  @ApiResponse({ status: 200, type: BaseResponseDto })
+  @ResponseMessage('Xóa tồn kho thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  deletePharmacyProduct(
     @Param('pharmacyId') pharmacyId: number,
     @Param('productId') productId: number,
   ) {
-    return this.productService.deletePharmacyStock(pharmacyId, productId);
+    return this.productService.deletePharmacyProduct(pharmacyId, productId);
   }
 
   @Delete(':id')

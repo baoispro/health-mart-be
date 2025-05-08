@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePharmacyStockRequest {
@@ -29,9 +29,4 @@ export class UpdatePharmacyStockRequest {
   @IsOptional()
   @IsString({ message: 'city phải là chuỗi' })
   city?: string;
-
-  @ApiProperty({ example: 100, description: 'Số lượng tồn kho' })
-  @IsOptional()
-  @IsNumber({}, { message: 'quantity phải là số' })
-  quantity?: number;
 }

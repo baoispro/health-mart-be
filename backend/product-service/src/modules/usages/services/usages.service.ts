@@ -5,8 +5,8 @@ import { UsagesServiceInterface } from '../interfaces/usages.service.interface';
 import { RpcException } from '@nestjs/microservices';
 import { Usage } from '../entities/usage.entity';
 import { CreateUsageRequest } from '../dto/requests/create-usages-request.dto';
-import { Product } from '../entities/product.entity';
 import { UpdateUsageRequest } from '../dto/requests/update-usages-request.dto';
+import { Product } from 'src/modules/products/entities/product.entity';
 
 @Injectable()
 export class UsagesService implements UsagesServiceInterface {

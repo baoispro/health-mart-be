@@ -7,12 +7,9 @@ export interface PharmacyStockService {
   create(createRequest: CreatePharmacyStockRequest): Promise<PharmacyStock>;
   findAll(): Promise<PharmacyStock[]>;
   findByPharmacy(pharmacyId: number): Promise<PharmacyStock[]>;
-  findByProduct(productId: number): Promise<PharmacyStock[]>;
-  findOne(pharmacyId: number, productId: number): Promise<PharmacyStock>;
   update(
     pharmacyId: number,
-    productId: number,
     updateRequest: UpdatePharmacyStockRequest,
   ): Promise<PharmacyStock>;
-  remove(pharmacyId: number, productId: number): Promise<DeleteResult>;
+  remove(pharmacyId: number): Promise<DeleteResult>;
 }

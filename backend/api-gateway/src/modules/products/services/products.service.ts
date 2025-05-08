@@ -17,6 +17,8 @@ import { CreatePharmacyStockRequest } from '../dto/requests/create-pharmacystock
 import { UpdatePharmacyStockRequest } from '../dto/requests/update-pharmacystock-request.dto';
 import { CreateSideEffectRequest } from '../dto/requests/create-sideEffect-request.dto';
 import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-request.dto';
+import { CreatePharmacyProductRequest } from '../dto/requests/create-pharmacyproduct-request.dto';
+import { UpdatePharmacyProductRequest } from '../dto/requests/update-pharmacyproduct-request.dto';
 
 @Injectable()
 export class ProductsService {
@@ -233,9 +235,9 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
-  getPharmacyStockById(pharmacyId: number, productId: number) {
+  getPharmacyStockById(pharmacyId: number) {
     return this.productClient
-      .send('get_pharmacy_stock_by_id', { pharmacyId, productId })
+      .send('get_pharmacy_stock_by_id', { pharmacyId })
       .pipe(this.handleError);
   }
 
@@ -247,29 +249,22 @@ export class ProductsService {
 
   updatePharmacyStock(
     pharmacyId: number,
-    productId: number,
     updateRequest: UpdatePharmacyStockRequest,
   ) {
     return this.productClient
-      .send('update_pharmacy_stock', { pharmacyId, productId, updateRequest })
+      .send('update_pharmacy_stock', { pharmacyId, updateRequest })
       .pipe(this.handleError);
   }
 
-  deletePharmacyStock(pharmacyId: number, productId: number) {
+  deletePharmacyStock(pharmacyId: number) {
     return this.productClient
-      .send('delete_pharmacy_stock', { pharmacyId, productId })
+      .send('delete_pharmacy_stock', { pharmacyId })
       .pipe(this.handleError);
   }
 
   getStockByPharmacy(pharmacyId: number) {
     return this.productClient
       .send('get_stock_by_pharmacy', pharmacyId)
-      .pipe(this.handleError);
-  }
-
-  getStockByProduct(productId: number) {
-    return this.productClient
-      .send('get_stock_by_product', productId)
       .pipe(this.handleError);
   }
 
@@ -330,6 +325,52 @@ export class ProductsService {
   deleteCategory(id: number) {
     return this.productClient
       .send('delete_category', id)
+      .pipe(this.handleError);
+  }
+
+  getAllPharmacyProducts() {
+    return this.productClient
+      .send('get_all_pharmacy_products', {})
+      .pipe(this.handleError);
+  }
+
+  getProductByPharmacy(pharmacyId: number) {
+    return this.productClient
+      .send('get_product_by_pharmacy', { pharmacyId })
+      .pipe(this.handleError);
+  }
+
+  createPharmacyProduct(createRequest: CreatePharmacyProductRequest) {
+    return this.productClient
+      .send('create_pharmacy_product', createRequest)
+      .pipe(this.handleError);
+  }
+
+  updatePharmacyProduct(
+    pharmacyId: number,
+    productId: number,
+    updateRequest: UpdatePharmacyProductRequest,
+  ) {
+    return this.productClient
+      .send('update_pharmacy_product', { pharmacyId, productId, updateRequest })
+      .pipe(this.handleError);
+  }
+
+  deletePharmacyProduct(pharmacyId: number, productId: number) {
+    return this.productClient
+      .send('delete_pharmacy_product', { pharmacyId, productId })
+      .pipe(this.handleError);
+  }
+
+  getPharmacyProductById(pharmacyId: number, productId: number) {
+    return this.productClient
+      .send('get_pharmacy_product_by_id', { pharmacyId, productId })
+      .pipe(this.handleError);
+  }
+
+  getPharmacyByProduct(productId: number) {
+    return this.productClient
+      .send('get_product_by_product', productId)
       .pipe(this.handleError);
   }
 }
