@@ -27,7 +27,7 @@ import { CategoriesModule } from './modules/categories/catrgories.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true, // Tự động load entity
-        synchronize: true, // Tạo bảng tự động (chỉ nên dùng trong phát triển)
+        synchronize: false, // Tạo bảng tự động (chỉ nên dùng trong phát triển)
       }),
     }),
     ProductsModule,

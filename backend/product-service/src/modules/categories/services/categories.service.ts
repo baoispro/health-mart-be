@@ -152,4 +152,12 @@ export class CategoriesService implements CategoryService {
 
     return `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
   }
+
+  async findRootCategories(): Promise<Category[]> {
+    return this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.children', 'children')
+      .where('category.parent IS NULL')
+      .getMany();
+  }
 }

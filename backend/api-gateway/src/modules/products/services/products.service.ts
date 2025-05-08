@@ -332,4 +332,10 @@ export class ProductsService {
       .send('delete_category', id)
       .pipe(this.handleError);
   }
+
+  findRootCategory() {
+    return this.productClient
+      .send('get_root_category', {})
+      .pipe(this.handleError);
+  }
 }
