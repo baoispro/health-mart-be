@@ -6,7 +6,6 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { PharmacyStock } from '../../pharmacy_stock/entities/pharmacy_stock.entity';
 import { Ingredient } from '../../ingredients/entities/ingredient.entity';
 import { SideEffect } from '../../side_effect/entities/side_effect.entity';
 import { Precaution } from '../../precautions/entities/precaution.entity';
@@ -15,6 +14,7 @@ import { Category } from '../../categories/entities/category.entity';
 import { Usage } from '../../usages/entities/usage.entity';
 import { Storage } from '../../storages/entities/storage.entity';
 import { Dosage } from '../../dosages/entities/dosage.entity';
+import { PharmacyProduct } from 'src/modules/pharmacy_product/entities/pharmacy_product.entity';
 
 @Entity('product')
 export class Product {
@@ -81,8 +81,11 @@ export class Product {
   @OneToMany(() => Storage, (storage) => storage.product)
   storages: Storage[];
 
-  @OneToMany(() => PharmacyStock, (pharmacyStock) => pharmacyStock.product)
-  pharmacyStock: PharmacyStock[];
+  @OneToMany(
+    () => PharmacyProduct,
+    (pharmacyProduct) => pharmacyProduct.product,
+  )
+  pharmacyProduct: PharmacyProduct[];
 
   @Expose()
   get safeIngredients(): Ingredient[] {
@@ -115,7 +118,7 @@ export class Product {
   }
 
   @Expose()
-  get safePharmacyStock(): PharmacyStock[] {
-    return this.pharmacyStock ?? [];
+  get safePharmacyProduct(): PharmacyProduct[] {
+    return this.pharmacyProduct ?? [];
   }
 }

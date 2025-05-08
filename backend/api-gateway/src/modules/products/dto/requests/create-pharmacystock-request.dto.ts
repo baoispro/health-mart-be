@@ -1,13 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import {
   IsInt,
-  IsNumber,
   IsPositive,
   IsString,
   IsNotEmpty,
   Length,
-  IsOptional,
 } from 'class-validator';
 
 export class CreatePharmacyStockRequest {
@@ -21,17 +19,6 @@ export class CreatePharmacyStockRequest {
   @IsPositive({ message: 'ID nhà thuốc phải là số dương' })
   @IsNotEmpty({ message: 'ID nhà thuốc không được để trống' })
   pharmacy_id: number;
-
-  @ApiProperty({
-    example: 1,
-    description: 'ID của sản phẩm',
-    required: true,
-  })
-  @Expose()
-  @IsInt({ message: 'ID sản phẩm phải là số nguyên' })
-  @IsPositive({ message: 'ID sản phẩm phải là số dương' })
-  @IsNotEmpty({ message: 'ID sản phẩm không được để trống' })
-  product_id: number;
 
   @ApiProperty({
     example: 'Paracetamol 500mg',
@@ -88,35 +75,23 @@ export class CreatePharmacyStockRequest {
   @Length(1, 100, { message: 'Tên thành phố phải từ 1 đến 100 ký tự' })
   city: string;
 
-  @ApiProperty({
-    example: 100,
-    description: 'Số lượng tồn kho',
-    minimum: 0,
-  })
-  @Expose()
-  @Type(() => Number)
-  @IsNumber({}, { message: 'Số lượng phải là số' })
-  @IsPositive({ message: 'Số lượng phải lớn hơn 0' })
-  @IsNotEmpty({ message: 'Số lượng không được để trống' })
-  quantity: number;
+  // @ApiProperty({
+  //   example: 'LOT2023-001',
+  //   description: 'Mã lô hàng',
+  //   required: false,
+  // })
+  // @Expose()
+  // @IsString({ message: 'Mã lô hàng phải là chuỗi' })
+  // @IsOptional()
+  // batch_number?: string;
 
-  @ApiProperty({
-    example: 'LOT2023-001',
-    description: 'Mã lô hàng',
-    required: false,
-  })
-  @Expose()
-  @IsString({ message: 'Mã lô hàng phải là chuỗi' })
-  @IsOptional()
-  batch_number?: string;
-
-  @ApiProperty({
-    example: '2023-12-31',
-    description: 'Ngày hết hạn',
-    required: false,
-  })
-  @Expose()
-  @IsString({ message: 'Ngày hết hạn phải là chuỗi' })
-  @IsOptional()
-  expiry_date?: string;
+  // @ApiProperty({
+  //   example: '2023-12-31',
+  //   description: 'Ngày hết hạn',
+  //   required: false,
+  // })
+  // @Expose()
+  // @IsString({ message: 'Ngày hết hạn phải là chuỗi' })
+  // @IsOptional()
+  // expiry_date?: string;
 }

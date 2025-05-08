@@ -20,21 +20,12 @@ export class PharmacyStockController {
     return this.pharmacyStockService.findByPharmacy(pharmacyId);
   }
 
-  // Lấy tồn kho theo productId
-  @MessagePattern('get_stock_by_product')
-  async getStockByProduct(@Payload() productId: number) {
-    return this.pharmacyStockService.findByProduct(productId);
-  }
-
   // Lấy tồn kho theo cả pharmacyId và productId
   @MessagePattern('get_pharmacy_stock_by_id')
   async getPharmacyStockById(
     @Payload() payload: { pharmacyId: number; productId: number },
   ) {
-    return this.pharmacyStockService.findOne(
-      payload.pharmacyId,
-      payload.productId,
-    );
+    return this.pharmacyStockService.findOne(payload.pharmacyId);
   }
 
   // Tạo mới tồn kho
@@ -57,7 +48,6 @@ export class PharmacyStockController {
   ) {
     return this.pharmacyStockService.update(
       payload.pharmacyId,
-      payload.productId,
       payload.updateRequest,
     );
   }
@@ -67,10 +57,7 @@ export class PharmacyStockController {
   async deletePharmacyStock(
     @Payload() payload: { pharmacyId: number; productId: number },
   ) {
-    return this.pharmacyStockService.remove(
-      payload.pharmacyId,
-      payload.productId,
-    );
+    return this.pharmacyStockService.remove(payload.pharmacyId);
   }
 
   // Kiểm tra tồn tại tồn kho theo pharmacyId

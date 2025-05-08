@@ -84,7 +84,7 @@ export class ProductsService implements ProductService {
         'precautions',
         'sideEffects',
         'storages',
-        'pharmacyStock',
+        'pharmacyProducts',
       ],
     });
     if (!product) {
@@ -98,7 +98,7 @@ export class ProductsService implements ProductService {
     product.sideEffects = product.sideEffects ?? [];
     product.precautions = product.precautions ?? [];
     product.storages = product.storages ?? [];
-    product.pharmacyStock = product.pharmacyStock ?? [];
+    product.pharmacyProduct = product.pharmacyProduct ?? [];
     return product;
   }
 

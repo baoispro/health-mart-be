@@ -10,6 +10,7 @@ import { UsagesModule } from './modules/usages/usages.module';
 import { DosagesModule } from './modules/dosages/dosages.module';
 import { StoragesModule } from './modules/storages/storages.module';
 import { CategoriesModule } from './modules/categories/catrgories.module';
+import { PharmacyProductsModule } from './modules/pharmacy_product/pharmacy_product.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { CategoriesModule } from './modules/categories/catrgories.module';
     DosagesModule,
     StoragesModule,
     CategoriesModule,
+    PharmacyProductsModule,
   ],
 })
 export class AppModule {}
