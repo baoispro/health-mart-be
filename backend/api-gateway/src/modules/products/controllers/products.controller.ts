@@ -71,6 +71,18 @@ export class ProductsController {
     return this.productService.getAllCategories();
   }
 
+  @Get('/categories-root')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả danh mục cha' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách danh mục cha',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách tất cả danh mục cha thành công')
+  getAllRootCategories() {
+    return this.productService.findRootCategory();
+  }
+
   @Get('/pharmacy-stocks')
   @ApiOperation({ summary: 'Lấy danh sách tồn kho nhà thuốc' })
   @ApiResponse({ status: 200, type: BaseResponseDto })

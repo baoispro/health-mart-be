@@ -328,6 +328,12 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
+  findRootCategory() {
+    return this.productClient
+      .send('get_root_category', {})
+      .pipe(this.handleError);
+  }
+
   getAllPharmacyProducts() {
     return this.productClient
       .send('get_all_pharmacy_products', {})

@@ -41,4 +41,9 @@ export class CategoriesController {
   async deleteCategory(@Payload() id: number) {
     return this.categoryService.remove(id);
   }
+
+  @MessagePattern('get_root_category')
+  async GetRootCategory() {
+    return this.categoryService.findRootCategories();
+  }
 }
