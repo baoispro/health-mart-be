@@ -173,6 +173,18 @@ export class ProductsController {
     return this.productService.getCategoryById(id);
   }
 
+  @Get('/category/slug/:slug')
+  @ApiOperation({ summary: 'Lấy thông tin danh mục theo slug' })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin danh mục',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy thông tin danh mục thành công')
+  getCategoryBySlug(@Param('slug') slug: string) {
+    return this.productService.getCategoryBySlug(slug);
+  }
+
   @Get('/ingredients/:id')
   @ApiOperation({ summary: 'Lấy thông tin nguyên liệu theo ID' })
   @ResponseMessage('Lấy thông tin nguyên liệu thành công')

@@ -46,4 +46,9 @@ export class CategoriesController {
   async GetRootCategory() {
     return this.categoryService.findRootCategories();
   }
+
+  @MessagePattern('get_category_by_slug')
+  async GetCategoryBySlug(slug: string) {
+    return this.categoryService.getCategoryBySlug(slug);
+  }
 }

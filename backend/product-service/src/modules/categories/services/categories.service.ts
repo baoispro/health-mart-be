@@ -154,10 +154,70 @@ export class CategoriesService implements CategoryService {
   }
 
   async findRootCategories(): Promise<Category[]> {
-    return this.categoryRepository
+    const categories = await this.categoryRepository
       .createQueryBuilder('category')
-      .leftJoinAndSelect('category.children', 'children')
-      .where('category.parent IS NULL')
+      .leftJoinAndSelect('category.children', 'children') // Lấy children cấp 1
+      .leftJoinAndSelect('children.children', 'subChildren') // Lấy children cấp 2
+      .leftJoinAndSelect('subChildren.children', 'subSubChildren') // Lấy children cấp 3
+      .where('category.parent IS NULL') // Lọc để chỉ lấy các danh mục cấp 1
       .getMany();
+
+    // Sắp xếp các danh mục cấp 1 theo category_id
+    categories.sort((a, b) => a.category_id - b.category_id);
+
+    // Hàm để xử lý đệ quy và sắp xếp danh mục con
+    const buildCategoryTree = (categories: Category[]): Category[] => {
+      return categories.map((category) => {
+        if (category.children && category.children.length > 0) {
+          // Sắp xếp children của cấp 1
+          category.children.sort((a, b) => a.category_id - b.category_id);
+          category.children = buildCategoryTree(category.children); // Đệ quy xử lý children
+        }
+        return category;
+      });
+    };
+
+    // Xây dựng cây danh mục đệ quy và trả về
+    return buildCategoryTree(categories);
+  }
+
+  async getCategoryBySlug(slug: string): Promise<any> {
+    const category = await this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.parent', 'parent')
+      .leftJoinAndSelect('category.children', 'children') // Cấp 1
+      .leftJoinAndSelect('children.children', 'subChildren') // Cấp 2
+      .leftJoinAndSelect('subChildren.children', 'subSubChildren') // Cấp 3
+      .where('category.slug = :slug', { slug })
+      .getOne();
+
+    if (!category) {
+      throw new RpcException(
+        new NotFoundException(`Category với slug "${slug}" không tồn tại!`),
+      );
+    }
+
+    // Sắp xếp và build lại dạng object như yêu cầu
+    const res = this.buildCategoryTreeResponse(category);
+    return res;
+  }
+
+  private buildCategoryTreeResponse(category: Category): any {
+    return {
+      category_id: category.category_id,
+      name: category.name,
+      slug: category.slug,
+      image: category.image,
+      parent: category.parent
+        ? {
+            category_id: category.parent.category_id,
+            name: category.parent.name,
+            slug: category.parent.slug,
+          }
+        : null,
+      children: (category.children || [])
+        .sort((a, b) => a.category_id - b.category_id)
+        .map((child) => this.buildCategoryTreeResponse(child)),
+    };
   }
 }
