@@ -59,6 +59,18 @@ export class ProductsController {
     return this.productService.getAllProducts();
   }
 
+  @Get('/slug/:slug')
+  @ApiOperation({ summary: 'Lấy sản phẩm theo slug' })
+  @ApiResponse({
+    status: 200,
+    description: 'sản phẩm',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy sản phẩm thành công')
+  getProductBySlug(@Param('slug') slug: string) {
+    return this.productService.getProductBySlug(slug);
+  }
+
   @Get('/categories')
   @ApiOperation({ summary: 'Lấy danh sách tất cả danh mục' })
   @ApiResponse({
@@ -183,6 +195,18 @@ export class ProductsController {
   @ResponseMessage('Lấy thông tin danh mục thành công')
   getCategoryBySlug(@Param('slug') slug: string) {
     return this.productService.getCategoryBySlug(slug);
+  }
+
+  @Get('/category/relate/:id')
+  @ApiOperation({ summary: 'Lấy thông tin ba và con của danh mục theo id' })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin danh mục',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy thông tin danh mục thành công')
+  getCategoryRelated(@Param('id') id: number) {
+    return this.productService.getCategoryRelated(id);
   }
 
   @Get('/ingredients/:id')

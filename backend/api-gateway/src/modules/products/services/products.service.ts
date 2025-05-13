@@ -385,4 +385,16 @@ export class ProductsService {
       .send('get_category_by_slug', slug)
       .pipe(this.handleError);
   }
+
+  getCategoryRelated(id: number) {
+    return this.productClient
+      .send('get_category_related', id)
+      .pipe(this.handleError);
+  }
+
+  getProductBySlug(slug: string) {
+    return this.productClient
+      .send('get_product_by_slug', slug)
+      .pipe(this.handleError);
+  }
 }

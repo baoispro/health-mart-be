@@ -63,6 +63,9 @@ export class Product {
   @Column({ type: 'text' })
   image_url: string;
 
+  @Column({ type: 'float', default: 0 })
+  discount_percentage: number;
+
   @OneToMany(() => Ingredient, (ingredient) => ingredient.product)
   ingredients: Ingredient[];
 
