@@ -69,8 +69,30 @@ export class ProductsService implements ProductService {
     return await this.productRepository.save(newProduct);
   }
 
-  async findAll(): Promise<Product[]> {
-    return await this.productRepository.find({ relations: ['category'] });
+  async findAll(): Promise<any[]> {
+    const data = await this.productRepository.find({ relations: ['category'] });
+
+    const grouped: Record<string, any> = {};
+
+    data.forEach((item) => {
+      const baseName = item.name.replace(/-(Hộp|Vỉ|Viên)$/i, '').trim();
+      if (!grouped[baseName]) {
+        grouped[baseName] = {
+          ...item,
+          name: baseName,
+          variants: [],
+        };
+        delete grouped[baseName].unit;
+        delete grouped[baseName].price;
+      }
+
+      grouped[baseName].variants.push({
+        unit: item.unit,
+        price: item.price,
+      });
+    });
+
+    return Object.values(grouped).sort((a, b) => a.product_id - b.product_id);
   }
 
   async findOne(id: number): Promise<Product> {
@@ -84,7 +106,6 @@ export class ProductsService implements ProductService {
         'precautions',
         'sideEffects',
         'storages',
-        'pharmacyStock',
       ],
     });
     if (!product) {
@@ -98,8 +119,43 @@ export class ProductsService implements ProductService {
     product.sideEffects = product.sideEffects ?? [];
     product.precautions = product.precautions ?? [];
     product.storages = product.storages ?? [];
-    product.pharmacyStock = product.pharmacyStock ?? [];
+    product.pharmacyProduct = product.pharmacyProduct ?? [];
     return product;
+  }
+
+  async findBySlug(slug: string): Promise<any> {
+    const data = await this.productRepository.find({
+      relations: ['category'],
+      where: { slug },
+    });
+
+    if (!data || data.length === 0) {
+      throw new NotFoundException('Product not found');
+    }
+
+    // Lấy tên gốc từ sản phẩm đầu tiên
+    const baseName = data[0].name.replace(/-(Hộp|Vỉ|Viên)$/i, '').trim();
+
+    // Tạo object kết quả từ sản phẩm đầu tiên
+    const result = {
+      ...data[0],
+      name: baseName,
+      variants: [],
+    };
+
+    // Xoá thuộc tính riêng của variant vì đã gom lại
+    delete result.unit;
+    delete result.price;
+
+    // Gom các biến thể lại
+    for (const item of data) {
+      result.variants.push({
+        unit: item.unit,
+        price: item.price,
+      });
+    }
+
+    return result;
   }
 
   async update(

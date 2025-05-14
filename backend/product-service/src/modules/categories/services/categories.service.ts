@@ -71,17 +71,27 @@ export class CategoriesService implements CategoryService {
     });
   }
 
-  async findOne(id: number): Promise<Category> {
-    const category = await this.categoryRepository.findOne({
-      where: { category_id: id },
-      relations: ['parent', 'children'],
-    });
+  async findOne(category_id: number): Promise<Category> {
+    const category = await this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.parent', 'parent')
+      .leftJoinAndSelect('category.children', 'children') // Cấp 1
+      .leftJoinAndSelect('children.children', 'subChildren') // Cấp 2
+      .leftJoinAndSelect('subChildren.children', 'subSubChildren') // Cấp 3
+      .where('category.category_id = :category_id', { category_id })
+      .getOne();
+
     if (!category) {
       throw new RpcException(
-        new NotFoundException(`Category ${id} không tìm thấy`),
+        new NotFoundException(
+          `Category với id "${category_id}" không tồn tại!`,
+        ),
       );
     }
-    return category;
+
+    // Sắp xếp và build lại dạng object như yêu cầu
+    const res = this.buildCategoryTreeResponse(category);
+    return res;
   }
 
   async update(
@@ -151,5 +161,117 @@ export class CategoriesService implements CategoryService {
     await this.s3.send(command);
 
     return `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+  }
+
+  async findRootCategories(): Promise<Category[]> {
+    const categories = await this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.children', 'children') // Lấy children cấp 1
+      .leftJoinAndSelect('children.children', 'subChildren') // Lấy children cấp 2
+      .leftJoinAndSelect('subChildren.children', 'subSubChildren') // Lấy children cấp 3
+      .where('category.parent IS NULL') // Lọc để chỉ lấy các danh mục cấp 1
+      .getMany();
+
+    // Sắp xếp các danh mục cấp 1 theo category_id
+    categories.sort((a, b) => a.category_id - b.category_id);
+
+    // Hàm để xử lý đệ quy và sắp xếp danh mục con
+    const buildCategoryTree = (categories: Category[]): Category[] => {
+      return categories.map((category) => {
+        if (category.children && category.children.length > 0) {
+          // Sắp xếp children của cấp 1
+          category.children.sort((a, b) => a.category_id - b.category_id);
+          category.children = buildCategoryTree(category.children); // Đệ quy xử lý children
+        }
+        return category;
+      });
+    };
+
+    // Xây dựng cây danh mục đệ quy và trả về
+    return buildCategoryTree(categories);
+  }
+
+  async getCategoryBySlug(slug: string): Promise<any> {
+    const category = await this.categoryRepository
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.parent', 'parent')
+      .leftJoinAndSelect('category.children', 'children') // Cấp 1
+      .leftJoinAndSelect('children.children', 'subChildren') // Cấp 2
+      .leftJoinAndSelect('subChildren.children', 'subSubChildren') // Cấp 3
+      .where('category.slug = :slug', { slug })
+      .getOne();
+
+    if (!category) {
+      throw new RpcException(
+        new NotFoundException(`Category với slug "${slug}" không tồn tại!`),
+      );
+    }
+
+    // Sắp xếp và build lại dạng object như yêu cầu
+    const res = this.buildCategoryTreeResponse(category);
+    return res;
+  }
+
+  private buildCategoryTreeResponse(category: Category): any {
+    return {
+      category_id: category.category_id,
+      name: category.name,
+      slug: category.slug,
+      image: category.image,
+      parent: category.parent
+        ? {
+            category_id: category.parent.category_id,
+            name: category.parent.name,
+            slug: category.parent.slug,
+          }
+        : null,
+      children: (category.children || [])
+        .sort((a, b) => a.category_id - b.category_id)
+        .map((child) => this.buildCategoryTreeResponse(child)),
+    };
+  }
+
+  async findRelatedCategories(id: number): Promise<Category[]> {
+    const category = await this.categoryRepository.findOne({
+      where: { category_id: id },
+      relations: ['parent', 'children'],
+    });
+
+    if (!category) {
+      throw new RpcException(new NotFoundException('Category not found'));
+    }
+
+    const related: Category[] = [];
+
+    // Đệ quy tìm tất cả cha
+    const getParents = async (cat: Category) => {
+      if (cat.parent) {
+        const parent = await this.categoryRepository.findOne({
+          where: { category_id: cat.parent.category_id },
+          relations: ['parent'],
+        });
+        if (parent) {
+          related.push(parent);
+          await getParents(parent);
+        }
+      }
+    };
+
+    // Đệ quy tìm tất cả con
+    const getChildren = async (cat: Category) => {
+      const children = await this.categoryRepository.find({
+        where: { parent: { category_id: cat.category_id } },
+        relations: ['children'],
+      });
+      for (const child of children) {
+        related.push(child);
+        await getChildren(child);
+      }
+    };
+
+    await getParents(category);
+    await getChildren(category);
+
+    return related;
   }
 }

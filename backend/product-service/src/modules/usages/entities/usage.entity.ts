@@ -1,3 +1,4 @@
+import { Product } from 'src/modules/products/entities/product.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,7 +6,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Product } from './product.entity';
 
 @Entity('usage')
 export class Usage {

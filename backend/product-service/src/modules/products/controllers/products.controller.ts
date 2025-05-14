@@ -18,6 +18,11 @@ export class ProductsController {
     return this.productService.findOne(id);
   }
 
+  @MessagePattern('get_product_by_slug')
+  async getProductBySlug(@Payload() slug: string) {
+    return this.productService.findBySlug(slug);
+  }
+
   @MessagePattern('create_product')
   async createProduct(@Payload() createProductRequest: CreateProductRequest) {
     return this.productService.create(createProductRequest);

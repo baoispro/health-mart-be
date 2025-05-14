@@ -41,4 +41,19 @@ export class CategoriesController {
   async deleteCategory(@Payload() id: number) {
     return this.categoryService.remove(id);
   }
+
+  @MessagePattern('get_root_category')
+  async GetRootCategory() {
+    return this.categoryService.findRootCategories();
+  }
+
+  @MessagePattern('get_category_by_slug')
+  async GetCategoryBySlug(slug: string) {
+    return this.categoryService.getCategoryBySlug(slug);
+  }
+
+  @MessagePattern('get_category_related')
+  async GetCategoryRelated(id: number) {
+    return this.categoryService.findRelatedCategories(id);
+  }
 }
