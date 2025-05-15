@@ -125,7 +125,15 @@ export class ProductsService implements ProductService {
 
   async findBySlug(slug: string): Promise<any> {
     const data = await this.productRepository.find({
-      relations: ['category'],
+      relations: [
+        'category',
+        'usages',
+        'ingredients',
+        'dosages',
+        'precautions',
+        'sideEffects',
+        'storages',
+      ],
       where: { slug },
     });
 
