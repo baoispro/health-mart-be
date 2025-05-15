@@ -312,17 +312,22 @@ export class CategoriesService implements CategoryService {
     };
 
     await getParents(category);
-    await getChildren(category);
 
-    // Lọc category cấp 3
+    // Nếu category là cấp 3 (không có con) => xử lý luôn
+    if (!category.children || category.children.length === 0) {
+      related.push(category);
+    } else {
+      await getChildren(category);
+    }
+
+    // Chỉ giữ lại cấp 3 (leaf nodes - không có children)
     const lv3Categories = related.filter(
       (c) => !c.children || c.children.length === 0,
     );
 
-    // Gom tất cả product lại
     const allProducts = lv3Categories.flatMap((c) => c.products || []);
 
-    // Gom nhóm sản phẩm theo tên base
+    // Gom nhóm theo base name
     const grouped: Record<string, any> = {};
 
     allProducts.forEach((item) => {
