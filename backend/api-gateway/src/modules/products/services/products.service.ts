@@ -397,4 +397,10 @@ export class ProductsService {
       .send('get_product_by_slug', slug)
       .pipe(this.handleError);
   }
+
+  getCategoryLv3(id: number) {
+    return this.productClient
+      .send('get_category_lv3', id)
+      .pipe(this.handleError);
+  }
 }

@@ -274,4 +274,81 @@ export class CategoriesService implements CategoryService {
 
     return related;
   }
+
+  async getListLv3(id: number): Promise<Category[]> {
+    const category = await this.categoryRepository.findOne({
+      where: { category_id: id },
+      relations: ['parent', 'children', 'products'],
+    });
+
+    if (!category) {
+      throw new RpcException(new NotFoundException('Category not found'));
+    }
+
+    const related: Category[] = [];
+
+    const getParents = async (cat: Category) => {
+      if (cat.parent) {
+        const parent = await this.categoryRepository.findOne({
+          where: { category_id: cat.parent.category_id },
+          relations: ['parent', 'products'],
+        });
+        if (parent) {
+          related.push(parent);
+          await getParents(parent);
+        }
+      }
+    };
+
+    const getChildren = async (cat: Category) => {
+      const children = await this.categoryRepository.find({
+        where: { parent: { category_id: cat.category_id } },
+        relations: ['children', 'products'],
+      });
+      for (const child of children) {
+        related.push(child);
+        await getChildren(child);
+      }
+    };
+
+    await getParents(category);
+
+    // Nếu category là cấp 3 (không có con) => xử lý luôn
+    if (!category.children || category.children.length === 0) {
+      related.push(category);
+    } else {
+      await getChildren(category);
+    }
+
+    // Chỉ giữ lại cấp 3 (leaf nodes - không có children)
+    const lv3Categories = related.filter(
+      (c) => !c.children || c.children.length === 0,
+    );
+
+    const allProducts = lv3Categories.flatMap((c) => c.products || []);
+
+    // Gom nhóm theo base name
+    const grouped: Record<string, any> = {};
+
+    allProducts.forEach((item) => {
+      const baseName = item.name.replace(/-(Hộp|Vỉ|Viên)$/i, '').trim();
+
+      if (!grouped[baseName]) {
+        grouped[baseName] = {
+          ...item,
+          name: baseName,
+          variants: [],
+        };
+        delete grouped[baseName].unit;
+        delete grouped[baseName].price;
+      }
+
+      grouped[baseName].variants.push({
+        unit: item.unit,
+        price: item.price,
+      });
+    });
+
+    return Object.values(grouped).sort((a, b) => a.product_id - b.product_id);
+  }
 }

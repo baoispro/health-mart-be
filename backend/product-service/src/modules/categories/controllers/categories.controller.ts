@@ -56,4 +56,9 @@ export class CategoriesController {
   async GetCategoryRelated(id: number) {
     return this.categoryService.findRelatedCategories(id);
   }
+
+  @MessagePattern('get_category_lv3')
+  async GetCategoryLv3(id: number) {
+    return this.categoryService.getListLv3(id);
+  }
 }

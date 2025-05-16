@@ -59,6 +59,18 @@ export class ProductsController {
     return this.productService.getAllProducts();
   }
 
+  @Get('/category-lv3/:id')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả sản phẩm' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách sản phẩm',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách tất cả sản phẩm thành công')
+  getAllCategoryLv3(@Param('id') id: number) {
+    return this.productService.getCategoryLv3(id);
+  }
+
   @Get('/slug/:slug')
   @ApiOperation({ summary: 'Lấy sản phẩm theo slug' })
   @ApiResponse({
