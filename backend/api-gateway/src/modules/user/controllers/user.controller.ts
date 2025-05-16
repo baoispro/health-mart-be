@@ -111,7 +111,8 @@ export class UserController {
           }
         : null,
     };
-    return this.userService.updateUser(id, payload);
+
+    return this.userService.updateUser(id, payload); // ✅ đây gọi đúng
   }
 
   @Delete(':id')

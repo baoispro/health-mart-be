@@ -29,16 +29,20 @@ export class AuthService {
   }
 
   async findUserByEmail(email: string): Promise<any> {
-    return firstValueFrom(this.userClient.send('get_user_by_email', email));
+    const user = await firstValueFrom(
+      this.userClient.send('get_user_by_email', email),
+    );
+    if (!user) {
+      throw new RpcException(new ConflictException('Email này không tồn tại.'));
+    }
+    return user;
   }
 
   async login(dto: LoginRequest) {
     const user = await this.findUserByEmail(dto.email);
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!user) {
-      throw new RpcException(
-        new ConflictException('Thông tin user không tồn tại!'),
-      );
+      throw new RpcException(new ConflictException('Email này không tồn tại.'));
     } else if (!user.password) {
       throw new RpcException(
         new ConflictException('Password không được nhập!'),
@@ -55,7 +59,7 @@ export class AuthService {
       role: user.role,
     };
 
-    const token = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
 
     let refreshToken: string | undefined;
 
@@ -93,6 +97,11 @@ export class AuthService {
 
         await this.authRepository.save(authEntity);
       }
+    } else {
+      refreshToken = this.jwtService.sign(
+        { sub: user.id, email: user.email },
+        { expiresIn: '1d' },
+      );
     }
     return {
       token,
@@ -105,7 +114,11 @@ export class AuthService {
     await this.authRepository.delete({ userId: Number(userId) });
   }
 
-  async refreshToken(token: string): Promise<RefreshTokenResponse> {
+  async refreshToken(payload: {
+    refreshToken: string;
+    time: string;
+  }): Promise<RefreshTokenResponse> {
+    const token = payload.refreshToken;
     try {
       const decoded = this.jwtService.verify(token);
 
@@ -118,49 +131,69 @@ export class AuthService {
       const authRecord = await this.authRepository.findOne({
         where: { refreshToken: token },
       });
-
+      let newAccessToken;
+      let newRefreshToken;
       if (!authRecord) {
-        throw new RpcException(
-          new UnauthorizedException(
-            'Refresh token không tồn tại trong hệ thống',
-          ),
+        try {
+          newAccessToken = this.jwtService.sign(
+            {
+              sub: decoded.id,
+              email: decoded.email,
+              name: decoded.fullName,
+              phone: decoded.phone,
+              role: decoded.role,
+            },
+            { expiresIn: '1h' },
+          );
+
+          newRefreshToken = token;
+        } catch (err) {
+          if (err.name === 'TokenExpiredError') {
+            throw new RpcException(
+              new UnauthorizedException('Refresh token đã hết hạn'),
+            );
+          } else {
+            throw new RpcException(
+              new UnauthorizedException('Refresh token không hợp lệ'),
+            );
+          }
+        }
+      } else {
+        const isExpired = new Date() > authRecord.expiresAt;
+        if (isExpired) {
+          await this.authRepository.delete({ refreshToken: token });
+          throw new RpcException(
+            new UnauthorizedException('Refresh token đã hết hạn'),
+          );
+        }
+
+        const user = await this.findUserByEmail(authRecord.email);
+        if (!user) {
+          throw new RpcException(
+            new UnauthorizedException('Người dùng không tồn tại'),
+          );
+        }
+
+        newAccessToken = this.jwtService.sign(
+          {
+            sub: user.id,
+            email: user.email,
+            name: user.fullName,
+            phone: user.phone,
+            role: user.role,
+          },
+          { expiresIn: '1h' },
         );
-      }
 
-      const isExpired = new Date() > authRecord.expiresAt;
-      if (isExpired) {
-        await this.authRepository.delete({ refreshToken: token });
-        throw new RpcException(
-          new UnauthorizedException('Refresh token đã hết hạn'),
+        newRefreshToken = this.jwtService.sign(
+          { sub: user.id, email: user.email },
+          { expiresIn: payload.time },
         );
+
+        authRecord.refreshToken = newRefreshToken;
+        authRecord.expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+        await this.authRepository.save(authRecord);
       }
-
-      const user = await this.findUserByEmail(authRecord.email);
-      if (!user) {
-        throw new RpcException(
-          new UnauthorizedException('Người dùng không tồn tại'),
-        );
-      }
-
-      const newAccessToken = this.jwtService.sign(
-        {
-          sub: user.id,
-          email: user.email,
-          name: user.fullName,
-          phone: user.phone,
-          role: user.role,
-        },
-        { expiresIn: '7d' },
-      );
-
-      const newRefreshToken = this.jwtService.sign(
-        { sub: user.id, email: user.email },
-        { expiresIn: '14d' },
-      );
-
-      authRecord.refreshToken = newRefreshToken;
-      authRecord.expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
-      await this.authRepository.save(authRecord);
 
       return {
         access_token: newAccessToken,

@@ -4,5 +4,9 @@ import { IsString } from 'class-validator';
 export class VerifyTokenRequest {
   @ApiProperty()
   @IsString()
-  token: string;
+  refreshToken: string;
+
+  @ApiProperty()
+  @IsString()
+  time: string;
 }

@@ -45,8 +45,8 @@ export class AuthController {
     type: RefreshTokenResponse,
   })
   @ResponseMessage('Làm mới token thành công.')
-  refreshToken(@Body() dto: VerifyTokenRequest) {
-    return this.authService.refreshToken(dto.token);
+  refreshToken(@Body() payload: VerifyTokenRequest) {
+    return this.authService.refreshToken(payload);
   }
 
   @Get('/refresh-token/:email')

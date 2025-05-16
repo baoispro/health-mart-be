@@ -44,9 +44,9 @@ export class AuthService {
     }
   }
 
-  refreshToken(refreshToken: string) {
+  refreshToken(payload: { refreshToken: string; time: string }) {
     return this.authClient
-      .send('refresh_token', refreshToken)
+      .send('refresh_token', payload)
       .pipe(
         catchError((error) =>
           throwError(() => new RpcException(error.response)),

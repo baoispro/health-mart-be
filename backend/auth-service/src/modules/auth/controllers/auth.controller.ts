@@ -24,8 +24,8 @@ export class AuthController {
   }
 
   @MessagePattern('refresh_token')
-  refreshToken(@Payload() refreshToken: string) {
-    return this.authService.refreshToken(refreshToken);
+  refreshToken(@Payload() payload: { refreshToken: string; time: string }) {
+    return this.authService.refreshToken(payload);
   }
 
   @MessagePattern('find_refresh_token')
