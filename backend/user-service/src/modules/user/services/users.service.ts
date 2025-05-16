@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -95,8 +96,15 @@ export class UsersService implements IUserService {
     updateUserRequest: UpdateUserRequest,
   ): Promise<User> {
     const user = await this.findOne(id);
-    const { email, phone, ...rest } = updateUserRequest;
+    if (!updateUserRequest) {
+      throw new RpcException(
+        new BadRequestException('Dữ liệu cập nhật không hợp lệ'),
+      );
+    }
 
+    const { email, phone, avatarFile, ...rest } = updateUserRequest;
+
+    // Kiểm tra trùng email/phone nếu có
     if (email || phone) {
       const existingUser = await this.userRepository.findOne({
         where: [
@@ -112,16 +120,20 @@ export class UsersService implements IUserService {
       }
     }
 
-    // Nếu có avatarFile thì upload lên S3
-    let avatarUrl = rest.avatar ?? 'https://example.com/avatar.png'; // default
-    if (rest.avatarFile) {
-      avatarUrl = await this.uploadToS3(rest.avatarFile); // bạn cần viết hàm này
+    // Upload avatar nếu có
+    if (avatarFile) {
+      const avatarUrl = await this.uploadToS3(avatarFile);
+      rest.avatar = avatarUrl;
     }
 
-    rest.avatar = avatarUrl; // cập nhật avatarUrl nếu có
+    // Cập nhật từng field một cách an toàn
+    Object.entries(rest).forEach(([key, value]) => {
+      if (value !== undefined) {
+        user[key] = value;
+      }
+    });
 
-    Object.assign(user, updateUserRequest);
-    return await this.userRepository.save(user);
+    return this.userRepository.save(user);
   }
 
   async remove(id: number): Promise<DeleteResult> {

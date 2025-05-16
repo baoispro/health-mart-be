@@ -29,16 +29,20 @@ export class AuthService {
   }
 
   async findUserByEmail(email: string): Promise<any> {
-    return firstValueFrom(this.userClient.send('get_user_by_email', email));
+    const user = await firstValueFrom(
+      this.userClient.send('get_user_by_email', email),
+    );
+    if (!user) {
+      throw new RpcException(new ConflictException('Email này không tồn tại.'));
+    }
+    return user;
   }
 
   async login(dto: LoginRequest) {
     const user = await this.findUserByEmail(dto.email);
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!user) {
-      throw new RpcException(
-        new ConflictException('Thông tin user không tồn tại!'),
-      );
+      throw new RpcException(new ConflictException('Email này không tồn tại.'));
     } else if (!user.password) {
       throw new RpcException(
         new ConflictException('Password không được nhập!'),

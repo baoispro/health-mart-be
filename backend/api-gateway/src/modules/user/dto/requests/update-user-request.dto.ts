@@ -4,7 +4,6 @@ import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateUserRequest {
   @ApiProperty({ example: 'https://example.com/avatar.png' })
-  @IsNotEmpty({ message: 'avatar không được để trống' })
   @IsOptional()
   avatar?: string;
   @ApiProperty({ example: 'Nguyen Van A' })

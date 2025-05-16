@@ -4,6 +4,7 @@ import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 import { catchError, throwError } from 'rxjs';
 import { CreateAddressDto } from '../dto/requests/create-address-request.dto';
 import { UpdateAddressDto } from '../dto/requests/update-address-request.dto';
+import { UpdateUserRequest } from '../dto/requests/update-user-request.dto';
 
 @Injectable()
 export class UserService {
@@ -37,9 +38,9 @@ export class UserService {
       );
   }
 
-  updateUser(id: number, payload: any) {
+  updateUser(id: number, updateUserRequest: UpdateUserRequest) {
     return this.userClient
-      .send('update_user', { id, payload })
+      .send('update_user', { id, updateUserRequest }) // ✅ ĐÚNG KEY
       .pipe(
         catchError((error) =>
           throwError(() => new RpcException(error.response)),
