@@ -50,7 +50,9 @@ export class CategoriesService implements CategoryService {
       }
     }
 
-    let avatarUrl = data.image ?? 'https://example.com/avatar.png'; // default
+    let avatarUrl =
+      data.image ??
+      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg'; // default
     if (data.avatarFile) {
       avatarUrl = await this.uploadToS3(data.avatarFile); // bạn cần viết hàm này
     }
@@ -127,7 +129,9 @@ export class CategoriesService implements CategoryService {
       category.parent = parent;
     }
 
-    let avatarUrl = rest.image ?? 'https://example.com/avatar.png'; // default
+    let avatarUrl =
+      rest.image ??
+      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg'; // default
     if (rest.avatarFile) {
       avatarUrl = await this.uploadToS3(rest.avatarFile); // bạn cần viết hàm này
     }
