@@ -10,10 +10,14 @@ import {
 } from 'class-validator';
 
 export class CreateUserRequest {
-  @ApiProperty({ example: 'https://example.com/avatar.png' })
+  @ApiProperty({
+    example:
+      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg',
+  })
   @IsString({ message: 'avatar phải là chuỗi' })
   @IsOptional()
-  avatar?: string = 'https://example.com/avatar.png';
+  avatar?: string =
+    'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg';
   @ApiProperty({ example: 'Nguyen Van A' })
   @IsNotEmpty({ message: 'Tên không được để trống' })
   fullName: string;

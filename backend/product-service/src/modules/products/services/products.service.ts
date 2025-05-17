@@ -55,7 +55,9 @@ export class ProductsService implements ProductService {
     }
 
     // Nếu có avatarFile thì upload lên S3
-    let avatarUrl = productData.image_url ?? 'https://example.com/avatar.png'; // default
+    let avatarUrl =
+      productData.image_url ??
+      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg'; // default
     if (productData.avatarFile) {
       avatarUrl = await this.uploadToS3(productData.avatarFile); // bạn cần viết hàm này
     }
@@ -188,7 +190,9 @@ export class ProductsService implements ProductService {
     const { categoryId, avatarFile, ...rest } = updateProductRequest;
 
     // Nếu có avatarFile thì upload lên S3
-    let avatarUrl = rest.image_url ?? 'https://example.com/avatar.png'; // default
+    let avatarUrl =
+      rest.image_url ??
+      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg'; // default
     if (avatarFile) {
       avatarUrl = await this.uploadToS3(avatarFile); // bạn cần viết hàm này
     }

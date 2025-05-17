@@ -3,7 +3,10 @@ import { Role } from '../../enums/users.enum';
 import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateUserRequest {
-  @ApiProperty({ example: 'https://example.com/avatar.png' })
+  @ApiProperty({
+    example:
+      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg',
+  })
   @IsOptional()
   avatar?: string;
   @ApiProperty({ example: 'Nguyen Van A' })

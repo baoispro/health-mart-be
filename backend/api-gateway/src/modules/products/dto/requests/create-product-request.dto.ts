@@ -88,5 +88,6 @@ export class CreateProductRequest {
   @Expose()
   @IsString()
   @IsOptional()
-  image_url?: string = 'https://example.com/avatar.png';
+  image_url?: string =
+    'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg';
 }
