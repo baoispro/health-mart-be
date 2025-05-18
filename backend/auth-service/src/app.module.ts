@@ -21,6 +21,9 @@ import { JwtModule } from '@nestjs/jwt';
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true, // Tự động load entity
         synchronize: true, // Tạo bảng tự động (chỉ nên dùng trong phát triển)
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
     JwtModule.register({
