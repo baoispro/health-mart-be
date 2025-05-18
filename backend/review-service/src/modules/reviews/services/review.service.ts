@@ -139,6 +139,7 @@ export class ReviewService {
 
     const reviews = await this.reviewRepository.find({
       where: { productId: productId },
+      relations: ['images', 'replies'],
     });
 
     return reviews;
