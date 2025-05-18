@@ -23,9 +23,9 @@ import { OrderPromotionsModule } from './modules/order_promotions/order_promotio
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true,
         synchronize: true,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // ssl: {
+        //   rejectUnauthorized: false,
+        // },
       }),
     }),
     OrdersModule,
