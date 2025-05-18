@@ -140,7 +140,7 @@ export class ProductsService implements ProductService {
     });
 
     if (!data || data.length === 0) {
-      throw new NotFoundException('Product not found');
+      throw new RpcException(new NotFoundException('Product not found'));
     }
 
     // Lấy tên gốc từ sản phẩm đầu tiên
