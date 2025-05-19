@@ -8,22 +8,20 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
+
+    redis:
+      image: redis:latest
+      ports:
       - "6379:6379"
+
   redis-commander:
     image: rediscommander/redis-commander:latest
-    container_name: redis-commander
     environment:
       - REDIS_HOSTS=local:redis:6379
     ports:
       - "8081:8081"
-    depends_on:
-      - redis
 
-      
+
   api-gateway:
     image: baoisspro/api-gateway
     ports:
@@ -60,6 +58,7 @@ services:
       image: baoisspro/review-service
       depends_on:
         - rabbitmq
+
   cart-service:
     build: ./cart-service
     command: yarn start:dev
@@ -69,6 +68,3 @@ services:
       - ./cart-service/.env
     depends_on:
       - redis
-
-
- 
