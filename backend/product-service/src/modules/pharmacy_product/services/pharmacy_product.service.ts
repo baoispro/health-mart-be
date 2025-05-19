@@ -74,9 +74,7 @@ export class PharmacyProductService implements IPharmacyProductService {
 
     if (stocks.length === 0) {
       throw new RpcException(
-        new NotFoundException(
-          `Không tìm thấy tồn kho cho nhà thuốc ${pharmacyId}`,
-        ),
+        `Không tìm thấy tồn kho cho nhà thuốc ${pharmacyId}`,
       );
     }
 
