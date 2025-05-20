@@ -1,9 +1,8 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateReviewImgRequest {
   @ApiProperty({ example: 1, description: 'ID của đánh giá' })
-  @IsNumber()
   @IsNotEmpty()
   reviewId: number;
 
