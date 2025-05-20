@@ -329,27 +329,35 @@ export class CategoriesService implements CategoryService {
       (c) => !c.children || c.children.length === 0,
     );
 
-    const allProducts = lv3Categories.flatMap((c) => c.products || []);
+    // const allProducts = lv3Categories.flatMap((c) => c.products || []);
 
     // Gom nhóm theo base name
     const grouped: Record<string, any> = {};
 
-    allProducts.forEach((item) => {
-      const baseName = item.name.replace(/-(Hộp|Vỉ|Viên)$/i, '').trim();
+    lv3Categories.forEach((cat) => {
+      const products = cat.products || [];
 
-      if (!grouped[baseName]) {
-        grouped[baseName] = {
-          ...item,
-          name: baseName,
-          variants: [],
-        };
-        delete grouped[baseName].unit;
-        delete grouped[baseName].price;
-      }
+      products.forEach((item) => {
+        const baseName = item.name.replace(/-(Hộp|Vỉ|Viên)$/i, '').trim();
 
-      grouped[baseName].variants.push({
-        unit: item.unit,
-        price: item.price,
+        if (!grouped[baseName]) {
+          grouped[baseName] = {
+            ...item,
+            name: baseName,
+            variants: [],
+            category: { category_id: cat.category_id, slug: cat.slug }, // ✅ chính xác: lấy từ lv3 category
+          };
+
+          delete grouped[baseName].unit;
+          delete grouped[baseName].price;
+        }
+
+        grouped[baseName].variants.push({
+          unit: item.unit,
+          price: item.price,
+          // Nếu muốn gắn category_id cho từng variant:
+          category_id: cat.category_id,
+        });
       });
     });
 
