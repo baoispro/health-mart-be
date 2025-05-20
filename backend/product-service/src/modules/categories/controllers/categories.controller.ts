@@ -58,7 +58,8 @@ export class CategoriesController {
   }
 
   @MessagePattern('get_category_lv3')
-  async GetCategoryLv3(id: number) {
-    return this.categoryService.getListLv3(id);
+  async GetCategoryLv3(data: { id: number; query?: any }) {
+    const { id, query } = data;
+    return this.categoryService.getListLv3(id, query);
   }
 }
