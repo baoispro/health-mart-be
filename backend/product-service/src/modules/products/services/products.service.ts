@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../entities/product.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, ILike, Repository } from 'typeorm';
 import { ProductService } from '../interfaces/products.service.interface';
 import { CreateProductRequest } from '../dto/requests/create-product-request.dto';
 import { UpdateProductRequest } from '../dto/requests/update-product-request.dto';
@@ -71,8 +71,16 @@ export class ProductsService implements ProductService {
     return await this.productRepository.save(newProduct);
   }
 
-  async findAll(): Promise<any[]> {
-    const data = await this.productRepository.find({ relations: ['category'] });
+  async findAll(queryParams: { name?: string }): Promise<any[]> {
+    const { name } = queryParams;
+    const where: any = {};
+    if (name) {
+      where.name = ILike(`%${name}%`);
+    }
+    const data = await this.productRepository.find({
+      where,
+      relations: ['category'],
+    });
 
     const grouped: Record<string, any> = {};
 
@@ -255,5 +263,15 @@ export class ProductsService implements ProductService {
     await this.s3.send(command);
 
     return `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+  }
+
+  async getUniqueBrands(): Promise<string[]> {
+    const brands = await this.productRepository
+      .createQueryBuilder('product')
+      .select('DISTINCT product.brand', 'brand')
+      .getRawMany();
+
+    // Chuyển từ object sang mảng string
+    return brands.map((b) => b.brand);
   }
 }

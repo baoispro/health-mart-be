@@ -279,7 +279,15 @@ export class CategoriesService implements CategoryService {
     return related;
   }
 
-  async getListLv3(id: number): Promise<Category[]> {
+  async getListLv3(
+    id: number,
+    query?: {
+      price?: string;
+      country?: string[];
+      brand?: string[];
+      sort?: 'order_desc_price' | 'order_asc_price';
+    },
+  ): Promise<Category[]> {
     const category = await this.categoryRepository.findOne({
       where: { category_id: id },
       relations: ['parent', 'children', 'products'],
@@ -335,7 +343,42 @@ export class CategoriesService implements CategoryService {
     const grouped: Record<string, any> = {};
 
     lv3Categories.forEach((cat) => {
-      const products = cat.products || [];
+      const filterProduct = (product: any): boolean => {
+        const { price: priceFilter, country, brand } = query || {};
+
+        // Price filter
+        if (priceFilter) {
+          const price = product.price;
+          if (
+            (priceFilter === 'under_100' && price >= 100 * 1000) ||
+            (priceFilter === '100_300' &&
+              (price < 100 * 1000 || price > 300 * 1000)) ||
+            (priceFilter === '300_500' &&
+              (price < 300 * 1000 || price > 500 * 1000)) ||
+            (priceFilter === 'above_500' && price <= 500 * 1000)
+          ) {
+            return false;
+          }
+        }
+
+        // Country filter
+        if (
+          country &&
+          country.length > 0 &&
+          !country.includes(product.country)
+        ) {
+          return false;
+        }
+
+        // Brand filter
+        if (brand && brand.length > 0 && !brand.includes(product.brand)) {
+          return false;
+        }
+
+        return true;
+      };
+
+      const products = (cat.products || []).filter(filterProduct);
 
       products.forEach((item) => {
         const baseName = item.name.replace(/-(Hộp|Vỉ|Viên)$/i, '').trim();
@@ -361,6 +404,25 @@ export class CategoriesService implements CategoryService {
       });
     });
 
-    return Object.values(grouped).sort((a, b) => a.product_id - b.product_id);
+    const sorted = Object.values(grouped);
+
+    if (query?.sort === 'order_asc_price') {
+      sorted.sort((a, b) => {
+        const aMin = Math.min(...a.variants.map((v) => v.price));
+        const bMin = Math.min(...b.variants.map((v) => v.price));
+        return aMin - bMin;
+      });
+    } else if (query?.sort === 'order_desc_price') {
+      sorted.sort((a, b) => {
+        const aMax = Math.max(...a.variants.map((v) => v.price));
+        const bMax = Math.max(...b.variants.map((v) => v.price));
+        return bMax - aMax;
+      });
+    } else {
+      // Mặc định: theo product_id
+      sorted.sort((a, b) => a.product_id - b.product_id);
+    }
+
+    return sorted;
   }
 }

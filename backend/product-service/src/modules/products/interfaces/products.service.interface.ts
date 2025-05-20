@@ -5,7 +5,7 @@ import { Product } from '../entities/product.entity';
 
 export interface ProductService {
   create(createProductRequest: CreateProductRequest): Promise<Product>;
-  findAll(): Promise<Product[]>;
+  findAll(queryParams: { name?: string }): Promise<Product[]>;
   findOne(id: number): Promise<Product>;
   update(
     id: number,

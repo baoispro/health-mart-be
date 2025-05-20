@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -55,8 +56,20 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Lấy danh sách tất cả sản phẩm thành công')
-  getAllProducts() {
-    return this.productService.getAllProducts();
+  getAllProducts(@Query('name') name?: string) {
+    return this.productService.getAllProducts({ name });
+  }
+
+  @Get('/list-brands')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả thương hiệu' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách thương hiệu',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách tất cả thương hiệu thành công')
+  getAllBrands() {
+    return this.productService.getAllBrands();
   }
 
   @Get('/category-lv3/:id')
@@ -67,8 +80,20 @@ export class ProductsController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Lấy danh sách tất cả sản phẩm thành công')
-  getAllCategoryLv3(@Param('id') id: number) {
-    return this.productService.getCategoryLv3(id);
+  getAllCategoryLv3(
+    @Param('id') id: number,
+    @Query('price') price?: string,
+    @Query('country') country?: string | string[],
+    @Query('brand') brand?: string | string[],
+    @Query('sort') sort?: string,
+  ) {
+    const query = {
+      price,
+      sort,
+      country: Array.isArray(country) ? country : country ? [country] : [],
+      brand: Array.isArray(brand) ? brand : brand ? [brand] : [],
+    };
+    return this.productService.getCategoryLv3(id, query);
   }
 
   @Get('/slug/:slug')

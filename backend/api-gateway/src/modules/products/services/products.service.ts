@@ -32,9 +32,9 @@ export class ProductsService {
     throwError(() => new RpcException(error.response || error.message)),
   );
 
-  getAllProducts() {
+  getAllProducts(queryParams: { name?: string }) {
     return this.productClient
-      .send('get_all_products', {})
+      .send('get_all_products', queryParams)
       .pipe(this.handleError);
   }
 
@@ -398,9 +398,13 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
-  getCategoryLv3(id: number) {
+  getCategoryLv3(id: number, query?: any) {
     return this.productClient
-      .send('get_category_lv3', id)
+      .send('get_category_lv3', { id, query })
       .pipe(this.handleError);
+  }
+
+  getAllBrands() {
+    return this.productClient.send('get_all_brands', {}).pipe(this.handleError);
   }
 }

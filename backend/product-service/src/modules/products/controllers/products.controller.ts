@@ -9,8 +9,8 @@ export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
   @MessagePattern('get_all_products')
-  getAllProducts() {
-    return this.productService.findAll();
+  getAllProducts(@Payload() queryParams: { name?: string }) {
+    return this.productService.findAll(queryParams);
   }
 
   @MessagePattern('get_product_by_id')
@@ -55,5 +55,10 @@ export class ProductsController {
     @Payload() payload: { productId: number },
   ): Promise<number> {
     return this.productService.getProductPrice(payload.productId);
+  }
+
+  @MessagePattern('get_all_brands')
+  getAllBrands() {
+    return this.productService.getUniqueBrands();
   }
 }
