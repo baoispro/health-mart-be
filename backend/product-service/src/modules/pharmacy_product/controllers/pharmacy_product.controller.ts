@@ -17,8 +17,8 @@ export class PharmacyProductController {
 
   // Lấy tồn kho theo pharmacyId
   @MessagePattern('get_product_by_pharmacy')
-  async getProductByPharmacy(@Payload() pharmacyId: number) {
-    return this.pharmacyProductService.findByPharmacy(pharmacyId);
+  async getProductByPharmacy(@Payload() payload: { pharmacyId: number }) {
+    return this.pharmacyProductService.findByPharmacy(payload.pharmacyId);
   }
 
   // Lấy tồn kho theo productId

@@ -9,46 +9,62 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
+    redis:
+      image: redis:latest
+      ports:
+      - "6379:6379"
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+
+
   api-gateway:
-    build: ./api-gateway
-    command: yarn start:dev
+    image: baoisspro/api-gateway
     ports:
       - "3001:3001"
     depends_on:
       - rabbitmq
 
   user-service:
-    build: ./user-service
-    command: yarn start:dev
+    image: baoisspro/user-service
     depends_on:
       - rabbitmq
 
   auth-service:
-    build: ./auth-service
-    command: yarn start:dev
+    image: baoisspro/auth-service
     depends_on:
       - rabbitmq
 
   order-service:
-      build: ./order-service
-      command: yarn start:dev
+      image: baoisspro/order-service
       depends_on:
         - rabbitmq
 
   policy-service:
-      build: ./policy-service
-      command: yarn start:dev
+      image: baoisspro/policy-service
       depends_on:
         - rabbitmq
 
   product-service:
-      build: ./product-service
-      command: yarn start:dev
+      image: baoisspro/product-service
       depends_on:
         - rabbitmq
 
   review-service:
-      build: ./review-service
-      command: yarn start:dev
+      image: baoisspro/review-service
       depends_on:
         - rabbitmq
+
+  cart-service:
+    build: ./cart-service
+    command: yarn start:dev
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./cart-service/.env
+    depends_on:
+      - redis
