@@ -30,4 +30,22 @@ export class CreateOrderShippingAddressRequest {
   @IsOptional()
   @IsNumber({}, { message: 'Pharmacy ID phải là số nếu có' })
   pharmacy_id?: number;
+
+  @ApiProperty({
+    description: 'Recipient Name (optional)',
+    example: 'Nguyễn Văn B',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'Recipient Name phải là chuỗi nếu có' })
+  recipientName?: string;
+
+  @ApiProperty({
+    description: 'Phone Number (optional)',
+    example: '0123456789',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'Phone Number phải là chuỗi nếu có' })
+  phoneNumber?: string;
 }

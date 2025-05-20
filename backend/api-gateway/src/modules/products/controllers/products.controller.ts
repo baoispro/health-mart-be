@@ -543,8 +543,8 @@ export class ProductsController {
   @ApiOperation({ summary: 'Cập nhật thông tin tồn kho' })
   @ApiResponse({ status: 200, type: BaseResponseDto })
   @ResponseMessage('Cập nhật tồn kho thành công')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('access-token')
   updatePharmacyProduct(
     @Param('pharmacyId') pharmacyId: number,
     @Param('productId') productId: number,

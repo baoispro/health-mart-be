@@ -12,7 +12,8 @@ export class OrderShippingAddress {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Order, { onDelete: 'CASCADE' })
+  // order_shipping_address.entity.ts
+  @OneToOne(() => Order, (order) => order.shippingAddress)
   @JoinColumn({ name: 'order_id' })
   order: Order;
 

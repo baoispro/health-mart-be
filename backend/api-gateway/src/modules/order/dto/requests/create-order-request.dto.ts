@@ -4,9 +4,9 @@ import { OrderShipMethod, OrderStatus } from '../../enums/order.enum';
 
 export class CreateOrderRequest {
   @ApiProperty()
-  @IsNotEmpty({ message: 'user_id là bắt buộc!' })
+  @IsOptional()
   @IsNumber()
-  user_id: number;
+  user_id?: number;
 
   @IsNotEmpty({ message: 'total_price không được để trống!' })
   @IsNumber({}, { message: 'total_price phải là số!' })

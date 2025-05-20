@@ -6,7 +6,6 @@ import {
   Body,
   Param,
   Put,
-  UseGuards,
   Delete,
 } from '@nestjs/common';
 import {
@@ -15,22 +14,22 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { OrderService } from '../services/order.service';
 import { CreateOrderRequest } from '../dto/requests/create-order-request.dto';
 import { BaseResponseDto } from '../dto/responses/base-response.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 import { UpdateOrderRequest } from '../dto/requests/update-order-request.dto';
-import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 import { CreateOrderShippingAddressRequest } from '../dto/requests/create-ordershippingaddress-request.dto';
 import { UpdateOrderShippingAddressRequest } from '../dto/requests/update-ordershippingaddress-request.dto';
 import { CreateOrderItemRequest } from '../dto/requests/create-order_items-request.dto';
 import { UpdateOrderPromotionRequest } from '../dto/requests/update-order_promotions-request.dto';
 import { CreateOrderPromotionRequest } from '../dto/requests/create-order_promotions-request.dto';
+import { CreateDiscountCodeRequest } from '../dto/requests/create-discount_code-request.dto';
+import { UpdateDiscountCodeRequest } from '../dto/requests/update-discount_code-request.dto';
 
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth('access-token')
+// @UseGuards(JwtAuthGuard)
+// @ApiBearerAuth('access-token')
 @ApiTags('Orders')
 @Controller('orders')
 export class OrderController {
@@ -268,5 +267,86 @@ export class OrderController {
   @ResponseMessage('Item được xóa thành công')
   deleteItemById(@Param('orderItemId') orderItemId: number) {
     return this.orderService.deleteItemById(orderItemId);
+  }
+
+  @Get('discount-codes')
+  @ApiOperation({ summary: 'Lấy danh sách mã giảm giá' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách mã giảm giá được trả về',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách mã giảm giá thành công')
+  getAllDiscountCodes() {
+    return this.orderService.getAllDiscountCodes();
+  }
+
+  @Get('discount-codes/:id')
+  @ApiOperation({ summary: 'Lấy thông tin một mã giảm giá' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin mã giảm giá',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy thông tin mã giảm giá thành công')
+  getDiscountCodeById(@Param('id') id: number) {
+    return this.orderService.getDiscountCodeById(id);
+  }
+
+  @Get('discount-codes/by-code/:code')
+  @ApiOperation({ summary: 'Lấy thông tin mã giảm giá theo code' })
+  @ApiParam({ name: 'code', type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin mã giảm giá theo code',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy thông tin mã giảm giá theo code thành công')
+  getDiscountCodeByCode(@Param('code') code: string) {
+    return this.orderService.getDiscountCodeByCode(code);
+  }
+
+  @Post('discount-codes')
+  @ApiOperation({ summary: 'Tạo mới mã giảm giá' })
+  @ApiBody({ type: CreateDiscountCodeRequest })
+  @ApiResponse({
+    status: 201,
+    description: 'Mã giảm giá được tạo thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Tạo mã giảm giá thành công')
+  createDiscountCode(@Body() createDiscountDto: CreateDiscountCodeRequest) {
+    return this.orderService.createDiscountCode(createDiscountDto);
+  }
+
+  @Put('discount-codes/:id')
+  @ApiOperation({ summary: 'Cập nhật thông tin mã giảm giá' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiBody({ type: UpdateDiscountCodeRequest })
+  @ApiResponse({
+    status: 200,
+    description: 'Cập nhật mã giảm giá thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Cập nhật mã giảm giá thành công')
+  updateDiscountCode(
+    @Param('id') id: number,
+    @Body() updateDiscountDto: UpdateDiscountCodeRequest,
+  ) {
+    return this.orderService.updateDiscountCode(id, updateDiscountDto);
+  }
+
+  @Delete('discount-codes/:id')
+  @ApiOperation({ summary: 'Xóa mã giảm giá' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Xóa mã giảm giá thành công',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Xóa mã giảm giá thành công')
+  deleteDiscountCode(@Param('id') id: number) {
+    return this.orderService.deleteDiscountCode(id);
   }
 }

@@ -16,7 +16,7 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   user_id: number;
 
   @Column({ type: 'decimal' })
@@ -28,7 +28,11 @@ export class Order {
   @Column({ type: 'decimal' })
   final_price: number;
 
-  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+  })
   order_status: OrderStatus;
 
   @Column({
@@ -44,6 +48,10 @@ export class Order {
   @OneToOne(
     () => OrderShippingAddress,
     (shippingAddress) => shippingAddress.order,
+    {
+      cascade: true,
+      eager: true,
+    },
   )
   shippingAddress: OrderShippingAddress;
 

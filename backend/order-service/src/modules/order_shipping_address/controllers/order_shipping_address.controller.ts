@@ -19,32 +19,25 @@ export class OrderShippingAddressController {
   }
 
   @MessagePattern({ cmd: 'get_all_order_shipping_addresses' })
-  async findAll(): Promise<OrderShippingAddress[]> {
+  async findAll(): Promise<any[]> {
     return this.shippingAddressService.findAll();
   }
 
   @MessagePattern({ cmd: 'get_order_shipping_address_by_id' })
-  async findOne(
-    @Payload() data: { id: number },
-  ): Promise<OrderShippingAddress> {
+  async findOne(@Payload() data: { id: number }): Promise<any> {
     return this.shippingAddressService.findOne(data.id);
   }
 
   @MessagePattern({ cmd: 'get_shipping_address_by_order_id' })
-  async findByOrderId(
-    @Payload() data: { orderId: number },
-  ): Promise<OrderShippingAddress> {
+  async findByOrderId(@Payload() data: { orderId: number }): Promise<any> {
     return this.shippingAddressService.getShippingAddress(data.orderId);
   }
 
   @MessagePattern({ cmd: 'update_order_shipping_address' })
   async update(
     @Payload()
-    data: {
-      id: number;
-      updateRequest: UpdateOrderShippingAddressRequest;
-    },
-  ): Promise<OrderShippingAddress> {
+    data: { id: number; updateRequest: UpdateOrderShippingAddressRequest },
+  ): Promise<any> {
     return this.shippingAddressService.updateShippingAddress(
       data.id,
       data.updateRequest,

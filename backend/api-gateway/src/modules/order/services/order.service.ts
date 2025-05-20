@@ -8,6 +8,8 @@ import { UpdateOrderShippingAddressRequest } from '../dto/requests/update-orders
 import { CreateOrderItemRequest } from '../dto/requests/create-order_items-request.dto';
 import { CreateOrderPromotionRequest } from '../dto/requests/create-order_promotions-request.dto';
 import { UpdateOrderPromotionRequest } from '../dto/requests/update-order_promotions-request.dto';
+import { CreateDiscountCodeRequest } from '../dto/requests/create-discount_code-request.dto';
+import { UpdateDiscountCodeRequest } from '../dto/requests/update-discount_code-request.dto';
 
 @Injectable()
 export class OrderService {
@@ -59,7 +61,7 @@ export class OrderService {
     );
   }
 
-  getAllShippingAddresses() {
+  async getAllShippingAddresses() {
     return this.orderClient.send(
       { cmd: 'get_all_order_shipping_addresses' },
       {},
@@ -125,7 +127,7 @@ export class OrderService {
     );
   }
 
-  //ORDER PROMOTIONS
+  // ORDER PROMOTIONS
   async getAllOrderPromotions() {
     return this.orderClient.send({ cmd: 'get_all_order_promotions' }, {});
   }
@@ -141,7 +143,7 @@ export class OrderService {
   async createOrderPromotion(promotionDto: CreateOrderPromotionRequest) {
     return await firstValueFrom(
       this.orderClient
-        .send({ cmd: 'create_order_promotions' }, promotionDto)
+        .send({ cmd: 'create_order_promotion' }, promotionDto)
         .pipe(this.handleError),
     );
   }
@@ -164,6 +166,58 @@ export class OrderService {
     return await firstValueFrom(
       this.orderClient
         .send({ cmd: 'delete_order_promotion' }, { id })
+        .pipe(this.handleError),
+    );
+  }
+
+  // DISCOUNT CODES PHẦN
+  async getAllDiscountCodes() {
+    return await firstValueFrom(
+      this.orderClient
+        .send({ cmd: 'discount:get_all' }, {})
+        .pipe(this.handleError),
+    );
+  }
+
+  async getDiscountCodeById(id: number) {
+    return await firstValueFrom(
+      this.orderClient
+        .send({ cmd: 'discount:get_by_id' }, { id })
+        .pipe(this.handleError),
+    );
+  }
+
+  async getDiscountCodeByCode(code: string): Promise<unknown> {
+    return await firstValueFrom(
+      this.orderClient
+        .send({ cmd: 'discount:get_by_code' }, { code })
+        .pipe(this.handleError),
+    );
+  }
+
+  async createDiscountCode(dto: CreateDiscountCodeRequest) {
+    return await firstValueFrom(
+      this.orderClient
+        .send({ cmd: 'discount:create' }, dto)
+        .pipe(this.handleError),
+    );
+  }
+
+  async updateDiscountCode(id: number, dto: UpdateDiscountCodeRequest) {
+    return await firstValueFrom(
+      this.orderClient
+        .send(
+          { cmd: 'discount:update' },
+          { id, updateDiscountCodeRequest: dto },
+        )
+        .pipe(this.handleError),
+    );
+  }
+
+  async deleteDiscountCode(id: number) {
+    return await firstValueFrom(
+      this.orderClient
+        .send({ cmd: 'discount:delete' }, { id })
         .pipe(this.handleError),
     );
   }
