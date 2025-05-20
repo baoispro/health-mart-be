@@ -1,5 +1,5 @@
 import { IsOptional, IsString, IsNumber } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateProductRequest {
@@ -18,6 +18,7 @@ export class UpdateProductRequest {
 
   @ApiProperty({ example: 15000, description: 'Giá sản phẩm' })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber({}, { message: 'price phải là số' })
   price?: number;
 
@@ -83,4 +84,10 @@ export class UpdateProductRequest {
   @IsNumber({}, { message: 'categoryId phải là số' })
   @Transform(({ obj }) => obj.category_id ?? obj.categoryId) // Ưu tiên lấy category_id nếu có
   categoryId?: number;
+
+  @ApiProperty({ example: 10, description: 'Phần trăm giảm giá (%)' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'discount_percentage phải là số' })
+  discount_percentage?: number;
 }

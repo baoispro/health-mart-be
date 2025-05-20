@@ -90,4 +90,15 @@ export class CreateProductRequest {
   @IsOptional()
   image_url?: string =
     'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg';
+
+  @ApiProperty({
+    example: 10,
+    description: 'Phần trăm giảm giá (%)',
+    required: false,
+  })
+  @Expose()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Giảm giá phải là số' })
+  @IsOptional()
+  discount_percentage?: number;
 }

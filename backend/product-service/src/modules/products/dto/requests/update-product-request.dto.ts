@@ -11,6 +11,7 @@ export class UpdateProductRequest {
   short_description?: string;
   slug?: string;
   image_url?: string;
+  discount_percentage: number;
   categoryId?: number;
-  avatarFile?: Express.Multer.File; // nếu có file upload
+  avatarFiles?: Express.Multer.File[]; // nếu có file upload
 }
