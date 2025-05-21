@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class UpdateReviewReplyRequest {
   @ApiProperty({
@@ -10,4 +10,13 @@ export class UpdateReviewReplyRequest {
   @IsOptional()
   @IsString({ message: 'replyText phải là chuỗi' })
   replyText?: string;
+
+  @ApiProperty({
+    example: 123,
+    description: 'ID của nhân viên phản hồi',
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: 'staffId phải là số' })
+  staffId?: number;
 }

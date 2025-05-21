@@ -86,7 +86,7 @@ export class ReviewReplyService {
 
   async updateReply(
     id: number,
-    data: { replyText?: string },
+    data: { staffId?: number; replyText?: string },
   ): Promise<ReviewReply> {
     const reply = await this.findOne(id);
 
