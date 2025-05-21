@@ -8,4 +8,5 @@ export interface IAddressService {
   findOne(id: number): Promise<Address>;
   update(id: number, updateUserRequest: UpdateAddressDto): Promise<Address>;
   remove(id: number): Promise<DeleteResult>;
+  getAddressesByUser(userId: number): Promise<Address[]>; // Phương thức mới
 }

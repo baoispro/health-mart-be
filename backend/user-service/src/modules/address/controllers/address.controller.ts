@@ -25,6 +25,11 @@ export class AddressController {
     return this.addressService.update(data.id, data.updateUserRequest);
   }
 
+  @MessagePattern('get_addresses_by_user')
+  async getAddressesByUser(@Payload() userId: number) {
+    return this.addressService.getAddressesByUser(userId);
+  }
+
   @MessagePattern('delete_address')
   async deleteAddress(@Payload() id: number) {
     return this.addressService.remove(id);

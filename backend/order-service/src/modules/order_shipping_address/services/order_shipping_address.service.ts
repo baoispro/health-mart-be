@@ -50,6 +50,11 @@ export class OrderShippingAddressService
         ward: address.ward,
         address: address.address,
         pharmacyName: address.pharmacy_id ? address.pharmacy_id : null,
+        // Các trường mới
+        customerName: address.customerName,
+        customerPhone: address.customerPhone,
+        customerEmail: address.customerEmail || null,
+        note: address.note || null,
       };
     });
   }
@@ -70,7 +75,6 @@ export class OrderShippingAddressService
       );
     }
 
-    // Kiểm tra pharmacy_id nếu có
     if (pharmacy_id) {
       const isPharmacyExists = await this.checkPharmacyExists(pharmacy_id);
       if (!isPharmacyExists) {
@@ -80,7 +84,6 @@ export class OrderShippingAddressService
       }
     }
 
-    // Nếu đã có địa chỉ cho đơn hàng này thì cập nhật
     const existingShipping = await this.orderShippingAddressRepository.findOne({
       where: { order: { id: orderId } },
       relations: ['order'],
@@ -138,6 +141,11 @@ export class OrderShippingAddressService
       pharmacyName: shippingAddress.pharmacy_id
         ? shippingAddress.pharmacy_id
         : null,
+      // Các trường mới
+      customerName: shippingAddress.customerName,
+      customerPhone: shippingAddress.customerPhone,
+      customerEmail: shippingAddress.customerEmail || null,
+      note: shippingAddress.note || null,
     };
   }
 
@@ -169,6 +177,11 @@ export class OrderShippingAddressService
       pharmacyName: shippingAddress.pharmacy_id
         ? shippingAddress.pharmacy_id
         : null,
+      // Các trường mới
+      customerName: shippingAddress.customerName,
+      customerPhone: shippingAddress.customerPhone,
+      customerEmail: shippingAddress.customerEmail || null,
+      note: shippingAddress.note || null,
     };
   }
 
@@ -242,6 +255,11 @@ export class OrderShippingAddressService
       pharmacyName: updatedEntity.pharmacy_id
         ? updatedEntity.pharmacy_id
         : null,
+      // Các trường mới
+      customerName: updatedEntity.customerName,
+      customerPhone: updatedEntity.customerPhone,
+      customerEmail: updatedEntity.customerEmail || null,
+      note: updatedEntity.note || null,
     };
   }
 
