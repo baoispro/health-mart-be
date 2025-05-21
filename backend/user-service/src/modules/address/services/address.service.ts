@@ -108,6 +108,23 @@ export class AddressService implements IAddressService {
     return await this.addressRepository.save(address);
   }
 
+  async getAddressesByUser(userId: number): Promise<Address[]> {
+    // Kiểm tra xem user có tồn tại không
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new RpcException(
+        new NotFoundException(`User ${userId} không tồn tại`),
+      );
+    }
+
+    // Lấy danh sách địa chỉ theo userId
+    const addresses = await this.addressRepository.find({
+      where: { userId },
+      relations: ['user'],
+    });
+    return addresses;
+  }
+
   async remove(id: number): Promise<DeleteResult> {
     await this.findOne(id);
     return await this.addressRepository.delete(id);

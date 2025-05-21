@@ -36,7 +36,10 @@ export class OrderShippingAddressController {
   @MessagePattern({ cmd: 'update_order_shipping_address' })
   async update(
     @Payload()
-    data: { id: number; updateRequest: UpdateOrderShippingAddressRequest },
+    data: {
+      id: number;
+      updateRequest: UpdateOrderShippingAddressRequest;
+    },
   ): Promise<any> {
     return this.shippingAddressService.updateShippingAddress(
       data.id,

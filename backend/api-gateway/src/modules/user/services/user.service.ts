@@ -98,6 +98,16 @@ export class UserService {
       );
   }
 
+  getAddressesByUser(userId: number) {
+    return this.userClient
+      .send('get_addresses_by_user', userId)
+      .pipe(
+        catchError((error) =>
+          throwError(() => new RpcException(error.response)),
+        ),
+      );
+  }
+
   deleteAddress(id: number) {
     return this.userClient
       .send('delete_address', id)

@@ -12,7 +12,6 @@ export class OrderShippingAddress {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // order_shipping_address.entity.ts
   @OneToOne(() => Order, (order) => order.shippingAddress)
   @JoinColumn({ name: 'order_id' })
   order: Order;
@@ -37,4 +36,17 @@ export class OrderShippingAddress {
 
   @Column({ nullable: true })
   phoneNumber: string;
+
+  // Các trường mới cho thông tin người đặt
+  @Column({ nullable: true })
+  customerName: string;
+
+  @Column({ nullable: true })
+  customerPhone: string;
+
+  @Column({ nullable: true })
+  customerEmail: string;
+
+  @Column({ nullable: true })
+  note: string;
 }

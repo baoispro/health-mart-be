@@ -172,6 +172,20 @@ export class UserController {
     return this.userService.updateAddress(id, updateUserRequest);
   }
 
+  @Get('/address/user/:userId')
+  @ApiOperation({ summary: 'Lấy danh sách địa chỉ của user theo userId' })
+  @ApiResponse({
+    status: 200,
+    description: 'Danh sách địa chỉ của user',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách địa chỉ thành công')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  getAddressesByUser(@Param('userId') userId: number) {
+    return this.userService.getAddressesByUser(userId);
+  }
+
   @Delete('/address/:id')
   @ApiOperation({ summary: 'Xóa địa chỉ' })
   @ApiResponse({
