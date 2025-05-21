@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
+  UploadedFiles,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -39,7 +40,7 @@ import { UpdateSideEffectRequest } from '../dto/requests/update-sideEffect-reque
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 import { CreateCategoryRequest } from '../dto/requests/create-category-requests.dto';
 import { UpdateCategoryRequest } from '../dto/requests/update-category-requests.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { UpdatePharmacyProductRequest } from '../dto/requests/update-pharmacyproduct-request.dto';
 import { CreatePharmacyProductRequest } from '../dto/requests/create-pharmacyproduct-request.dto';
 
@@ -524,7 +525,7 @@ export class ProductsController {
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor('image_url'))
+  @UseInterceptors(FilesInterceptor('image_url'))
   @ApiOperation({ summary: 'Tạo mới một sản phẩm' })
   @ApiResponse({
     status: 201,
@@ -536,17 +537,17 @@ export class ProductsController {
   @ApiBearerAuth('access-token')
   createProduct(
     @Body() createProductRequest: CreateProductRequest,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
     const payload = {
       ...createProductRequest,
-      avatarFile: file
-        ? {
+      avatarFiles: files?.length
+        ? files.map((file) => ({
             originalname: file.originalname,
             mimetype: file.mimetype,
-            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
-          }
-        : null,
+            buffer: Array.from(file.buffer),
+          }))
+        : [],
     };
     return this.productService.createProduct(payload);
   }
@@ -705,7 +706,7 @@ export class ProductsController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Cập nhật thông tin sản phẩm' })
-  @UseInterceptors(FileInterceptor('image_url'))
+  @UseInterceptors(FilesInterceptor('image_url'))
   @ApiResponse({
     status: 200,
     description: 'Cập nhật thành công',
@@ -717,18 +718,20 @@ export class ProductsController {
   updateProduct(
     @Param('id') id: number,
     @Body() updateProductRequest: UpdateProductRequest,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
     const payload = {
+      id,
       ...updateProductRequest,
-      avatarFile: file
-        ? {
+      avatarFiles: files?.length
+        ? files.map((file) => ({
             originalname: file.originalname,
             mimetype: file.mimetype,
-            buffer: Array.from(file.buffer), // Chuyển Buffer sang JSON để truyền qua RabbitMQ
-          }
-        : null,
+            buffer: Array.from(file.buffer),
+          }))
+        : [],
     };
+    console.log('[GATEWAY] Payload gửi sang microservice:', payload);
     return this.productService.updateProduct(id, payload);
   }
 

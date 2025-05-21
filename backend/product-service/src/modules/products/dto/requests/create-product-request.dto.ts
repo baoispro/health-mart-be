@@ -12,5 +12,6 @@ export class CreateProductRequest {
   description_html: string;
   slug: string;
   image_url?: string;
-  avatarFile?: Express.Multer.File; // nếu có file upload
+  discount_percentage: number;
+  avatarFiles?: Express.Multer.File[]; // nếu có file upload
 }

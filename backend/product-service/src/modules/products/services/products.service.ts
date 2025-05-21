@@ -33,7 +33,7 @@ export class ProductsService implements ProductService {
   }
 
   async create(createProductRequest: CreateProductRequest): Promise<Product> {
-    const { category_id, ...productData } = createProductRequest;
+    const { category_id, avatarFiles, ...productData } = createProductRequest;
 
     const category = await this.categoryRepository.findOne({
       where: { category_id },
@@ -55,14 +55,32 @@ export class ProductsService implements ProductService {
     }
 
     // Nếu có avatarFile thì upload lên S3
-    let avatarUrl =
-      productData.image_url ??
-      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg'; // default
-    if (productData.avatarFile) {
-      avatarUrl = await this.uploadToS3(productData.avatarFile); // bạn cần viết hàm này
+    let imageUrls: string[] = [];
+
+    if (avatarFiles && Array.isArray(avatarFiles) && avatarFiles.length > 0) {
+      imageUrls = await Promise.all(
+        avatarFiles.map(async (file) => {
+          const buffer = Buffer.isBuffer(file.buffer)
+            ? file.buffer
+            : Buffer.from(file.buffer);
+          const uploadFile = {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer,
+          };
+          const url = await this.uploadToS3(uploadFile);
+          return url;
+        }),
+      );
+    } else if (productData.image_url) {
+      imageUrls = [productData.image_url];
+    } else {
+      imageUrls = [
+        'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg',
+      ];
     }
 
-    productData.image_url = avatarUrl;
+    productData.image_url = imageUrls.join(',');
 
     const newProduct = this.productRepository.create({
       ...productData,
@@ -188,30 +206,60 @@ export class ProductsService implements ProductService {
         where: { category_id: updateProductRequest.categoryId },
       });
       if (!category) {
+        console.error(
+          '❌ [ERROR] Category không tồn tại:',
+          updateProductRequest.categoryId,
+        );
         throw new RpcException('Category không tồn tại!');
       }
       product.category = category;
     }
 
-    // Loại bỏ categoryId tránh ghi đè
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { categoryId, avatarFile, ...rest } = updateProductRequest;
+    const { categoryId, avatarFiles, image_url, ...rest } =
+      updateProductRequest;
 
-    // Nếu có avatarFile thì upload lên S3
-    let avatarUrl =
-      rest.image_url ??
-      'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg'; // default
-    if (avatarFile) {
-      avatarUrl = await this.uploadToS3(avatarFile); // bạn cần viết hàm này
+    // Upload ảnh mới nếu có
+    let imageUrls: string[] = [];
+
+    // Lấy link ảnh cũ từ image_url (nếu có)
+    if (image_url) {
+      imageUrls = image_url.split(',').map((url: string) => url.trim());
     }
 
-    rest.image_url = avatarUrl;
+    // Nếu có file mới, upload và nối vào mảng link ảnh cũ
+    if (avatarFiles && Array.isArray(avatarFiles) && avatarFiles.length > 0) {
+      const uploadedUrls = await Promise.all(
+        avatarFiles.map(async (file) => {
+          const buffer = Buffer.isBuffer(file.buffer)
+            ? file.buffer
+            : Buffer.from(file.buffer);
+          const uploadFile = {
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            buffer,
+          };
+          const url = await this.uploadToS3(uploadFile);
+          return url;
+        }),
+      );
+      // Nối link ảnh mới vào cuối mảng ảnh cũ
+      imageUrls = [...imageUrls, ...uploadedUrls];
+    }
+
+    // Nếu không có ảnh nào, dùng ảnh mặc định
+    if (imageUrls.length === 0) {
+      imageUrls = [
+        'https://bucket-ktpm.s3.ap-southeast-1.amazonaws.com/avatars/4c66412e-6894-4bfd-b717-3018f79faf13_avatar-default.svg',
+      ];
+    }
+
+    (rest as any).image_url = imageUrls.join(',');
 
     Object.assign(product, rest);
 
     await this.productRepository.save(product);
 
-    // Tìm lại product kèm quan hệ category
     const updatedProduct = await this.productRepository.findOne({
       where: { product_id: id },
       relations: ['category'],

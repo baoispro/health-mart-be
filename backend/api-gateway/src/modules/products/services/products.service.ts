@@ -50,9 +50,9 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
-  updateProduct(id: number, payload: any) {
+  updateProduct(id: number, updateProductRequest: any) {
     return this.productClient
-      .send('update_product', { id, payload })
+      .send('update_product', { id, updateProductRequest }) 
       .pipe(this.handleError);
   }
 
