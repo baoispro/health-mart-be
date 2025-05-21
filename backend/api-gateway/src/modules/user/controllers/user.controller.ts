@@ -53,8 +53,6 @@ export class UserController {
     type: BaseResponseDto,
   })
   @ResponseMessage('Lấy thông tin người dùng thành công')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
   getUserById(@Param('id') id: number) {
     return this.userService.getUserById(id);
   }
