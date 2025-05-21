@@ -12,7 +12,6 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 import { firstValueFrom } from 'rxjs';
 import { CreateOrderShippingAddressRequest } from '../dto/requests/create-ordershippingaddress-request.dto';
-import { UpdateOrderShippingAddressRequest } from '../dto/requests/update-ordershippingaddress-request.dto';
 import { OrderShippingAddressService as IOrderShippingAddressService } from '../interfaces/order_shipping_address.service.interface';
 
 @Injectable()
@@ -20,8 +19,8 @@ export class OrderShippingAddressService
   implements IOrderShippingAddressService
 {
   private readonly logger = new Logger(OrderShippingAddressService.name);
+  // Vì không cần lấy thông tin từ user nên không cần userClient nữa.
   private productClient: ClientProxy;
-  private userClient: ClientProxy; // Khai báo cho user service
 
   constructor(
     @InjectRepository(OrderShippingAddress)
@@ -31,56 +30,31 @@ export class OrderShippingAddressService
     private readonly clientProxyFactory: ClientProxyFactoryService,
   ) {
     this.productClient = this.clientProxyFactory.createClient('productService');
-    this.userClient = this.clientProxyFactory.createClient('userService');
   }
 
+  // Lấy toàn bộ địa chỉ giao hàng, sử dụng trực tiếp thông tin từ entity
   async findAll(): Promise<any[]> {
-    // Lấy tất cả các shipping address kèm quan hệ order để có thể truy xuất thuộc tính order.user_id
     const shippingAddresses = await this.orderShippingAddressRepository.find({
       relations: ['order'],
     });
 
-    const enrichedShippingAddresses = await Promise.all(
-      shippingAddresses.map(async (address) => {
-        const orderId = address.order ? address.order.id : null;
-
-        let enrichedRecipientName = address.recipientName;
-        let enrichedPhoneNumber = address.phoneNumber;
-
-        if (address.order && address.order.user_id) {
-          try {
-            const user = await firstValueFrom(
-              this.userClient.send('get_user_by_id', address.order.user_id),
-            );
-            if (!enrichedRecipientName) {
-              enrichedRecipientName = user.fullName;
-            }
-            if (!enrichedPhoneNumber) {
-              enrichedPhoneNumber = user.phone;
-            }
-          } catch (error) {
-            this.logger.error(
-              `Không lấy được thông tin user cho order ${orderId}: ${error.message}`,
-            );
-          }
-        }
-
-        return {
-          order_id: orderId,
-          recipientName: enrichedRecipientName,
-          phoneNumber: enrichedPhoneNumber,
-          city: address.city,
-          district: address.district,
-          ward: address.ward,
-          address: address.address,
-          pharmacyName: address.pharmacy_id ? address.pharmacy_id : null,
-        };
-      }),
-    );
-
-    return enrichedShippingAddresses;
+    return shippingAddresses.map((address) => {
+      const orderId = address.order ? address.order.id : null;
+      return {
+        id: address.id,
+        order_id: orderId,
+        recipientName: address.recipientName,
+        phoneNumber: address.phoneNumber,
+        city: address.city,
+        district: address.district,
+        ward: address.ward,
+        address: address.address,
+        pharmacyName: address.pharmacy_id ? address.pharmacy_id : null,
+      };
+    });
   }
 
+  // Tạo mới địa chỉ giao hàng (nếu đã có rồi thì update)
   async createShippingAddress(
     createRequest: CreateOrderShippingAddressRequest,
   ): Promise<OrderShippingAddress> {
@@ -96,7 +70,7 @@ export class OrderShippingAddressService
       );
     }
 
-    // Nếu có pharmacy_id thì kiểm tra xem có tồn tại không
+    // Kiểm tra pharmacy_id nếu có
     if (pharmacy_id) {
       const isPharmacyExists = await this.checkPharmacyExists(pharmacy_id);
       if (!isPharmacyExists) {
@@ -106,13 +80,12 @@ export class OrderShippingAddressService
       }
     }
 
-    // Kiểm tra đã có địa chỉ của đơn hàng chưa
-    let existingShipping = await this.orderShippingAddressRepository.findOne({
+    // Nếu đã có địa chỉ cho đơn hàng này thì cập nhật
+    const existingShipping = await this.orderShippingAddressRepository.findOne({
       where: { order: { id: orderId } },
       relations: ['order'],
     });
     if (existingShipping) {
-      // Nếu đã có, cập nhật thông tin nếu cần và trả về
       Object.assign(existingShipping, shippingData, { pharmacy_id });
       return this.orderShippingAddressRepository.save(existingShipping);
     }
@@ -125,6 +98,7 @@ export class OrderShippingAddressService
     return await this.orderShippingAddressRepository.save(newShipping);
   }
 
+  // Hàm kiểm tra sự tồn tại của pharmacy thông qua productService
   private async checkPharmacyExists(pharmacyId: number): Promise<boolean> {
     try {
       const result = await firstValueFrom(
@@ -137,6 +111,7 @@ export class OrderShippingAddressService
     }
   }
 
+  // Lấy địa chỉ giao hàng theo order ID (dành cho view theo đơn hàng)
   async getShippingAddress(orderId: number): Promise<any> {
     const shippingAddress = await this.orderShippingAddressRepository.findOne({
       where: { order: { id: orderId } },
@@ -151,27 +126,11 @@ export class OrderShippingAddressService
       );
     }
 
-    let enrichedRecipientName = shippingAddress.recipientName;
-    let enrichedPhoneNumber = shippingAddress.phoneNumber;
-
-    if (shippingAddress.order && shippingAddress.order.user_id) {
-      try {
-        const user = await firstValueFrom(
-          this.userClient.send('get_user_by_id', shippingAddress.order.user_id),
-        );
-        enrichedRecipientName = enrichedRecipientName || user.fullName;
-        enrichedPhoneNumber = enrichedPhoneNumber || user.phone;
-      } catch (error) {
-        this.logger.error(
-          `Không lấy được thông tin user cho order ${orderId}: ${error.message}`,
-        );
-      }
-    }
-
     return {
+      id: shippingAddress.id,
       order_id: orderId,
-      recipientName: enrichedRecipientName,
-      phoneNumber: enrichedPhoneNumber,
+      recipientName: shippingAddress.recipientName,
+      phoneNumber: shippingAddress.phoneNumber,
       city: shippingAddress.city,
       district: shippingAddress.district,
       ward: shippingAddress.ward,
@@ -182,42 +141,27 @@ export class OrderShippingAddressService
     };
   }
 
-  async findOne(orderShippingAddressId: number): Promise<any> {
+  // Lấy địa chỉ giao hàng theo shipping address ID
+  async findOne(shippingAddressId: number): Promise<any> {
     const shippingAddress = await this.orderShippingAddressRepository.findOne({
-      where: { id: orderShippingAddressId },
+      where: { id: shippingAddressId },
       relations: ['order'],
     });
 
     if (!shippingAddress) {
       throw new RpcException(
         new NotFoundException(
-          `Địa chỉ giao hàng với ID ${orderShippingAddressId} không tồn tại`,
+          `Địa chỉ giao hàng với ID ${shippingAddressId} không tồn tại`,
         ),
       );
     }
 
     const orderId = shippingAddress.order ? shippingAddress.order.id : null;
-    let enrichedRecipientName = shippingAddress.recipientName;
-    let enrichedPhoneNumber = shippingAddress.phoneNumber;
-
-    if (shippingAddress.order && shippingAddress.order.user_id) {
-      try {
-        const user = await firstValueFrom(
-          this.userClient.send('get_user_by_id', shippingAddress.order.user_id),
-        );
-        enrichedRecipientName = enrichedRecipientName || user.fullName;
-        enrichedPhoneNumber = enrichedPhoneNumber || user.phone;
-      } catch (error) {
-        this.logger.error(
-          `Không lấy được thông tin user cho order ${orderId}: ${error.message}`,
-        );
-      }
-    }
-
     return {
+      id: shippingAddress.id,
       order_id: orderId,
-      recipientName: enrichedRecipientName,
-      phoneNumber: enrichedPhoneNumber,
+      recipientName: shippingAddress.recipientName,
+      phoneNumber: shippingAddress.phoneNumber,
       city: shippingAddress.city,
       district: shippingAddress.district,
       ward: shippingAddress.ward,
@@ -228,32 +172,30 @@ export class OrderShippingAddressService
     };
   }
 
+  // Cập nhật địa chỉ giao hàng theo shipping address ID
   async updateShippingAddress(
-    orderId: number,
+    shippingAddressId: number,
     shippingData: Partial<OrderShippingAddress>,
   ): Promise<any> {
-    // Truy vấn entity thực từ repository để lấy thông tin (bao gồm cả ID)
     const existingShipping = await this.orderShippingAddressRepository.findOne({
-      where: { order: { id: orderId } },
+      where: { id: shippingAddressId },
       relations: ['order'],
     });
 
     if (!existingShipping) {
       throw new RpcException(
         new NotFoundException(
-          `Địa chỉ giao hàng cho đơn hàng ${orderId} không tồn tại`,
+          `Địa chỉ giao hàng với ID ${shippingAddressId} không tồn tại`,
         ),
       );
     }
 
-    // Nếu dữ liệu cập nhật rỗng thì không thực hiện update
     if (Object.keys(shippingData).length === 0) {
       throw new RpcException(
         new BadRequestException('Không có dữ liệu cập nhật'),
       );
     }
 
-    // Kiểm tra pharmacy_id nếu có
     if (
       shippingData.pharmacy_id !== undefined &&
       shippingData.pharmacy_id !== null
@@ -270,13 +212,11 @@ export class OrderShippingAddressService
       }
     }
 
-    // Cập nhật entity theo ID đã tìm được
     await this.orderShippingAddressRepository.update(
       existingShipping.id,
       shippingData,
     );
 
-    // Lấy lại entity sau khi cập nhật
     const updatedEntity = await this.orderShippingAddressRepository.findOne({
       where: { id: existingShipping.id },
       relations: ['order'],
@@ -290,29 +230,11 @@ export class OrderShippingAddressService
       );
     }
 
-    // Enrich thông tin recipientName và phoneNumber nếu cần, lấy từ user nếu chưa có
-    let enrichedRecipientName = updatedEntity.recipientName;
-    let enrichedPhoneNumber = updatedEntity.phoneNumber;
-
-    if (updatedEntity.order && updatedEntity.order.user_id) {
-      try {
-        const user = await firstValueFrom(
-          this.userClient.send('get_user_by_id', updatedEntity.order.user_id),
-        );
-        enrichedRecipientName = enrichedRecipientName || user.fullName;
-        enrichedPhoneNumber = enrichedPhoneNumber || user.phone;
-      } catch (error) {
-        this.logger.error(
-          `Không lấy được thông tin user cho order ${orderId}: ${error.message}`,
-        );
-      }
-    }
-
-    // Trả về kết quả enrich theo cấu trúc mong muốn
     return {
+      id: updatedEntity.id,
       order_id: updatedEntity.order ? updatedEntity.order.id : null,
-      recipientName: enrichedRecipientName,
-      phoneNumber: enrichedPhoneNumber,
+      recipientName: updatedEntity.recipientName,
+      phoneNumber: updatedEntity.phoneNumber,
       city: updatedEntity.city,
       district: updatedEntity.district,
       ward: updatedEntity.ward,
@@ -323,8 +245,19 @@ export class OrderShippingAddressService
     };
   }
 
-  async deleteShippingAddress(orderId: number): Promise<void> {
-    const shippingAddress = await this.getShippingAddress(orderId);
+  // Xóa địa chỉ giao hàng theo shipping address ID
+  async deleteShippingAddress(shippingAddressId: number): Promise<void> {
+    const shippingAddress = await this.orderShippingAddressRepository.findOne({
+      where: { id: shippingAddressId },
+      relations: ['order'],
+    });
+    if (!shippingAddress) {
+      throw new RpcException(
+        new NotFoundException(
+          `Địa chỉ giao hàng với ID ${shippingAddressId} không tồn tại`,
+        ),
+      );
+    }
     await this.orderShippingAddressRepository.delete(shippingAddress.id);
   }
 }

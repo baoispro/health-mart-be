@@ -12,7 +12,7 @@ import { ClientProxyFactoryService } from 'src/utils/client-proxy.factory';
 import { firstValueFrom } from 'rxjs';
 import { OrderItemsService as IOrderItemsService } from '../interfaces/order_items.service.interface';
 import { Order } from '../../orders/entities/orders.entity';
-import { CreateOrderItemRequest } from '../dto/requests/create-order_items-request.dto';
+import { CreateOrderItemRequestDto } from '../dto/requests/create-order_item-request.dto';
 
 @Injectable()
 export class OrderItemsService implements IOrderItemsService {
@@ -82,9 +82,9 @@ export class OrderItemsService implements IOrderItemsService {
   }
 
   async createOrderItem(
-    dtos: CreateOrderItemRequest[] | CreateOrderItemRequest,
+    dtos: CreateOrderItemRequestDto[] | CreateOrderItemRequestDto,
   ): Promise<OrderItem[]> {
-    const dtosArray: CreateOrderItemRequest[] = Array.isArray(dtos)
+    const dtosArray: CreateOrderItemRequestDto[] = Array.isArray(dtos)
       ? dtos
       : [dtos];
     const createdItems: OrderItem[] = [];

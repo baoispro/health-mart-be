@@ -23,7 +23,7 @@ export class OrderPromotionsController {
     return await this.orderPromotionsService.findByOrderId(payload.orderId);
   }
 
-  @MessagePattern({ cmd: 'create_order_promotions' })
+  @MessagePattern({ cmd: 'create_order_promotion' })
   async create(
     @Payload() promotionDto: CreateOrderPromotionRequest,
   ): Promise<OrderPromotion> {
@@ -48,7 +48,6 @@ export class OrderPromotionsController {
   async delete(
     @Payload() payload: { id: number },
   ): Promise<{ message: string }> {
-    await this.orderPromotionsService.deletePromotion(payload.id);
-    return { message: 'Xóa khuyến mãi đơn hàng thành công' };
+    return await this.orderPromotionsService.deletePromotion(payload.id);
   }
 }

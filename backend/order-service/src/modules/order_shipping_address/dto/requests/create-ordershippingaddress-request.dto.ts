@@ -5,4 +5,6 @@ export class CreateOrderShippingAddressRequest {
   ward: string;
   address: string;
   pharmacy_id?: number;
+  recipientName: string;
+  phoneNumber: string;
 }

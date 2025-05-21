@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrdersModule } from './modules/orders/orders.module';
-import { OrderShippingAddress } from './modules/order_shipping_address/entities/order_shipping_address.entity';
+import { OrderShippingAddressModule } from './modules/order_shipping_address/order_shipping_address.module';
 import { OrderItemsModule } from './modules/order_items/order_items.module';
 import { OrderPromotionsModule } from './modules/order_promotions/order_promotions.module';
+import { DiscountCodesModule } from './modules/discount_code/discount_code.module';
 
 @Module({
   imports: [
@@ -29,9 +30,10 @@ import { OrderPromotionsModule } from './modules/order_promotions/order_promotio
       }),
     }),
     OrdersModule,
-    OrderShippingAddress,
+    OrderShippingAddressModule,
     OrderItemsModule,
     OrderPromotionsModule,
+    DiscountCodesModule,
   ],
 })
 export class AppModule {}

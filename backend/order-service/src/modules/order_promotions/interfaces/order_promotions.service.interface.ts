@@ -10,5 +10,5 @@ export interface OrderPromotionsService {
     id: number,
     updateDto: UpdateOrderPromotionRequest,
   ): Promise<OrderPromotion>;
-  deletePromotion(id: number): Promise<void>;
+  deletePromotion(id: number): Promise<{ message: string }>;
 }

@@ -1,17 +1,6 @@
 import { Order } from 'src/modules/orders/entities/orders.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-
-export enum DiscountType {
-  NONE = 'NONE',
-  FIXED = 'FIXED',
-  PERCENTAGE = 'PERCENTAGE',
-}
+import { DiscountCode } from '../../discount_code/entities/discount_code.entity';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('order_promotions')
 export class OrderPromotion {
@@ -22,16 +11,7 @@ export class OrderPromotion {
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
-  @Column('text')
-  promoCode: string;
-
-  @Column({
-    type: 'enum',
-    enum: DiscountType,
-    default: DiscountType.NONE,
-  })
-  discountType: DiscountType;
-
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  discountValue: number;
+  @ManyToOne(() => DiscountCode, { eager: true })
+  @JoinColumn({ name: 'discount_code_id' })
+  discountCode: DiscountCode;
 }

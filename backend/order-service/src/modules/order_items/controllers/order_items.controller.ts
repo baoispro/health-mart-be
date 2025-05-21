@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { OrderItemsService } from '../services/order_items.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { OrderItem } from '../entities/order_items.entity';
-import { CreateOrderItemRequest } from '../dto/requests/create-order_items-request.dto';
+import { CreateOrderItemRequestDto } from '../dto/requests/create-order_item-request.dto';
 
 @Controller('order-items')
 export class OrderItemsController {
@@ -22,7 +22,7 @@ export class OrderItemsController {
 
   @MessagePattern({ cmd: 'create_order_items' })
   async create(
-    @Payload() items: CreateOrderItemRequest[],
+    @Payload() items: CreateOrderItemRequestDto[],
   ): Promise<OrderItem[]> {
     return await this.orderItemsService.createOrderItem(items);
   }
