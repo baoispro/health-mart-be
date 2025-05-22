@@ -65,20 +65,22 @@ export class OrdersService implements IOrderService {
 
     if (discount < 0 || total <= 0) {
       throw new RpcException(
-        new BadRequestException('Tổng tiền phải > 0 và giảm giá ≥ 0')
+        new BadRequestException('Tổng tiền phải > 0 và giảm giá ≥ 0'),
       );
     }
     if (discount >= total) {
       throw new RpcException(
-        new BadRequestException('Tổng tiền phải lớn hơn giảm giá')
+        new BadRequestException('Tổng tiền phải lớn hơn giảm giá'),
       );
     }
 
-    // Cập nhật trạng thái đơn hàng dựa vào hình thức giao hàng
-    if (orderData.ship_method === OrderShipMethod.PICK_UP) {
-      orderData.order_status = OrderStatus.COMPLETED;
-    } else {
-      orderData.order_status = OrderStatus.PENDING;
+    let order_status = orderData.order_status;
+    if (!order_status) {
+      if (orderData.ship_method === OrderShipMethod.PICK_UP) {
+        order_status = OrderStatus.COMPLETED;
+      } else {
+        order_status = OrderStatus.PENDING;
+      }
     }
 
     const final_price = total - discount;
@@ -91,7 +93,7 @@ export class OrdersService implements IOrderService {
         discount: discount,
         final_price: final_price,
         ship_method: orderData.ship_method,
-        order_status: orderData.order_status,
+        order_status: order_status,
       };
 
       const newOrder = manager.create(Order, orderPayload);

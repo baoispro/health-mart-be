@@ -1,5 +1,6 @@
 export enum OrderStatus {
   PENDING = 'PENDING', // Chờ xử lý
+  PENDING_NOTPAYMENT = 'PENDING_NOTPAYMENT',
   CONFIRMED = 'CONFIRMED', // Đã xác nhận
   PROCESSING = 'PROCESSING', // Đang xử lý
   SHIPPING = 'SHIPPING', // Đang giao hàng
