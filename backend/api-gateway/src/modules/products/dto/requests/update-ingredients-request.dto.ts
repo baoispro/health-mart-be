@@ -1,22 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsPositive, IsString, ValidateNested, IsOptional } from 'class-validator';
+
+export class UpdateIngredientItemDto {
+  @ApiProperty({ example: 'Calci carbonat', description: 'Tên thành phần' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty({ example: '400mg', description: 'Hàm lượng' })
+  @IsString()
+  @IsNotEmpty()
+  concentration: string;
+}
 
 export class UpdateIngredientRequest {
-  @ApiProperty({
-    example: 'Thành phần thuốc 300mg',
-    description: 'Tên thành phần',
-  })
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty({ message: 'Tên thành phần không được để trống' })
-  name?: string;
 
   @ApiProperty({
-    example: 'Hàm lượng của thành phần thuốc 300mg',
-    description: 'Hàm lượng thành phần',
+    type: [UpdateIngredientItemDto],
+    description: 'Danh sách thành phần cập nhật',
   })
-  @IsOptional()
-  @IsString()
-  @IsNotEmpty({ message: 'Hàm lượng thành phần không được để trống' })
-  concentration?: string;
+  @ValidateNested({ each: true })
+  @Type(() => UpdateIngredientItemDto)
+  ingredients: UpdateIngredientItemDto[];
 }

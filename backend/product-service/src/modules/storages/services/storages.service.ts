@@ -82,7 +82,8 @@ export class StoragesService implements StoragesServiceInterface {
         new NotFoundException(`Storage ${id} không tồn tại!`),
       );
     }
-    if (storage.product.product_id !== product_id) {
+
+    if (product_id && storage.product.product_id !== product_id) {
       const product = await this.productRepository.findOne({
         where: { product_id },
       });
@@ -93,10 +94,10 @@ export class StoragesService implements StoragesServiceInterface {
       }
       storage.product = product;
     }
-    return await this.storageRepository.save({
-      ...storage,
-      ...storageData,
-    });
+
+    Object.assign(storage, storageData);
+
+    return await this.storageRepository.save(storage);
   }
 
   async remove(id: number): Promise<DeleteResult> {

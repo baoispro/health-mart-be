@@ -16,7 +16,10 @@ export class IngredientService {
     private productRepository: Repository<Product>,
   ) {}
 
-  async create(createRequest: CreateIngredientRequest): Promise<Ingredient> {
+  async createMany(createRequest: {
+    product_id: number;
+    ingredients: { name: string; concentration: string }[];
+  }): Promise<Ingredient[]> {
     const product = await this.productRepository.findOne({
       where: { product_id: createRequest.product_id },
     });
@@ -27,11 +30,13 @@ export class IngredientService {
         ),
       );
     }
-    const newIngredient = this.ingredientRepository.create({
-      ...createRequest,
-      product,
-    });
-    return await this.ingredientRepository.save(newIngredient);
+    const newIngredients = createRequest.ingredients.map((item) =>
+      this.ingredientRepository.create({
+        ...item,
+        product,
+      }),
+    );
+    return await this.ingredientRepository.save(newIngredients);
   }
 
   async findAll(): Promise<Ingredient[]> {
@@ -58,13 +63,55 @@ export class IngredientService {
     return ingredient;
   }
 
-  async update(
-    id: number,
-    updateRequest: UpdateIngredientRequest,
-  ): Promise<Ingredient> {
-    const ingredient = await this.findOne(id);
-    Object.assign(ingredient, updateRequest);
-    return await this.ingredientRepository.save(ingredient);
+  async updateMany(updateRequest: {
+    product_id: number;
+    ingredients: { name: string; concentration: string }[];
+  }): Promise<Ingredient[]> {
+    const product = await this.productRepository.findOne({
+      where: { product_id: updateRequest.product_id },
+    });
+
+    if (!product) {
+      throw new RpcException(
+        new NotFoundException(
+          `Product ${updateRequest.product_id} không tồn tại!`,
+        ),
+      );
+    }
+
+    const existingIngredients = await this.ingredientRepository.find({
+      where: { product: { product_id: updateRequest.product_id } },
+    });
+
+    const existingMap = new Map<string, Ingredient>();
+    for (const ing of existingIngredients) {
+      existingMap.set(ing.name, ing);
+    }
+
+    const updatedOrCreated: Ingredient[] = [];
+
+    for (const item of updateRequest.ingredients) {
+      const existing = existingMap.get(item.name);
+      if (existing) {
+        existing.concentration = item.concentration;
+        updatedOrCreated.push(existing);
+        existingMap.delete(item.name); 
+      } else {
+        const newIngredient = this.ingredientRepository.create({
+          name: item.name,
+          concentration: item.concentration,
+          product,
+        });
+        updatedOrCreated.push(newIngredient);
+      }
+    }
+
+    const toDelete = Array.from(existingMap.values());
+    if (toDelete.length > 0) {
+      await this.ingredientRepository.remove(toDelete);
+    }
+
+    return await this.ingredientRepository.save(updatedOrCreated);
   }
 
   async remove(id: number): Promise<DeleteResult> {

@@ -82,7 +82,8 @@ export class DosagesService implements DosagesServiceInterface {
         new NotFoundException(`dosage ${id} không tồn tại!`),
       );
     }
-    if (dosage.product.product_id !== product_id) {
+
+    if (product_id && dosage.product.product_id !== product_id) {
       const product = await this.productRepository.findOne({
         where: { product_id },
       });
@@ -93,10 +94,10 @@ export class DosagesService implements DosagesServiceInterface {
       }
       dosage.product = product;
     }
-    return await this.dosageRepository.save({
-      ...dosage,
-      ...dosageData,
-    });
+
+    Object.assign(dosage, dosageData);
+
+    return await this.dosageRepository.save(dosage);
   }
 
   async remove(id: number): Promise<DeleteResult> {
