@@ -1,6 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsPositive, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsPositive, IsString, ValidateNested, ArrayMinSize } from 'class-validator';
+
+export class IngredientItemDto {
+  @ApiProperty({ example: 'Calci carbonat', description: 'Tên thành phần' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty({ example: '400mg', description: 'Hàm lượng' })
+  @IsString()
+  @IsNotEmpty()
+  concentration: string;
+}
 
 export class CreateIngredientRequest {
   @ApiProperty({
@@ -8,25 +20,17 @@ export class CreateIngredientRequest {
     description: 'ID của sản phẩm',
     required: true,
   })
-  @Expose()
-  @IsInt({ message: 'ID sản phẩm phải là số nguyên' })
-  @IsPositive({ message: 'ID sản phẩm phải là số dương' })
-  @IsNotEmpty({ message: 'ID sản phẩm không được để trống' })
+  @IsInt()
+  @IsPositive()
+  @IsNotEmpty()
   product_id: number;
+
   @ApiProperty({
-    example: 'Thành phần thuốc 300mg',
-    description: 'Hàm lượng cách dùng',
+    type: [IngredientItemDto],
+    description: 'Danh sách thành phần',
   })
-  @Expose()
-  @IsString()
-  @IsNotEmpty({ message: 'Tên thành phần cách dùng không được để trống' })
-  name: string;
-  @ApiProperty({
-    example: 'Hàm lượng 300mg',
-    description: 'Hàm lượng của sản phẩm',
-  })
-  @Expose()
-  @IsString()
-  @IsNotEmpty({ message: 'Hàm lượng không được để trống' })
-  concentration: string;
+  @ValidateNested({ each: true })
+  @Type(() => IngredientItemDto)
+  @ArrayMinSize(1, { message: 'Phải có ít nhất 1 thành phần' })
+  ingredients: IngredientItemDto[];
 }

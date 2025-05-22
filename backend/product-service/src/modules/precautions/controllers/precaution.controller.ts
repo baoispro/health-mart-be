@@ -39,4 +39,9 @@ export class PrecautionController {
   async deletePrecaution(@Payload() id: number) {
     return this.precautionService.remove(id);
   }
+
+  @MessagePattern('get_precautions_by_product_id')
+  async getPrecautionsByProductId(@Payload() productId: number) {
+    return this.precautionService.findByProduct(productId);
+  }
 }

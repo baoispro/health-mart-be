@@ -21,17 +21,27 @@ export class IngredientController {
   }
 
   // Tạo thành phần mới
-  @MessagePattern('create_ingredient')
-  async createIngredient(@Payload() createRequest: CreateIngredientRequest) {
-    return this.ingredientService.create(createRequest);
+  @MessagePattern('create_ingredients')
+  async createIngredients(
+    @Payload()
+    createRequest: {
+      product_id: number;
+      ingredients: { name: string; concentration: string }[];
+    },
+  ) {
+    return this.ingredientService.createMany(createRequest);
   }
 
   // Cập nhật thành phần
-  @MessagePattern('update_ingredient')
-  async updateIngredient(
-    @Payload() payload: { id: number; updateRequest: UpdateIngredientRequest },
+  @MessagePattern('update_ingredients')
+  async updateIngredientsByProduct(
+    @Payload()
+    updateRequest: {
+      product_id: number;
+      ingredients: { name: string; concentration: string }[];
+    },
   ) {
-    return this.ingredientService.update(payload.id, payload.updateRequest);
+    return this.ingredientService.updateMany(updateRequest);
   }
 
   // Xoá thành phần

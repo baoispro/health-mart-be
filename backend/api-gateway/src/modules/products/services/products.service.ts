@@ -52,7 +52,7 @@ export class ProductsService {
 
   updateProduct(id: number, updateProductRequest: any) {
     return this.productClient
-      .send('update_product', { id, updateProductRequest }) 
+      .send('update_product', { id, updateProductRequest })
       .pipe(this.handleError);
   }
 
@@ -72,23 +72,35 @@ export class ProductsService {
       .pipe(this.handleError);
   }
 
-  createIngredient(createRequest: CreateIngredientRequest) {
+  createIngredients(createRequest: {
+    product_id: number;
+    ingredients: { name: string; concentration: string }[];
+  }) {
     const payload = instanceToPlain(createRequest);
     return this.productClient
-      .send('create_ingredient', payload)
+      .send('create_ingredients', payload)
       .pipe(this.handleError);
   }
 
-  updateIngredient(id: number, updateRequest: UpdateIngredientRequest) {
+  updateIngredients(updateRequest: {
+    product_id: number;
+    ingredients: { name: string; concentration: string }[];
+  }) {
     const payload = instanceToPlain(updateRequest);
     return this.productClient
-      .send('update_ingredient', { id, updateRequest: payload })
+      .send('update_ingredients', payload)
       .pipe(this.handleError);
   }
 
   deleteIngredient(id: number) {
     return this.productClient
       .send('delete_ingredient', id)
+      .pipe(this.handleError);
+  }
+
+  getPrecautionsByProductId(productId: number) {
+    return this.productClient
+      .send('get_precautions_by_product_id', productId)
       .pipe(this.handleError);
   }
 

@@ -82,7 +82,8 @@ export class UsagesService implements UsagesServiceInterface {
         new NotFoundException(`Usage ${id} không tồn tại!`),
       );
     }
-    if (usage.product.product_id !== product_id) {
+
+    if (product_id && usage.product.product_id !== product_id) {
       const product = await this.productRepository.findOne({
         where: { product_id },
       });
@@ -93,10 +94,10 @@ export class UsagesService implements UsagesServiceInterface {
       }
       usage.product = product;
     }
-    return await this.usageRepository.save({
-      ...usage,
-      ...usageData,
-    });
+
+    Object.assign(usage, usageData);
+
+    return await this.usageRepository.save(usage);
   }
 
   async remove(id: number): Promise<DeleteResult> {

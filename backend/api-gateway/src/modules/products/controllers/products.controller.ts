@@ -365,6 +365,18 @@ export class ProductsController {
     return this.productService.getUsageByProductId(id);
   }
 
+  @Get(':id/precautions')
+  @ApiOperation({ summary: 'Lấy danh sách lưu ý theo id sản phẩm' })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin lưu ý theo id sản phẩm',
+    type: BaseResponseDto,
+  })
+  @ResponseMessage('Lấy danh sách lưu ý theo id sản phẩm thành công')
+  getPrecautionsByProductId(@Param('id') id: number) {
+    return this.productService.getPrecautionsByProductId(id);
+  }
+
   @Get(':productId/pharmacy-product/:pharmacyId')
   @ApiOperation({ summary: 'Lấy tồn kho theo nhà thuốc + sản phẩm' })
   @ApiResponse({ status: 200, type: BaseResponseDto })
@@ -450,8 +462,8 @@ export class ProductsController {
   @ResponseMessage('Tạo nguyên liệu thành công')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  createIngredient(@Body() createRequest: CreateIngredientRequest) {
-    return this.productService.createIngredient(createRequest);
+  createIngredients(@Body() createRequest: CreateIngredientRequest) {
+    return this.productService.createIngredients(createRequest);
   }
 
   @Post('/dosages')
@@ -604,7 +616,10 @@ export class ProductsController {
     @Param('id') id: number,
     @Body() updateRequest: UpdateIngredientRequest,
   ) {
-    return this.productService.updateIngredient(id, updateRequest);
+    return this.productService.updateIngredients({
+      product_id: id,
+      ...updateRequest,
+    });
   }
 
   @Put('/category/:id')
