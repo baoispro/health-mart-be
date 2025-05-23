@@ -1,21 +1,11 @@
-# File: cart-service/Dockerfile
-FROM node:18
+FROM node:20
 
-# Set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json + yarn.lock
-COPY package*.json ./
-COPY yarn.lock ./
+COPY package.json yarn.lock ./
 
-# Cài dependency
-RUN yarn install
+RUN yarn
 
-# Copy toàn bộ source
 COPY . .
 
-# Expose port của cart-service
-EXPOSE 3003
-
-# Command chạy dev (có thể đổi thành yarn start nếu dùng production)
 CMD ["yarn", "start:dev"]

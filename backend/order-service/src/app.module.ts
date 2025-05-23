@@ -24,9 +24,9 @@ import { DiscountCodesModule } from './modules/discount_code/discount_code.modul
         database: configService.get<string>('DB_NAME'),
         autoLoadEntities: true,
         synchronize: true,
-        // ssl: {
-        //   rejectUnauthorized: false,
-        // },
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
     OrdersModule,

@@ -9,9 +9,9 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
-    redis:
-      image: redis:latest
-      ports:
+  redis:
+    image: redis:latest
+    ports:
       - "6379:6379"
 
   redis-commander:
@@ -60,11 +60,8 @@ services:
         - rabbitmq
 
   cart-service:
-    build: ./cart-service
-    command: yarn start:dev
+    image: baoisspro/cart-service
     ports:
       - "3003:3003"
-    env_file:
-      - ./cart-service/.env
     depends_on:
       - redis
